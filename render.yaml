@@ -1,0 +1,24 @@
+# Deploy del backend NestJS a Render (runtime nativo Node, sin Docker).
+# El smoke test post-deploy está documentado en el README.
+services:
+  - type: web
+    name: automecanica-api
+    runtime: node
+    region: ohio
+    plan: free
+    # Build desde la raíz del monorepo: instala el workspace, genera Prisma,
+    # buildea el API y aplica migraciones pendientes contra Neon.
+    buildCommand: >-
+      corepack enable &&
+      pnpm install --frozen-lockfile &&
+      pnpm --filter api exec prisma generate &&
+      pnpm --filter api build &&
+      pnpm --filter api exec prisma migrate deploy
+    startCommand: pnpm --filter api start:prod
+    healthCheckPath: /v1/health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: NODE_VERSION
+        value: "20"
+      # Render inyecta PORT automáticamente; la app lo lee de process.env.PORT.
