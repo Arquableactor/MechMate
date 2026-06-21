@@ -41,7 +41,7 @@ Prisma lee `apps/api/.env` cuando corres comandos con `--filter api`.
 | `pnpm build` | Build incremental de todo el workspace (Turborepo) |
 | `pnpm test` | Tests de todo el workspace |
 | `pnpm lint` | Lint de todo el workspace |
-| `pnpm --filter api prisma migrate dev --name init` | Aplica la migración inicial contra Neon |
+| `pnpm --filter api exec prisma migrate deploy` | Aplica las migraciones contra Neon (citext + tablas) |
 
 ## API
 
@@ -54,14 +54,45 @@ Prisma lee `apps/api/.env` cuando corres comandos con `--filter api`.
   (el endpoint no se cae: degrada con elegancia).
 - OpenAPI (Swagger UI): `GET /v1/docs`
 
+### Identity (Día 2)
+
+Auth0 es dueño de las credenciales; la API solo valida el **JWT** (RS256). Los roles viven en la DB.
+
+- `GET /v1/me` — perfil + roles del token actual. **Provisiona** la cuenta (JIT) en la primera llamada.
+- `POST /v1/me/roles` `{ "role": "mechanic" }` — añade rol a la cuenta. Idempotente. Solo acepta
+  `mechanic|seller|customer` (rechaza `courier|admin` con `400`).
+
+Ambos requieren `Authorization: Bearer <token>`. Sin token / inválido ⇒ `401`.
+
+#### Obtener un token de prueba de Auth0
+
+1. En el dashboard de Auth0, abre tu **API** → pestaña **Test**. Auth0 muestra un `curl` con un token
+   de una app **Machine-to-Machine** (client_credentials) ya autorizada para esa API.
+2. Copia el `access_token` y ejercita la API:
+   ```bash
+   TOKEN="<access_token>"
+   curl -s -H "Authorization: Bearer $TOKEN" localhost:3000/v1/me | jq
+   curl -s -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+     -d '{"role":"mechanic"}' localhost:3000/v1/me/roles | jq
+   ```
+   Para un token de usuario real (con `email`/`name` en los claims) usa el flujo de Universal Login
+   de tu app SPA/móvil; el M2M sirve para validar el guard y el provisioning por `sub`.
+
 ## Base de datos (Neon + Prisma)
 
-1. Crea una base en [Neon](https://neon.tech) y copia la connection string a `apps/api/.env`.
-2. Aplica la migración inicial:
+1. Crea una base en [Neon](https://neon.tech) y copia la connection string a `apps/api/.env`
+   (junto con las vars `AUTH0_*`, ver [`.env.example`](./.env.example)).
+2. Aplica las migraciones:
    ```bash
-   pnpm --filter api prisma migrate dev --name init
+   pnpm --filter api exec prisma migrate deploy
    ```
-   Crea la tabla trivial `_healthcheck` (PK `uuid` v7, `created_at timestamptz`).
+   Crea la extensión `citext`, `_healthcheck`, y las tablas de Identity (`accounts`,
+   `account_roles`, `shops`).
+
+   > **Nota citext:** `accounts.email` es una columna `citext` (unique case-insensitive). Prisma no
+   > tiene tipo nativo `citext`, así que la migración está escrita a mano y se aplica con
+   > `migrate deploy`. Si en el futuro usas `prisma migrate dev`, revisa la migración generada: Prisma
+   > intentará convertir `email` a `text` (drift) — preserva el tipo `citext`.
 3. Verifica: `curl localhost:3000/v1/health` debe responder `"db": "up"`.
 
 ## Deploy a Render
