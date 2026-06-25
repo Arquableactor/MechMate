@@ -78,6 +78,33 @@ Ambos requieren `Authorization: Bearer <token>`. Sin token / inválido ⇒ `401`
    Para un token de usuario real (con `email`/`name` en los claims) usa el flujo de Universal Login
    de tu app SPA/móvil; el M2M sirve para validar el guard y el provisioning por `sub`.
 
+### Payments + Ledger (Día 3)
+
+El corazón del sistema: motor de pagos y **ledger de doble entrada**. Invariantes garantizadas en la
+DB con triggers (no solo en la app):
+
+- **Doble entrada:** `SUM(ledger_postings.amount_cents) = 0` por asiento (CONSTRAINT TRIGGER diferido,
+  valida al COMMIT); un asiento = una sola moneda.
+- **Inmutable:** `ledger_entries`/`ledger_postings` son append-only — `UPDATE`/`DELETE`/`TRUNCATE`
+  lanzan excepción. Las correcciones se hacen con un **asiento de reversa** (INSERT nuevo).
+- **Dinero en BigInt centavos**; en el wire viaja como **string** (`amount_cents: "100000"`) para no
+  perder precisión — el cliente hace `BigInt(str)`/`int.parse`, nunca `Number`.
+- **Captura idempotente** por `idempotency_key`: reintentar no duplica el pago ni el asiento; misma
+  key con payload distinto ⇒ `409`.
+
+La captura postea un asiento de 3 líneas (buyer −total / seller +net / platform +comisión) y escribe
+`PaymentCaptured` + `CommissionAccrued` al `outbox` en la misma transacción. (El worker que publica el
+outbox y el endpoint de cobro de la orden llegan después.)
+
+#### CardNet (mock) y webhook
+
+Los pagos están detrás de la interfaz `PaymentProvider`; el adapter **CardNet** corre en
+sandbox/mock determinista (config por env, ver `CARDNET_*`). El comprador enchufa credenciales reales
+después — nunca tocamos el PAN.
+
+- `POST /v1/payments/webhook/:provider` — público; lo autentica la **firma HMAC** sobre el cuerpo
+  crudo (header `x-signature`), no un JWT. Firma inválida ⇒ `401`.
+
 ## Base de datos (Neon + Prisma)
 
 1. Crea una base en [Neon](https://neon.tech) y copia la connection string a `apps/api/.env`
@@ -86,14 +113,25 @@ Ambos requieren `Authorization: Bearer <token>`. Sin token / inválido ⇒ `401`
    ```bash
    pnpm --filter api exec prisma migrate deploy
    ```
-   Crea la extensión `citext`, `_healthcheck`, y las tablas de Identity (`accounts`,
-   `account_roles`, `shops`).
+   Crea la extensión `citext`, Identity (`accounts`, `account_roles`, `shops`) y el motor de pagos
+   (`ledger_accounts`, `ledger_entries`, `ledger_postings`, `payments`, `payouts`, `outbox`) con sus
+   triggers de balance e inmutabilidad y las cuentas singleton de plataforma/impuestos.
 
-   > **Nota citext:** `accounts.email` es una columna `citext` (unique case-insensitive). Prisma no
-   > tiene tipo nativo `citext`, así que la migración está escrita a mano y se aplica con
-   > `migrate deploy`. Si en el futuro usas `prisma migrate dev`, revisa la migración generada: Prisma
-   > intentará convertir `email` a `text` (drift) — preserva el tipo `citext`.
+   > **Usa `migrate deploy`, no `migrate dev`.** Las migraciones llevan SQL crudo que Prisma no modela
+   > (triggers, `citext`, `UNIQUE ... NULLS NOT DISTINCT`). `migrate dev` detectaría "drift" e
+   > intentaría revertir esos objetos — preserva las migraciones a mano.
 3. Verifica: `curl localhost:3000/v1/health` debe responder `"db": "up"`.
+
+### Tests
+
+```bash
+pnpm --filter api test:unit   # rápidos, Prisma mockeado
+pnpm --filter api test:int    # integración: triggers del ledger contra Postgres REAL
+pnpm --filter api test        # ambos
+```
+
+Los tests de integración necesitan Postgres real: en local se levanta **embedded-postgres** (binario
+real vía npm, sin Docker) automáticamente; en CI se usa un service container y `TEST_DATABASE_URL`.
 
 ## Deploy a Render
 

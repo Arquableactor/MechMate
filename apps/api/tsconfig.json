@@ -5,7 +5,10 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "declaration": false,
-    "declarationMap": false
+    "declarationMap": false,
+    // nest build hace deleteOutDir; con incremental + tsbuildinfo stale, tsc
+    // creería que nada cambió y NO emitiría dist. Desactivado para emitir siempre.
+    "incremental": false
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]

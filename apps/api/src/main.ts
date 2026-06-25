@@ -1,10 +1,15 @@
+// Debe ir primero: parchea BigInt.prototype.toJSON antes de cualquier serialización.
+import './common/bigint-serializer';
+
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule);
+  // rawBody:true expone req.rawBody para verificar la firma de los webhooks.
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, { rawBody: true });
 
   // API versionada bajo /v1 (CLAUDE.md).
   app.setGlobalPrefix('v1');
@@ -15,7 +20,7 @@ async function bootstrap(): Promise<void> {
   // OpenAPI autogenerado — es el contrato que alimentará al cliente Flutter.
   const config = new DocumentBuilder()
     .setTitle('AutoMecánica API')
-    .setDescription('Backend del Ecosistema AutoMecánica (Identity — Día 2).')
+    .setDescription('Backend del Ecosistema AutoMecánica (Payments + Ledger — Día 3).')
     .setVersion('1.0')
     .addBearerAuth()
     .build();

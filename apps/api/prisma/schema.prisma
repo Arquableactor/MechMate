@@ -28,6 +28,43 @@ enum ShopType {
   parts_seller
 }
 
+// --- Payments + Ledger (Día 3) ---
+
+/// Dueño contable de una `ledger_account`. `platform`/`tax` usan owner_id NULL.
+enum LedgerOwnerType {
+  platform
+  seller
+  buyer
+  courier
+  tax
+}
+
+/// Naturaleza de la cuenta contable.
+enum LedgerAccountKind {
+  escrow_pending
+  available
+  commission_revenue
+  tax_payable
+  clearing
+}
+
+enum PaymentProvider {
+  cardnet
+}
+
+enum PaymentStatus {
+  requires_action
+  captured
+  failed
+  refunded
+}
+
+enum PayoutStatus {
+  scheduled
+  paid
+  failed
+}
+
 /// Tabla trivial para validar conexión y migraciones contra Neon (Día 1).
 model Healthcheck {
   id         String   @id @default(uuid(7)) @db.Uuid
@@ -78,7 +115,103 @@ model Shop {
   created_at     DateTime @default(now()) @db.Timestamptz(6)
   updated_at     DateTime @updatedAt @db.Timestamptz(6)
 
-  owner Account @relation(fields: [owner_id], references: [id])
+  owner   Account  @relation(fields: [owner_id], references: [id])
+  payouts Payout[]
 
   @@map("shops")
+}
+
+/// Cuenta contable. El UNIQUE(owner_type, owner_id, kind, currency) se crea en SQL
+/// crudo con NULLS NOT DISTINCT (Prisma no lo modela) — por eso NO hay @@unique
+/// aquí. Las cuentas singleton (platform/tax, owner_id NULL) se siembran en la
+/// migración. Futuros `migrate dev` marcarán drift en ese índice: preservarlo.
+model LedgerAccount {
+  id         String            @id @default(uuid(7)) @db.Uuid
+  owner_type LedgerOwnerType
+  owner_id   String?           @db.Uuid
+  kind       LedgerAccountKind
+  currency   String            @default("DOP")
+  created_at DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at DateTime          @updatedAt @db.Timestamptz(6)
+
+  postings LedgerPosting[]
+
+  @@map("ledger_accounts")
+}
+
+/// Asiento contable. Inmutable (append-only); correcciones por asiento de reversa.
+/// Triggers de balance (DEFERRED) e inmutabilidad viven en SQL crudo.
+model LedgerEntry {
+  id           String   @id @default(uuid(7)) @db.Uuid
+  external_ref String?
+  description  String?
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+
+  postings LedgerPosting[]
+
+  @@map("ledger_entries")
+}
+
+/// Línea de un asiento. `amount_cents` bigint (positivo=crédito, negativo=débito).
+/// Inmutable. La suma por `entry_id` debe ser 0 (trigger DEFERRED).
+model LedgerPosting {
+  id           String   @id @default(uuid(7)) @db.Uuid
+  entry_id     String   @db.Uuid
+  account_id   String   @db.Uuid
+  amount_cents BigInt
+  currency     String
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+
+  entry   LedgerEntry   @relation(fields: [entry_id], references: [id])
+  account LedgerAccount @relation(fields: [account_id], references: [id])
+
+  @@index([account_id])
+  @@index([entry_id])
+  @@map("ledger_postings")
+}
+
+/// Pago delegado al PSP (CardNet). Idempotente por `idempotency_key`.
+model Payment {
+  id              String          @id @default(uuid(7)) @db.Uuid
+  order_id        String?         @db.Uuid
+  provider        PaymentProvider @default(cardnet)
+  provider_ref    String?
+  amount_cents    BigInt
+  currency        String          @default("DOP")
+  status          PaymentStatus   @default(requires_action)
+  idempotency_key String          @unique
+  created_at      DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime        @updatedAt @db.Timestamptz(6)
+
+  @@map("payments")
+}
+
+/// Pago programado a un taller (primitiva mínima; sin reglas de scheduling).
+model Payout {
+  id           String      @id @default(uuid(7)) @db.Uuid
+  shop_id      String      @db.Uuid
+  amount_cents BigInt
+  currency     String      @default("DOP")
+  status       PayoutStatus @default(scheduled)
+  scheduled_for DateTime    @db.Date
+  created_at   DateTime    @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime    @updatedAt @db.Timestamptz(6)
+
+  shop Shop @relation(fields: [shop_id], references: [id])
+
+  @@map("payouts")
+}
+
+/// Outbox transaccional: el evento se escribe en la MISMA tx que el cambio de
+/// estado; un worker BullMQ lo publica (worker = PROMPT_003b). NO es inmutable
+/// (el worker setea `published_at`).
+model OutboxEvent {
+  id           String    @id @default(uuid(7)) @db.Uuid
+  topic        String
+  payload      Json      @db.JsonB
+  published_at DateTime? @db.Timestamptz(6)
+  created_at   DateTime  @default(now()) @db.Timestamptz(6)
+
+  @@index([published_at])
+  @@map("outbox")
 }

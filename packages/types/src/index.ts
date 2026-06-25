@@ -40,3 +40,36 @@ export interface MeResponse {
   roles: Role[];
   created_at: string;
 }
+
+// --- Payments + Ledger (Día 3) ---
+
+/**
+ * Dinero en **centavos como string decimal** (sin separadores, sin signo salvo
+ * reversas). En el wire es string para no perder precisión: el cliente debe
+ * `BigInt(str)` / `int.parse`, **nunca** `Number(str)`.
+ */
+export type Cents = string;
+
+export type PaymentStatus = 'requires_action' | 'captured' | 'failed' | 'refunded';
+
+/** Vista pública de un pago (montos como string). */
+export interface PaymentView {
+  id: string;
+  order_id: string | null;
+  provider: 'cardnet';
+  status: PaymentStatus;
+  amount_cents: Cents;
+  currency: string;
+  created_at: string;
+}
+
+/** Tópicos de eventos de dominio escritos al outbox. */
+export type OutboxTopic =
+  | 'PaymentCaptured'
+  | 'CommissionAccrued'
+  | 'PaymentRefunded'
+  // Reservados para Fase 3 (courier) — solo el contrato, sin lógica.
+  | 'DeliveryRequested'
+  | 'CourierAssigned'
+  | 'DeliveryInTransit'
+  | 'DeliveryCompleted';

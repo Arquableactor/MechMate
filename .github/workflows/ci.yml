@@ -12,6 +12,23 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Postgres real para los tests de integración del ledger (triggers). Local usa
+    # embedded-postgres; en CI usamos un service container (más estable que bajar
+    # el binario beta). globalSetup detecta TEST_DATABASE_URL y NO usa embedded.
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: mechmate_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v4
 
@@ -39,6 +56,8 @@ jobs:
 
       - name: Test
         run: pnpm test
+        env:
+          TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/mechmate_test
 
       - name: Build
         run: pnpm build
