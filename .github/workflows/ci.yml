@@ -58,6 +58,11 @@ jobs:
         run: pnpm test
         env:
           TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/mechmate_test
+          # Dummies (no son secretos): los tests son herméticos, esto es red de
+          # seguridad por si un test futuro llega a leer config de Auth0.
+          AUTH0_DOMAIN: test-tenant.us.auth0.com
+          AUTH0_AUDIENCE: https://api.test.automecanica.do
+          AUTH0_ISSUER_URL: https://test-tenant.us.auth0.com/
 
       - name: Build
         run: pnpm build

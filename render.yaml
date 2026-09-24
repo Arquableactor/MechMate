@@ -8,17 +8,32 @@ services:
     plan: free
     # Build desde la raíz del monorepo: instala el workspace, genera Prisma,
     # buildea el API y aplica migraciones pendientes contra Neon.
+    # NODE_ENV=development solo en el install: con NODE_ENV=production pnpm omite
+    # devDependencies (nest CLI, prisma, typescript) y el build fallaría.
     buildCommand: >-
       corepack enable &&
-      pnpm install --frozen-lockfile &&
+      NODE_ENV=development pnpm install --frozen-lockfile &&
       pnpm --filter api exec prisma generate &&
       pnpm --filter api build &&
       pnpm --filter api exec prisma migrate deploy
     startCommand: pnpm --filter api start:prod
     healthCheckPath: /v1/health
     envVars:
+      # sync:false → se cargan a mano en el dashboard de Render, nunca en el repo.
       - key: DATABASE_URL
+        sync: false
+      - key: AUTH0_DOMAIN
+        sync: false
+      - key: AUTH0_AUDIENCE
+        sync: false
+      - key: AUTH0_ISSUER_URL
+        sync: false
+      - key: CARDNET_WEBHOOK_SECRET
         sync: false
       - key: NODE_VERSION
         value: "20"
+      # Activa el fail-closed de CardnetProvider: sin CARDNET_WEBHOOK_SECRET la
+      # app no arranca (en vez de caer al secreto de desarrollo).
+      - key: NODE_ENV
+        value: production
       # Render inyecta PORT automáticamente; la app lo lee de process.env.PORT.
