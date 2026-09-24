@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#D6D8D1;padding:46px 40px 70px;font-family:'IBM Plex Sans',sans-serif;color:#17191A;}
+</style>
+</helmet>
+
+<div style="max-width:1040px;margin:0 auto;display:flex;gap:54px;align-items:flex-start;justify-content:center;flex-wrap:wrap;">
+
+  <!-- GUÍA -->
+  <div style="width:290px;display:flex;flex-direction:column;gap:18px;padding-top:22px;">
+    <div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#59636B;margin-bottom:12px;">Prototipo navegable · v2</div>
+      <h1 style="font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:34px;letter-spacing:-.5px;line-height:1.05;">MechMate</h1>
+      <p style="margin-top:11px;font-size:14px;color:#454B4F;line-height:1.55;">Tablero de instrumentos, superficie clara. Todo es clickeable.</p>
+    </div>
+    <div style="background:#fff;border:1px solid #CFD2CB;border-radius:14px;padding:16px 18px;">
+      <div style="font-weight:600;font-size:13px;margin-bottom:10px;">Rutas para probar</div>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:12.5px;color:#454B4F;line-height:1.45;">
+        <div>① <b>Iniciar sesión</b> → Dashboard</div>
+        <div>② Manómetro y tarjetas → cada módulo</div>
+        <div>③ Orden → <b>Hacer DVI</b> → enviar → aprobación</div>
+        <div>④ Orden → <b>Cobrar</b> (comisión visible) → Cobrado</div>
+        <div>⑤ <b>Nueva orden</b>: sube el amortiguador a 4 → stock insuficiente; bájalo → se habilita</div>
+        <div>⑥ Avatar → Ajustes → <b>Cerrar sesión</b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELÉFONO -->
+  <div data-screen-label="MechMate v2">
+    <x-import component="AndroidDevice" from="./android-frame.jsx" hint-size="412px,892px">
+      <div style="position:relative;height:100%;background:#E7E8E3;font-family:'IBM Plex Sans',sans-serif;color:#17191A;overflow:hidden;">
+
+        <!-- ===== LOGIN ===== -->
+        <sc-if value="{{ show_login }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;padding:0 26px;background:#17191A;">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;">
+              <svg viewBox="0 0 100 100" style="width:74px;height:74px;">
+                <g fill="#F3A007"><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(0 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(36 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(72 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(108 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(144 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(180 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(216 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(252 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(288 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(324 50 50)"/></g>
+                <circle cx="50" cy="50" r="31" fill="none" stroke="#F3A007" stroke-width="6"/><text x="50" y="50" dy=".36em" text-anchor="middle" font-family="Chakra Petch" font-weight="700" font-size="32" fill="#fff">M</text>
+              </svg>
+              <div style="text-align:center;">
+                <div style="font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:32px;letter-spacing:-.5px;color:#fff;line-height:1;">MechMate</div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#8B949B;margin-top:10px;">El compañero del taller</div>
+              </div>
+            </div>
+            <div style="flex:1.05;display:flex;flex-direction:column;gap:12px;">
+              <div style="background:#22262A;border:1px solid #2F3439;border-radius:13px;padding:11px 15px;">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.5px;color:#8B949B;">CORREO</div>
+                <div style="font-size:15.5px;color:#fff;-webkit-text-fill-color:#fff;margin-top:3px;">carlos<span>@</span>tallerdeltoro.do</div>
+              </div>
+              <div style="background:#22262A;border:1px solid #2F3439;border-radius:13px;padding:11px 15px;display:flex;align-items:center;justify-content:space-between;">
+                <div><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.5px;color:#8B949B;">CONTRASEÑA</div><div style="font-size:17px;color:#fff;margin-top:4px;letter-spacing:3px;">••••••••</div></div>
+                <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#8B949B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </div>
+              <div onClick="{{ go_dashboard }}" style="margin-top:7px;height:56px;border-radius:14px;background:#F3A007;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;" style-hover="background:#ffb121;" style-active="transform:scale(.98);">
+                <span style="font-weight:700;font-size:16.5px;color:#17191A;">Entrar</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#17191A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </div>
+            </div>
+            <div style="padding:16px 0 22px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#59636B;">MechMate v1.0 · RD</div>
+          </div>
+        </sc-if>
+
+        <!-- ===== DASHBOARD ===== -->
+        <sc-if value="{{ show_dashboard }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0 0 62px 0;padding:8px 18px 10px;display:flex;flex-direction:column;gap:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:9px;">
+                <svg viewBox="0 0 100 100" style="width:27px;height:27px;">
+                  <g fill="#17191A"><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(0 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(36 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(72 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(108 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(144 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(180 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(216 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(252 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(288 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(324 50 50)"/></g>
+                  <circle cx="50" cy="50" r="31" fill="none" stroke="#17191A" stroke-width="6"/><text x="50" y="50" dy=".36em" text-anchor="middle" font-family="Chakra Petch" font-weight="700" font-size="32" fill="#17191A">M</text>
+                </svg>
+                <span style="font-weight:700;font-size:17px;letter-spacing:-.3px;">MechMate</span>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <div style="width:38px;height:38px;border-radius:11px;background:#fff;border:1px solid #D5D8D1;display:flex;align-items:center;justify-content:center;position:relative;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#454B4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M10 21a2 2 0 004 0"/></svg>
+                  <div style="position:absolute;top:8px;right:9px;width:7px;height:7px;border-radius:50%;background:#F3A007;border:1.5px solid #fff;"></div>
+                </div>
+                <div onClick="{{ go_ajustes }}" style="width:38px;height:38px;border-radius:11px;background:#17191A;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;color:#fff;cursor:pointer;">CN</div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:20px;font-weight:600;">Buen día, Carlos</div>
+              <div style="font-size:12.5px;color:#59636B;margin-top:1px;font-family:'IBM Plex Mono',monospace;">Jue 20 jun · Taller Del Toro</div>
+            </div>
+
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:18px;padding:16px 18px 18px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#59636B;">INGRESOS DE HOY</div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#1C8C57;">▲ 12%</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;margin-top:2px;">
+                <svg viewBox="0 0 220 122" style="width:142px;height:79px;flex:none;">
+                  <path d="M22 110 A88 88 0 0 1 198 110" fill="none" stroke="#E7E8E3" stroke-width="11" stroke-linecap="round"/>
+                  <path d="M22 110 A88 88 0 0 1 168.5 47.5" fill="none" stroke="#F3A007" stroke-width="11" stroke-linecap="round"/>
+                  <g stroke="#D4D7D0" stroke-width="2.5" stroke-linecap="round"><line x1="110" y1="24" x2="110" y2="33" transform="rotate(-90 110 110)"/><line x1="110" y1="24" x2="110" y2="33" transform="rotate(-60 110 110)"/><line x1="110" y1="24" x2="110" y2="33" transform="rotate(-30 110 110)"/><line x1="110" y1="24" x2="110" y2="33" transform="rotate(0 110 110)"/><line x1="110" y1="24" x2="110" y2="33" transform="rotate(30 110 110)"/><line x1="110" y1="24" x2="110" y2="33" transform="rotate(60 110 110)"/><line x1="110" y1="24" x2="110" y2="33" transform="rotate(90 110 110)"/></g>
+                  <line x1="110" y1="110" x2="110" y2="42" stroke="#17191A" stroke-width="4.5" stroke-linecap="round" transform="rotate(42 110 110)"/>
+                  <circle cx="110" cy="110" r="7" fill="#17191A"/><circle cx="110" cy="110" r="2.5" fill="#fff"/>
+                  <text x="110" y="97" text-anchor="middle" font-family="Chakra Petch" font-weight="700" font-size="22" fill="#17191A">74%</text>
+                </svg>
+                <div style="flex:1;">
+                  <div style="font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:33px;letter-spacing:-.5px;line-height:1;">RD$ 18,400</div>
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#59636B;margin-top:6px;">meta RD$ 25,000</div>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;">
+              <div onClick="{{ go_ordenes }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:11px 12px;border-top:3px solid #17191A;cursor:pointer;">
+                <div style="font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:22px;line-height:1;">7</div><div style="font-size:11px;color:#59636B;margin-top:4px;">Órdenes</div>
+              </div>
+              <div onClick="{{ go_dvi }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:11px 12px;border-top:3px solid #F3A007;cursor:pointer;">
+                <div style="font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:22px;line-height:1;">3</div><div style="font-size:11px;color:#59636B;margin-top:4px;">DVI hoy</div>
+              </div>
+              <div onClick="{{ go_ordenes }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:11px 12px;border-top:3px solid #1C8C57;cursor:pointer;">
+                <div style="font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:22px;line-height:1;">9.2k</div><div style="font-size:11px;color:#59636B;margin-top:4px;">Por cobrar</div>
+              </div>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:14.5px;font-weight:600;">Órdenes activas</span>
+              <span onClick="{{ go_ordenes }}" style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#59636B;cursor:pointer;">ver todas</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:9px;">
+              <div onClick="{{ go_ordenDetalle }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:11px 13px;display:flex;align-items:center;gap:11px;cursor:pointer;" style-hover="border-color:#B9BDB5;">
+                <span style="width:9px;height:9px;border-radius:50%;background:#F3A007;flex:none;"></span>
+                <div style="flex:1;"><div style="font-size:13.5px;font-weight:600;">Yohan Peña</div><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#59636B;margin-top:1px;">A412678 · Corolla 2020</div></div>
+                <span style="font-size:11px;font-weight:600;color:#B27400;background:#FBEFD4;padding:3px 9px;border-radius:6px;">En proceso</span>
+              </div>
+              <div onClick="{{ go_cobro }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:11px 13px;display:flex;align-items:center;gap:11px;cursor:pointer;" style-hover="border-color:#B9BDB5;">
+                <span style="width:9px;height:9px;border-radius:50%;background:#1C8C57;flex:none;"></span>
+                <div style="flex:1;"><div style="font-size:13.5px;font-weight:600;">Ramona Castillo</div><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#59636B;margin-top:1px;">A887301 · CR-V 2019</div></div>
+                <span style="font-size:11px;font-weight:600;color:#0F7345;background:#D7EFE2;padding:3px 9px;border-radius:6px;">Por cobrar</span>
+              </div>
+              <div onClick="{{ go_ordenDetalle }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:11px 13px;display:flex;align-items:center;gap:11px;cursor:pointer;" style-hover="border-color:#B9BDB5;">
+                <span style="width:9px;height:9px;border-radius:50%;background:#59636B;flex:none;"></span>
+                <div style="flex:1;"><div style="font-size:13.5px;font-weight:600;">Wellington Mateo</div><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#59636B;margin-top:1px;">A203945 · Hilux 2018</div></div>
+                <span style="font-size:11px;font-weight:600;color:#454B4F;background:#EAEBE6;padding:3px 9px;border-radius:6px;">Esperando</span>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== CLIENTES ===== -->
+        <sc-if value="{{ show_clientes }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0 0 62px 0;padding:8px 18px 10px;display:flex;flex-direction:column;gap:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:9px;"><span style="font-size:22px;font-weight:700;">Clientes</span><span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#59636B;">128</span></div>
+              <div onClick="{{ go_clienteForm }}" style="width:38px;height:38px;border-radius:11px;background:#17191A;display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:0 14px;height:46px;flex:none;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9aa1a6" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>
+              <span style="font-size:14px;color:#9aa1a6;">Buscar por nombre o teléfono</span>
+            </div>
+            <div style="display:flex;background:#EDEEEA;border-radius:12px;padding:4px;gap:4px;">
+              <div style="flex:1;text-align:center;padding:7px 0;border-radius:9px;background:#fff;color:#17191A;font-size:13px;font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.05);">Clientes</div>
+              <div onClick="{{ go_vehiculos }}" style="flex:1;text-align:center;padding:7px 0;border-radius:9px;color:#59636B;font-size:13px;font-weight:600;cursor:pointer;">Vehículos</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:9px;">
+              <div onClick="{{ go_clienteDetalle }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#B9BDB5;">
+                <div style="width:42px;height:42px;border-radius:13px;background:#EDEEEA;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;color:#454B4F;">YP</div>
+                <div style="flex:1;"><div style="font-size:14.5px;font-weight:600;">Yohan Peña</div><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#59636B;margin-top:1px;">809 412 5678</div></div>
+                <span style="font-size:11px;color:#59636B;">2 autos</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bcc1bd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+              </div>
+              <div onClick="{{ go_clienteDetalle }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#B9BDB5;">
+                <div style="width:42px;height:42px;border-radius:13px;background:#EDEEEA;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;color:#454B4F;">RC</div>
+                <div style="flex:1;"><div style="font-size:14.5px;font-weight:600;">Ramona Castillo</div><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#59636B;margin-top:1px;">829 765 4321</div></div>
+                <span style="font-size:11px;color:#59636B;">1 auto</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bcc1bd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+              </div>
+              <div onClick="{{ go_clienteDetalle }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#B9BDB5;">
+                <div style="width:42px;height:42px;border-radius:13px;background:#EDEEEA;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;color:#454B4F;">WM</div>
+                <div style="flex:1;"><div style="font-size:14.5px;font-weight:600;">Wellington Mateo</div><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#59636B;margin-top:1px;">849 203 9945</div></div>
+                <span style="font-size:11px;color:#59636B;">3 autos</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bcc1bd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+              </div>
+              <div onClick="{{ go_clienteDetalle }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#B9BDB5;">
+                <div style="width:42px;height:42px;border-radius:13px;background:#EDEEEA;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;color:#454B4F;">FD</div>
+                <div style="flex:1;"><div style="font-size:14.5px;font-weight:600;">Franklin Díaz</div><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#59636B;margin-top:1px;">809 556 1188</div></div>
+                <span style="font-size:11px;color:#59636B;">1 auto</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bcc1bd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== CLIENTE DETALLE ===== -->
+        <sc-if value="{{ show_clienteDetalle }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;padding:8px 18px 16px;display:flex;flex-direction:column;gap:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div onClick="{{ goBack }}" style="width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid #D5D8D1;display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#17191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></div>
+              <span style="font-size:15.5px;font-weight:600;">Cliente</span>
+              <div style="width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid #D5D8D1;display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#454B4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3l4 4L8 20l-5 1 1-5z"/></svg></div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:4px 0 0;">
+              <div style="width:72px;height:72px;border-radius:22px;background:#17191A;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:23px;color:#fff;">YP</div>
+              <div style="text-align:center;"><div style="font-size:20px;font-weight:700;">Yohan Peña</div><div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#59636B;margin-top:3px;">cliente desde mar 2024 · 8 visitas</div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div style="height:46px;border-radius:13px;background:#17191A;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.12.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.34 1.85.58 2.81.7A2 2 0 0122 16.92z"/></svg><span style="font-weight:600;font-size:14px;color:#fff;">Llamar</span></div>
+              <div style="height:46px;border-radius:13px;background:#fff;border:1px solid #D5D8D1;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#17191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span style="font-weight:600;font-size:14px;">WhatsApp</span></div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:14px;font-weight:600;">Vehículos</span><span onClick="{{ go_vehiculoForm }}" style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#59636B;cursor:pointer;">+ agregar</span></div>
+            <div onClick="{{ go_vehiculoDetalle }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#B9BDB5;">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#fff;background:#17191A;border-radius:6px;padding:5px 8px;letter-spacing:1px;">A412678</span>
+              <div style="flex:1;"><div style="font-size:13.5px;font-weight:600;">Toyota Corolla 2020</div><div style="font-size:11.5px;color:#59636B;">Gris · 84,200 km</div></div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bcc1bd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+            </div>
+            <div onClick="{{ go_vehiculoDetalle }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#B9BDB5;">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#fff;background:#17191A;border-radius:6px;padding:5px 8px;letter-spacing:1px;">A559021</span>
+              <div style="flex:1;"><div style="font-size:13.5px;font-weight:600;">Honda Civic 2016</div><div style="font-size:11.5px;color:#59636B;">Negro · 132,000 km</div></div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bcc1bd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:2px;"><span style="font-size:14px;font-weight:600;">Órdenes recientes</span></div>
+            <div onClick="{{ go_ordenDetalle }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#B9BDB5;">
+              <div style="flex:1;"><div style="font-size:13px;font-weight:600;"><span style="font-family:'IBM Plex Mono',monospace;">OT-0142</span> · Balatas</div><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#59636B;margin-top:1px;">28 may · RD$ 4,180</div></div>
+              <span style="font-size:11px;font-weight:600;color:#0F7345;background:#D7EFE2;padding:3px 9px;border-radius:6px;">Cobrada</span>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== CLIENTE FORM ===== -->
+        <sc-if value="{{ show_clienteForm }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;padding:8px 18px 16px;display:flex;flex-direction:column;gap:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div onClick="{{ goBack }}" style="width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid #D5D8D1;display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#17191A" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></div>
+              <span style="font-size:15.5px;font-weight:600;">Nuevo cliente</span>
+              <div style="width:40px;"></div>
+            </div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:11px 15px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.5px;color:#59636B;">NOMBRE *</div><div style="font-size:15.5px;margin-top:3px;">Franklin Díaz</div></div>
+            <div>
+              <div style="background:#fff;border:1.5px solid #D2382F;border-radius:13px;padding:11px 15px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.5px;color:#D2382F;">TELÉFONO *</div><div style="font-size:15.5px;color:#9aa1a6;margin-top:3px;">809 000 0000</div></div>
+              <div style="display:flex;align-items:center;gap:6px;margin-top:6px;padding-left:3px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#D2382F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><span style="font-size:12px;color:#D2382F;">Escribe un teléfono de 10 dígitos para guardar</span></div>
+            </div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:11px 15px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.5px;color:#59636B;">CORREO</div><div style="font-size:15.5px;color:#9aa1a6;margin-top:3px;">opcional</div></div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:11px 15px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.5px;color:#59636B;">DIRECCIÓN</div><div style="font-size:15.5px;color:#9aa1a6;margin-top:3px;">sector, calle, número</div></div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:11px 15px;height:96px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.5px;color:#59636B;">NOTAS</div><div style="font-size:15.5px;color:#9aa1a6;margin-top:3px;">referencias del cliente…</div></div>
+            <div style="flex:1;"></div>
+            <div onClick="{{ go_clientes }}" style="height:54px;border-radius:14px;background:#17191A;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-active="transform:scale(.98);"><span style="font-weight:700;font-size:16px;color:#fff;">Guardar cliente</span></div>
+          </div>
+        </sc-if>
+
+        <!-- ===== VEHÍCULOS ===== -->
+        <sc-if value="{{ show_vehiculos }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0 0 62px 0;padding:8px 18px 10px;display:flex;flex-direction:column;gap:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:9px;"><span style="font-size:22px;font-weight:700;">Vehículos</span><span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#59636B;">173</span></div>
+              <div onClick="{{ go_vehiculoForm }}" style="width:38px;height:38px;border-radius:11px;background:#17191A;display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>
+            </div>
+            <div style="display:flex;background:#EDEEEA;border-radius:12px;padding:4px;gap:4px;">
+              <div onClick="{{ go_clientes }}" style="flex:1;text-align:center;padding:7px 0;border-radius:9px;color:#59636B;font-size:13px;font-weight:600;cursor:pointer;">Clientes</div>
+              <div style="flex:1;text-align:center;padding:7px 0;border-radius:9px;background:#fff;color:#17191A;font-size:13px;font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.05);">Vehículos</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:0 14px;height:46px;flex:none;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9aa1a6" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>
+              <span style="font-size:14px;color:#9aa1a6;">Buscar por placa o VIN</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:9px;">
+              <div onClick="{{ go_vehiculoDetalle }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#B9BDB5;">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#fff;background:#17191A;border-radius:6px;padding:5px 8px;letter-spacing:1px;">A412678</span>
+                <div style="flex:1;"><div style="font-size:14px;font-weight:600;">Toyota Corolla 2020</div><div style="font-size:11.5px;color:#59636B;margin-top:1px;">Yohan Peña</div></div>
+                <span style="font-size:10.5px;font-weight:600;color:#454B4F;background:#EAEBE6;padding:3px 9px;border-radius:6px;">Sedán</span>
+              </div>
+              <div onClick="{{ go_vehiculoDetalle }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#B9BDB5;">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#fff;background:#17191A;border-radius:6px;padding:5px 8px;letter-spacing:1px;">A887301</span>
+                <div style="flex:1;"><div style="font-size:14px;font-weight:600;">Honda CR-V 2019</div><div style="font-size:11.5px;color:#59636B;margin-top:1px;">Ramona Castillo</div></div>
+                <span style="font-size:10.5px;font-weight:600;color:#454B4F;background:#EAEBE6;padding:3px 9px;border-radius:6px;">SUV</span>
+              </div>
+              <div onClick="{{ go_vehiculoDetalle }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#B9BDB5;">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#fff;background:#17191A;border-radius:6px;padding:5px 8px;letter-spacing:1px;">A203945</span>
+                <div style="flex:1;"><div style="font-size:14px;font-weight:600;">Toyota Hilux 2018</div><div style="font-size:11.5px;color:#59636B;margin-top:1px;">Wellington Mateo</div></div>
+                <span style="font-size:10.5px;font-weight:600;color:#454B4F;background:#EAEBE6;padding:3px 9px;border-radius:6px;">Pickup</span>
+              </div>
+              <div onClick="{{ go_vehiculoDetalle }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#B9BDB5;">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#fff;background:#17191A;border-radius:6px;padding:5px 8px;letter-spacing:1px;">A559021</span>
+                <div style="flex:1;"><div style="font-size:14px;font-weight:600;">Hyundai Tucson 2021</div><div style="font-size:11.5px;color:#59636B;margin-top:1px;">Franklin Díaz</div></div>
+                <span style="font-size:10.5px;font-weight:600;color:#454B4F;background:#EAEBE6;padding:3px 9px;border-radius:6px;">SUV</span>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== VEHÍCULO DETALLE ===== -->
+        <sc-if value="{{ show_vehiculoDetalle }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;padding:8px 18px 16px;display:flex;flex-direction:column;gap:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div onClick="{{ goBack }}" style="width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid #D5D8D1;display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#17191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></div>
+              <span style="font-size:15.5px;font-weight:600;">Vehículo</span>
+              <div style="width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid #D5D8D1;display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#454B4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3l4 4L8 20l-5 1 1-5z"/></svg></div>
+            </div>
+            <!-- VIN plate -->
+            <div style="background:#17191A;border-radius:16px;padding:15px 17px;color:#fff;">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:1.5px;color:#8B949B;">VIN</div><div style="font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:16.5px;letter-spacing:1.5px;margin-top:3px;">1HGCM82633A004352</div></div>
+                <div style="border:1.5px solid #3A3F42;border-radius:7px;padding:5px 9px;text-align:center;"><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:1px;color:#8B949B;">PLACA</div><div style="font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:14px;letter-spacing:1px;margin-top:1px;">A412678</div></div>
+              </div>
+              <div style="height:1px;background:#2B2F32;margin:13px 0;"></div>
+              <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:16px;font-weight:600;">Toyota Corolla 2020</span><span style="font-size:11.5px;color:#8B949B;">· Gris · 84,200 km</span></div>
+            </div>
+            <div onClick="{{ go_clienteDetalle }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:11px;cursor:pointer;" style-hover="border-color:#B9BDB5;">
+              <div style="width:38px;height:38px;border-radius:11px;background:#EDEEEA;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;color:#454B4F;">YP</div>
+              <div style="flex:1;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#59636B;">PROPIETARIO</div><div style="font-size:13.5px;font-weight:600;margin-top:1px;">Yohan Peña</div></div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bcc1bd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+            </div>
+            <span style="font-size:14px;font-weight:600;">Historial de servicio</span>
+            <div onClick="{{ go_ordenDetalle }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#B9BDB5;">
+              <div style="flex:1;"><div style="font-size:13px;font-weight:600;"><span style="font-family:'IBM Plex Mono',monospace;">OT-0148</span> · Frenos</div><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#59636B;margin-top:1px;">hoy · RD$ 4,600</div></div>
+              <span style="font-size:11px;font-weight:600;color:#B27400;background:#FBEFD4;padding:3px 9px;border-radius:6px;">En proceso</span>
+            </div>
+            <div onClick="{{ go_ordenDetalle }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#B9BDB5;">
+              <div style="flex:1;"><div style="font-size:13px;font-weight:600;"><span style="font-family:'IBM Plex Mono',monospace;">OT-0119</span> · Afinación</div><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#59636B;margin-top:1px;">12 mar · RD$ 6,900</div></div>
+              <span style="font-size:11px;font-weight:600;color:#0F7345;background:#D7EFE2;padding:3px 9px;border-radius:6px;">Cobrada</span>
+            </div>
+            <div style="flex:1;"></div>
+            <div onClick="{{ go_citaForm }}" style="height:54px;border-radius:14px;background:#17191A;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;" style-active="transform:scale(.98);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span style="font-weight:700;font-size:15.5px;color:#fff;">Agendar cita</span></div>
+          </div>
+        </sc-if>
+
+        <!-- ===== VEHÍCULO FORM ===== -->
+        <sc-if value="{{ show_vehiculoForm }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;padding:8px 18px 16px;display:flex;flex-direction:column;gap:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div onClick="{{ goBack }}" style="width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid #D5D8D1;display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#17191A" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></div>
+              <span style="font-size:15.5px;font-weight:600;">Nuevo vehículo</span>
+              <div style="width:40px;"></div>
+            </div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:10px 14px;display:flex;align-items:center;gap:10px;">
+              <div style="width:34px;height:34px;border-radius:10px;background:#EDEEEA;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px;color:#454B4F;">YP</div>
+              <div style="flex:1;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#59636B;">CLIENTE *</div><div style="font-size:14px;font-weight:600;margin-top:1px;">Yohan Peña</div></div>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9aa1a6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <!-- VIN destacado -->
+            <div style="background:#fff;border:1.5px solid #17191A;border-radius:13px;padding:11px 15px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.5px;color:#17191A;">VIN *</div><div style="font-family:'IBM Plex Mono',monospace;font-size:15.5px;letter-spacing:1px;margin-top:3px;">1HGCM82633A004352</div></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;">
+              <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:10px 14px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#59636B;">MARCA</div><div style="font-size:15px;margin-top:2px;">Toyota</div></div>
+              <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:10px 14px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#59636B;">MODELO</div><div style="font-size:15px;margin-top:2px;">Corolla</div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;">
+              <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:10px 14px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#59636B;">AÑO</div><div style="font-size:15px;margin-top:2px;">2020</div></div>
+              <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:10px 14px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#59636B;">PLACA</div><div style="font-family:'IBM Plex Mono',monospace;font-size:15px;letter-spacing:1px;margin-top:2px;">A412678</div></div>
+            </div>
+            <div><div style="font-size:12px;color:#59636B;font-weight:500;margin-bottom:8px;padding-left:3px;">Tipo</div>
+              <div style="display:flex;gap:8px;">
+                <span style="padding:8px 15px;border-radius:999px;font-size:12.5px;font-weight:600;background:#17191A;color:#fff;cursor:pointer;">Sedán</span>
+                <span style="padding:8px 15px;border-radius:999px;font-size:12.5px;font-weight:600;background:#fff;border:1px solid #D5D8D1;color:#454B4F;cursor:pointer;">SUV</span>
+                <span style="padding:8px 15px;border-radius:999px;font-size:12.5px;font-weight:600;background:#fff;border:1px solid #D5D8D1;color:#454B4F;cursor:pointer;">Pickup</span>
+                <span style="padding:8px 15px;border-radius:999px;font-size:12.5px;font-weight:600;background:#fff;border:1px solid #D5D8D1;color:#454B4F;cursor:pointer;">Jeepeta</span>
+              </div>
+            </div>
+            <div style="flex:1;"></div>
+            <div onClick="{{ go_vehiculos }}" style="height:54px;border-radius:14px;background:#17191A;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-active="transform:scale(.98);"><span style="font-weight:700;font-size:16px;color:#fff;">Guardar vehículo</span></div>
+          </div>
+        </sc-if>
+
+        <!-- ===== INVENTARIO ===== -->
+        <sc-if value="{{ show_inventario }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0 0 62px 0;padding:8px 18px 10px;display:flex;flex-direction:column;gap:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:9px;"><span style="font-size:22px;font-weight:700;">Inventario</span><span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#59636B;">342</span></div>
+              <div onClick="{{ go_piezaForm }}" style="width:38px;height:38px;border-radius:11px;background:#17191A;display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:0 14px;height:46px;flex:none;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9aa1a6" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>
+              <span style="font-size:14px;color:#9aa1a6;">Buscar por nombre o código</span>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <span style="padding:7px 13px;border-radius:999px;font-size:12px;font-weight:600;background:#17191A;color:#fff;">Todas</span>
+              <span style="padding:7px 13px;border-radius:999px;font-size:12px;font-weight:600;background:#FBEFD4;border:1px solid #F0D6A0;color:#B27400;cursor:pointer;display:flex;align-items:center;gap:5px;"><span style="width:7px;height:7px;border-radius:50%;background:#F3A007;"></span>Bajo stock 4</span>
+              <span style="padding:7px 13px;border-radius:999px;font-size:12px;font-weight:600;background:#fff;border:1px solid #D5D8D1;color:#454B4F;cursor:pointer;">Frenos</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:9px;">
+              <div onClick="{{ go_piezaDetalle }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#B9BDB5;">
+                <span style="width:9px;height:9px;border-radius:50%;background:#1C8C57;flex:none;"></span>
+                <div style="flex:1;"><div style="font-size:14px;font-weight:600;">Aceite 5W-30 Mobil</div><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#59636B;margin-top:1px;">ACE-5301</div></div>
+                <div style="text-align:right;"><div style="font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:16px;">48</div><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#59636B;">RD$ 520</div></div>
+              </div>
+              <div onClick="{{ go_piezaDetalle }}" style="background:#fff;border:1px solid #F0D6A0;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#F3A007;">
+                <span style="width:9px;height:9px;border-radius:50%;background:#F3A007;flex:none;"></span>
+                <div style="flex:1;"><div style="font-size:14px;font-weight:600;">Balatas Brembo del.</div><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#59636B;margin-top:1px;">BAL-2241</div></div>
+                <div style="text-align:right;"><div style="font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:16px;color:#B27400;">2</div><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#59636B;">RD$ 1,260</div></div>
+              </div>
+              <div onClick="{{ go_piezaDetalle }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#B9BDB5;">
+                <span style="width:9px;height:9px;border-radius:50%;background:#1C8C57;flex:none;"></span>
+                <div style="flex:1;"><div style="font-size:14px;font-weight:600;">Filtro de aceite Mann</div><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#59636B;margin-top:1px;">FIL-0610</div></div>
+                <div style="text-align:right;"><div style="font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:16px;">23</div><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#59636B;">RD$ 480</div></div>
+              </div>
+              <div onClick="{{ go_piezaDetalle }}" style="background:#fff;border:1px solid #E7B6B1;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#D2382F;">
+                <span style="width:9px;height:9px;border-radius:50%;background:#D2382F;flex:none;"></span>
+                <div style="flex:1;"><div style="font-size:14px;font-weight:600;">Banda distribución Gates</div><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#59636B;margin-top:1px;">BAN-7705</div></div>
+                <div style="text-align:right;"><div style="font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:16px;color:#B4231B;">0</div><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#59636B;">RD$ 1,640</div></div>
+              </div>
+              <div onClick="{{ go_piezaDetalle }}" style="background:#fff;border:1px solid #F0D6A0;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#F3A007;">
+                <span style="width:9px;height:9px;border-radius:50%;background:#F3A007;flex:none;"></span>
+                <div style="flex:1;"><div style="font-size:14px;font-weight:600;">Amortiguador KYB tras.</div><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#59636B;margin-top:1px;">AMO-3320</div></div>
+                <div style="text-align:right;"><div style="font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:16px;color:#B27400;">3</div><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#59636B;">RD$ 4,200</div></div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== PIEZA DETALLE ===== -->
+        <sc-if value="{{ show_piezaDetalle }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;padding:8px 18px 16px;display:flex;flex-direction:column;gap:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div onClick="{{ goBack }}" style="width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid #D5D8D1;display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#17191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></div>
+              <span style="font-size:15.5px;font-weight:600;">Pieza</span>
+              <div onClick="{{ go_piezaForm }}" style="width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid #D5D8D1;display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#454B4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3l4 4L8 20l-5 1 1-5z"/></svg></div>
+            </div>
+            <div>
+              <div style="font-size:20px;font-weight:700;line-height:1.2;">Balatas Brembo delanteras</div>
+              <div style="display:flex;gap:7px;margin-top:9px;">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;background:#EDEEEA;border-radius:6px;padding:4px 8px;letter-spacing:1px;">BAL-2241</span>
+                <span style="font-size:11px;font-weight:600;color:#454B4F;background:#EAEBE6;padding:4px 9px;border-radius:6px;">Frenos</span>
+              </div>
+            </div>
+            <!-- gauge de existencias -->
+            <div style="background:#fff;border:1px solid #F0D6A0;border-radius:16px;padding:15px 17px;display:flex;align-items:center;gap:14px;">
+              <svg viewBox="0 0 220 122" style="width:104px;height:58px;flex:none;">
+                <path d="M22 110 A88 88 0 0 1 198 110" fill="none" stroke="#EDEEEA" stroke-width="12" stroke-linecap="round"/>
+                <path d="M22 110 A88 88 0 0 1 52 63" fill="none" stroke="#F3A007" stroke-width="12" stroke-linecap="round"/>
+                <line x1="110" y1="110" x2="110" y2="46" stroke="#17191A" stroke-width="4.5" stroke-linecap="round" transform="rotate(-58 110 110)"/>
+                <circle cx="110" cy="110" r="6.5" fill="#17191A"/>
+              </svg>
+              <div style="flex:1;">
+                <div style="display:flex;align-items:baseline;gap:6px;"><span style="font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:30px;color:#B27400;line-height:1;">2</span><span style="font-size:13px;color:#59636B;">uds · mín 5</span></div>
+                <span style="display:inline-block;margin-top:7px;font-size:11px;font-weight:600;color:#B27400;background:#FBEFD4;padding:3px 9px;border-radius:6px;">Bajo stock</span>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:12px 14px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#59636B;">COMPRA</div><div style="font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:18px;margin-top:3px;">RD$ 930</div></div>
+              <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:12px 14px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#59636B;">VENTA</div><div style="font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:18px;margin-top:3px;">RD$ 1,260 <span style="font-family:'IBM Plex Sans';font-size:11px;color:#1C8C57;">+35%</span></div></div>
+            </div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:11px 15px;display:flex;align-items:center;justify-content:space-between;"><span style="font-size:12.5px;color:#59636B;">Suplidor</span><span style="font-size:13.5px;font-weight:600;">Repuestos GLZ</span></div>
+            <span style="font-size:14px;font-weight:600;">Movimientos</span>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="background:#fff;border:1px solid #D5D8D1;border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:12px;"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:#D2382F;width:30px;">−2</span><div style="flex:1;"><div style="font-size:12.5px;font-weight:600;">Orden OT-0148</div><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#59636B;">hoy 12:40</div></div></div>
+              <div style="background:#fff;border:1px solid #D5D8D1;border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:12px;"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:#1C8C57;width:30px;">+10</span><div style="flex:1;"><div style="font-size:12.5px;font-weight:600;">Entrada de suplidor</div><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#59636B;">3 jun</div></div></div>
+            </div>
+            <div style="flex:1;"></div>
+            <div onClick="{{ go_piezaForm }}" style="height:54px;border-radius:14px;background:#fff;border:1.5px solid #17191A;display:flex;align-items:center;justify-content:center;cursor:pointer;"><span style="font-weight:700;font-size:15.5px;">Ajustar stock</span></div>
+          </div>
+        </sc-if>
+
+        <!-- ===== PIEZA FORM ===== -->
+        <sc-if value="{{ show_piezaForm }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;padding:8px 18px 16px;display:flex;flex-direction:column;gap:12px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div onClick="{{ goBack }}" style="width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid #D5D8D1;display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#17191A" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></div>
+              <span style="font-size:15.5px;font-weight:600;">Nueva pieza</span>
+              <div style="width:40px;"></div>
+            </div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:11px 15px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#59636B;">NOMBRE *</div><div style="font-size:15.5px;margin-top:3px;">Amortiguador KYB trasero</div></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;">
+              <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:11px 15px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#59636B;">CÓDIGO *</div><div style="font-family:'IBM Plex Mono',monospace;font-size:15px;margin-top:3px;">AMO-3320</div></div>
+              <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:11px 15px;display:flex;align-items:center;justify-content:space-between;"><div><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#59636B;">CATEGORÍA</div><div style="font-size:15px;margin-top:3px;">Suspensión</div></div><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9aa1a6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;">
+              <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:11px 14px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#59636B;">CANTIDAD</div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-top:7px;"><div style="width:30px;height:30px;border-radius:9px;background:#EDEEEA;display:flex;align-items:center;justify-content:center;color:#454B4F;font-size:17px;font-weight:600;cursor:pointer;">−</div><span style="font-family:'Chakra Petch',sans-serif;font-size:18px;font-weight:700;">3</span><div style="width:30px;height:30px;border-radius:9px;background:#17191A;display:flex;align-items:center;justify-content:center;color:#fff;font-size:17px;font-weight:600;cursor:pointer;">+</div></div>
+              </div>
+              <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:11px 14px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#59636B;">MÍNIMO</div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-top:7px;"><div style="width:30px;height:30px;border-radius:9px;background:#EDEEEA;display:flex;align-items:center;justify-content:center;color:#454B4F;font-size:17px;font-weight:600;cursor:pointer;">−</div><span style="font-family:'Chakra Petch',sans-serif;font-size:18px;font-weight:700;">5</span><div style="width:30px;height:30px;border-radius:9px;background:#17191A;display:flex;align-items:center;justify-content:center;color:#fff;font-size:17px;font-weight:600;cursor:pointer;">+</div></div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;">
+              <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:11px 15px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#59636B;">COMPRA</div><div style="font-size:15px;margin-top:3px;">RD$ 3,100</div></div>
+              <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:11px 15px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#59636B;">VENTA</div><div style="font-size:15px;margin-top:3px;">RD$ 4,200</div></div>
+            </div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:12px 15px;display:flex;align-items:center;justify-content:space-between;"><div><div style="font-size:14px;font-weight:600;">Pieza activa</div><div style="font-size:11.5px;color:#59636B;margin-top:1px;">Aparece al crear órdenes</div></div><div style="width:46px;height:27px;border-radius:14px;background:#1C8C57;position:relative;cursor:pointer;"><div style="position:absolute;top:3px;right:3px;width:21px;height:21px;border-radius:50%;background:#fff;"></div></div></div>
+            <div style="flex:1;"></div>
+            <div onClick="{{ go_inventario }}" style="height:54px;border-radius:14px;background:#17191A;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-active="transform:scale(.98);"><span style="font-weight:700;font-size:16px;color:#fff;">Guardar pieza</span></div>
+          </div>
+        </sc-if>
+
+        <!-- ===== CITAS ===== -->
+        <sc-if value="{{ show_citas }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0 0 62px 0;padding:8px 18px 10px;display:flex;flex-direction:column;gap:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:22px;font-weight:700;">Citas</span>
+              <div style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #D5D8D1;border-radius:11px;padding:7px 12px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#454B4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg><span style="font-size:13px;font-weight:600;">Junio</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#454B4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>
+            </div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:16px;padding:12px 8px;display:grid;grid-template-columns:repeat(7,1fr);gap:3px;">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:7px 0;border-radius:11px;cursor:pointer;"><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#9aa1a6;">LU</span><span style="font-family:'Chakra Petch',sans-serif;font-size:15px;font-weight:600;color:#454B4F;">16</span><span style="width:4px;height:4px;border-radius:50%;background:#D4D7D0;"></span></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:7px 0;border-radius:11px;cursor:pointer;"><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#9aa1a6;">MA</span><span style="font-family:'Chakra Petch',sans-serif;font-size:15px;font-weight:600;color:#454B4F;">17</span><span style="width:4px;height:4px;border-radius:50%;background:#D4D7D0;"></span></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:7px 0;border-radius:11px;cursor:pointer;"><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#9aa1a6;">MI</span><span style="font-family:'Chakra Petch',sans-serif;font-size:15px;font-weight:600;color:#454B4F;">18</span><span style="width:4px;height:4px;border-radius:50%;background:transparent;"></span></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:7px 0;border-radius:11px;cursor:pointer;"><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#9aa1a6;">JU</span><span style="font-family:'Chakra Petch',sans-serif;font-size:15px;font-weight:600;color:#454B4F;">19</span><span style="width:4px;height:4px;border-radius:50%;background:#D4D7D0;"></span></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:7px 0;border-radius:11px;background:#17191A;cursor:pointer;"><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8B949B;">VI</span><span style="font-family:'Chakra Petch',sans-serif;font-size:15px;font-weight:700;color:#fff;">20</span><span style="width:4px;height:4px;border-radius:50%;background:#F3A007;"></span></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:7px 0;border-radius:11px;cursor:pointer;"><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#9aa1a6;">SÁ</span><span style="font-family:'Chakra Petch',sans-serif;font-size:15px;font-weight:600;color:#454B4F;">21</span><span style="width:4px;height:4px;border-radius:50%;background:transparent;"></span></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:7px 0;border-radius:11px;cursor:pointer;"><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#cdd0ca;">DO</span><span style="font-family:'Chakra Petch',sans-serif;font-size:15px;font-weight:600;color:#bcc1bd;">22</span><span style="width:4px;height:4px;border-radius:50%;background:transparent;"></span></div>
+            </div>
+            <div style="font-size:13.5px;font-weight:700;">Hoy · Viernes 20 <span style="font-weight:500;color:#59636B;font-family:'IBM Plex Mono',monospace;font-size:11.5px;">· 6 citas</span></div>
+            <div style="display:flex;flex-direction:column;gap:9px;">
+              <div onClick="{{ go_citaDetalle }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:13px;cursor:pointer;" style-hover="border-color:#B9BDB5;">
+                <div style="text-align:center;width:46px;"><div style="font-family:'Chakra Petch',sans-serif;font-size:15px;font-weight:700;">09:00</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#59636B;">45m</div></div>
+                <div style="width:1px;height:36px;background:#E7E8E3;"></div>
+                <div style="flex:1;"><div style="font-size:13px;font-weight:600;">Ramona Castillo · CR-V</div><div style="font-size:11px;color:#59636B;margin-top:1px;">Servicio 10,000 km</div></div>
+                <span style="font-size:10.5px;font-weight:600;color:#0F7345;background:#D7EFE2;padding:3px 8px;border-radius:6px;">Lista</span>
+              </div>
+              <div onClick="{{ go_citaDetalle }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:13px;cursor:pointer;" style-hover="border-color:#B9BDB5;">
+                <div style="text-align:center;width:46px;"><div style="font-family:'Chakra Petch',sans-serif;font-size:15px;font-weight:700;">10:30</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#59636B;">1h</div></div>
+                <div style="width:1px;height:36px;background:#E7E8E3;"></div>
+                <div style="flex:1;"><div style="font-size:13px;font-weight:600;">Yohan Peña · Corolla</div><div style="font-size:11px;color:#59636B;margin-top:1px;">Cambio de aceite · Raúl</div></div>
+                <span style="font-size:10.5px;font-weight:600;color:#454B4F;background:#EAEBE6;padding:3px 8px;border-radius:6px;">Confirmada</span>
+              </div>
+              <div onClick="{{ go_citaDetalle }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:13px;cursor:pointer;" style-hover="border-color:#B9BDB5;">
+                <div style="text-align:center;width:46px;"><div style="font-family:'Chakra Petch',sans-serif;font-size:15px;font-weight:700;">12:00</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#59636B;">2h</div></div>
+                <div style="width:1px;height:36px;background:#E7E8E3;"></div>
+                <div style="flex:1;"><div style="font-size:13px;font-weight:600;">Wellington · Hilux</div><div style="font-size:11px;color:#59636B;margin-top:1px;">Vibración al frenar · Beto</div></div>
+                <span style="font-size:10.5px;font-weight:600;color:#B27400;background:#FBEFD4;padding:3px 8px;border-radius:6px;">En proceso</span>
+              </div>
+              <div style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:13px;opacity:.55;">
+                <div style="text-align:center;width:46px;"><div style="font-family:'Chakra Petch',sans-serif;font-size:15px;font-weight:700;text-decoration:line-through;">16:00</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#59636B;">30m</div></div>
+                <div style="width:1px;height:36px;background:#E7E8E3;"></div>
+                <div style="flex:1;"><div style="font-size:13px;font-weight:600;text-decoration:line-through;">Franklin · Tucson</div><div style="font-size:11px;color:#59636B;margin-top:1px;">Diagnóstico</div></div>
+                <span style="font-size:10.5px;font-weight:600;color:#B4231B;background:#F7DAD8;padding:3px 8px;border-radius:6px;">Cancelada</span>
+              </div>
+            </div>
+            <div onClick="{{ go_citaForm }}" style="position:absolute;right:18px;bottom:14px;width:54px;height:54px;border-radius:17px;background:#F3A007;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(243,160,7,.3);cursor:pointer;" style-active="transform:scale(.94);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#17191A" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>
+          </div>
+        </sc-if>
+
+        <!-- ===== CITA DETALLE ===== -->
+        <sc-if value="{{ show_citaDetalle }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;padding:8px 18px 16px;display:flex;flex-direction:column;gap:12px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div onClick="{{ goBack }}" style="width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid #D5D8D1;display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#17191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></div>
+              <span style="font-size:15.5px;font-weight:600;">Cita</span>
+              <div onClick="{{ go_citaForm }}" style="width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid #D5D8D1;display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#454B4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3l4 4L8 20l-5 1 1-5z"/></svg></div>
+            </div>
+            <div style="background:#17191A;border-radius:18px;padding:20px 16px;display:flex;flex-direction:column;align-items:center;gap:7px;color:#fff;">
+              <span style="font-size:11px;font-weight:600;color:#17191A;background:#F3A007;padding:4px 11px;border-radius:999px;">Confirmada</span>
+              <div style="font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:38px;line-height:1;margin-top:4px;">10:30</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#8B949B;">vie 20 jun · 1 hora</div>
+            </div>
+            <div onClick="{{ go_clienteDetalle }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:11px;cursor:pointer;" style-hover="border-color:#B9BDB5;">
+              <div style="width:40px;height:40px;border-radius:12px;background:#EDEEEA;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;color:#454B4F;">YP</div>
+              <div style="flex:1;"><div style="font-size:13.5px;font-weight:600;">Yohan Peña</div><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#59636B;">809 412 5678</div></div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bcc1bd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+            </div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:11px;">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#fff;background:#17191A;border-radius:6px;padding:5px 8px;letter-spacing:1px;">A412678</span>
+              <div style="flex:1;"><div style="font-size:13px;font-weight:600;">Toyota Corolla 2020</div><div style="font-size:11px;color:#59636B;">Gris</div></div>
+            </div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:12px 15px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#59636B;letter-spacing:.5px;">MOTIVO</div><div style="font-size:13.5px;margin-top:5px;line-height:1.45;">Cambio de aceite y revisión de frenos. Rechinido leve al frenar en frío.</div></div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:11px;">
+              <div style="width:36px;height:36px;border-radius:50%;background:#FBEFD4;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#B27400;">R</div>
+              <div style="flex:1;"><div style="font-size:13px;font-weight:600;">Raúl</div><div style="font-size:11px;color:#59636B;">Técnico asignado</div></div>
+              <span style="font-size:12px;color:#454B4F;font-weight:600;">Cambiar</span>
+            </div>
+            <div style="flex:1;"></div>
+            <div onClick="{{ go_ordenForm }}" style="height:54px;border-radius:14px;background:#17191A;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;" style-active="transform:scale(.98);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4a3 3 0 016 0"/><path d="M9 12h6M9 16h4"/></svg><span style="font-weight:700;font-size:15.5px;color:#fff;">Iniciar orden</span></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div onClick="{{ go_citaForm }}" style="height:46px;border-radius:13px;background:#fff;border:1px solid #D5D8D1;display:flex;align-items:center;justify-content:center;cursor:pointer;"><span style="font-weight:600;font-size:14px;">Reagendar</span></div>
+              <div onClick="{{ go_citas }}" style="height:46px;border-radius:13px;background:#fff;border:1px solid #E7B6B1;display:flex;align-items:center;justify-content:center;cursor:pointer;"><span style="font-weight:600;font-size:14px;color:#D2382F;">Cancelar</span></div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== CITA FORM ===== -->
+        <sc-if value="{{ show_citaForm }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;padding:8px 18px 16px;display:flex;flex-direction:column;gap:12px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div onClick="{{ goBack }}" style="width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid #D5D8D1;display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#17191A" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></div>
+              <span style="font-size:15.5px;font-weight:600;">Nueva cita</span>
+              <div style="width:40px;"></div>
+            </div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:10px 14px;display:flex;align-items:center;gap:10px;"><div style="width:34px;height:34px;border-radius:10px;background:#EDEEEA;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px;color:#454B4F;">YP</div><div style="flex:1;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#59636B;">CLIENTE *</div><div style="font-size:14px;font-weight:600;margin-top:1px;">Yohan Peña</div></div><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9aa1a6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:10px 14px;display:flex;align-items:center;gap:10px;"><span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;color:#fff;background:#17191A;border-radius:6px;padding:5px 8px;letter-spacing:1px;">A412678</span><div style="flex:1;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#59636B;">VEHÍCULO *</div><div style="font-size:14px;font-weight:600;margin-top:1px;">Toyota Corolla 2020</div></div><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9aa1a6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
+            <div><div style="font-size:12px;color:#59636B;font-weight:500;margin-bottom:8px;padding-left:3px;">Fecha *</div>
+              <div style="display:flex;gap:8px;"><span style="padding:8px 15px;border-radius:999px;font-size:12.5px;font-weight:600;background:#17191A;color:#fff;cursor:pointer;">Hoy</span><span style="padding:8px 15px;border-radius:999px;font-size:12.5px;font-weight:600;background:#fff;border:1px solid #D5D8D1;color:#454B4F;cursor:pointer;">Mañana</span><span style="padding:8px 15px;border-radius:999px;font-size:12.5px;font-weight:600;background:#fff;border:1px solid #D5D8D1;color:#454B4F;cursor:pointer;">Sáb 21</span></div>
+            </div>
+            <div><div style="font-size:12px;color:#59636B;font-weight:500;margin-bottom:8px;padding-left:3px;">Hora *</div>
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+                <span style="padding:9px 0;text-align:center;border-radius:11px;font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:600;background:#fff;border:1px solid #D5D8D1;cursor:pointer;">09:00</span>
+                <span style="padding:9px 0;text-align:center;border-radius:11px;font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:600;background:#fff;border:1px solid #D5D8D1;cursor:pointer;">09:30</span>
+                <span style="padding:9px 0;text-align:center;border-radius:11px;font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:700;background:#17191A;color:#fff;cursor:pointer;">10:30</span>
+                <span style="padding:9px 0;text-align:center;border-radius:11px;font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:600;background:#fff;border:1px solid #D5D8D1;cursor:pointer;">11:00</span>
+                <span style="padding:9px 0;text-align:center;border-radius:11px;font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:600;background:#fff;border:1px solid #D5D8D1;cursor:pointer;">12:00</span>
+                <span style="padding:9px 0;text-align:center;border-radius:11px;font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:600;background:#EFF0EC;border:1px solid #E1E3DD;color:#bcc1bd;text-decoration:line-through;">13:00</span>
+                <span style="padding:9px 0;text-align:center;border-radius:11px;font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:600;background:#fff;border:1px solid #D5D8D1;cursor:pointer;">16:00</span>
+                <span style="padding:9px 0;text-align:center;border-radius:11px;font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:600;background:#fff;border:1px solid #D5D8D1;cursor:pointer;">17:30</span>
+              </div>
+            </div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:11px 15px;height:74px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#59636B;">MOTIVO *</div><div style="font-size:14.5px;margin-top:3px;line-height:1.4;">Cambio de aceite y revisión de frenos</div></div>
+            <div style="flex:1;"></div>
+            <div onClick="{{ go_citas }}" style="height:54px;border-radius:14px;background:#17191A;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-active="transform:scale(.98);"><span style="font-weight:700;font-size:16px;color:#fff;">Agendar cita</span></div>
+          </div>
+        </sc-if>
+
+        <!-- ===== ÓRDENES ===== -->
+        <sc-if value="{{ show_ordenes }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0 0 62px 0;padding:8px 18px 10px;display:flex;flex-direction:column;gap:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:9px;"><span style="font-size:22px;font-weight:700;">Órdenes</span><span style="font-size:11px;font-weight:600;color:#B27400;background:#FBEFD4;padding:3px 9px;border-radius:6px;">9 abiertas</span></div>
+              <div onClick="{{ go_ordenForm }}" style="width:38px;height:38px;border-radius:11px;background:#17191A;display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <span style="padding:7px 13px;border-radius:999px;font-size:12px;font-weight:600;background:#17191A;color:#fff;">Todas</span>
+              <span style="padding:7px 13px;border-radius:999px;font-size:12px;font-weight:600;background:#fff;border:1px solid #D5D8D1;color:#454B4F;cursor:pointer;">En proceso</span>
+              <span style="padding:7px 13px;border-radius:999px;font-size:12px;font-weight:600;background:#fff;border:1px solid #D5D8D1;color:#454B4F;cursor:pointer;">Por cobrar</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div onClick="{{ go_ordenDetalle }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:16px;padding:13px 15px;display:flex;flex-direction:column;gap:8px;cursor:pointer;" style-hover="border-color:#B9BDB5;">
+                <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;">OT-0148</span><span style="font-size:10.5px;font-weight:600;color:#B27400;background:#FBEFD4;padding:3px 9px;border-radius:6px;">En proceso</span></div>
+                <div style="font-size:14px;font-weight:600;">Yohan Peña · Corolla 2020</div>
+                <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#59636B;">A412678 · hoy</span><span style="font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:17px;">RD$ 4,600</span></div>
+              </div>
+              <div onClick="{{ go_cobro }}" style="background:#fff;border:1px solid #B6DEC8;border-radius:16px;padding:13px 15px;display:flex;flex-direction:column;gap:8px;cursor:pointer;" style-hover="border-color:#1C8C57;">
+                <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;">OT-0146</span><span style="font-size:10.5px;font-weight:600;color:#0F7345;background:#D7EFE2;padding:3px 9px;border-radius:6px;">Por cobrar</span></div>
+                <div style="font-size:14px;font-weight:600;">Ramona Castillo · CR-V 2019</div>
+                <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#59636B;">A887301 · listo</span><span style="font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:17px;color:#0F7345;">RD$ 3,850</span></div>
+              </div>
+              <div onClick="{{ go_ordenDetalle }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:16px;padding:13px 15px;display:flex;flex-direction:column;gap:8px;cursor:pointer;" style-hover="border-color:#B9BDB5;">
+                <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;">OT-0145</span><span style="font-size:10.5px;font-weight:600;color:#454B4F;background:#EAEBE6;padding:3px 9px;border-radius:6px;">Abierta</span></div>
+                <div style="font-size:14px;font-weight:600;">Franklin Díaz · Tucson 2021</div>
+                <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#59636B;">A559021 · diagnóstico</span><span style="font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:17px;color:#59636B;">—</span></div>
+              </div>
+              <div onClick="{{ go_ordenDetalle }}" style="background:#fff;border:1px solid #D5D8D1;border-radius:16px;padding:13px 15px;display:flex;flex-direction:column;gap:8px;cursor:pointer;" style-hover="border-color:#B9BDB5;">
+                <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;">OT-0142</span><span style="font-size:10.5px;font-weight:600;color:#0F7345;background:#D7EFE2;padding:3px 9px;border-radius:6px;">Cobrada</span></div>
+                <div style="font-size:14px;font-weight:600;">Wellington Mateo · Hilux 2018</div>
+                <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#59636B;">A203945 · ayer</span><span style="font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:17px;">RD$ 7,920</span></div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== ORDEN DETALLE ===== -->
+        <sc-if value="{{ show_ordenDetalle }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;padding:8px 18px 16px;display:flex;flex-direction:column;gap:12px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div onClick="{{ goBack }}" style="width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid #D5D8D1;display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#17191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></div>
+              <div style="display:flex;align-items:center;gap:8px;"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;">OT-0148</span><span style="font-size:10.5px;font-weight:600;color:#B27400;background:#FBEFD4;padding:3px 9px;border-radius:6px;">En proceso</span></div>
+              <div style="width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid #D5D8D1;display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#454B4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg></div>
+            </div>
+            <div style="background:#17191A;border-radius:16px;padding:14px 16px;color:#fff;">
+              <div style="display:flex;align-items:center;justify-content:space-between;"><div><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1.5px;color:#8B949B;">VIN</div><div style="font-family:'IBM Plex Mono',monospace;font-size:14.5px;letter-spacing:1px;margin-top:2px;">1HGCM82633A004352</div></div><div style="border:1.5px solid #3A3F42;border-radius:7px;padding:5px 8px;text-align:center;"><div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:#8B949B;">PLACA</div><div style="font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:13px;margin-top:1px;">A412678</div></div></div>
+              <div style="height:1px;background:#2B2F32;margin:11px 0;"></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:14.5px;font-weight:600;">Toyota Corolla 2020 · Yohan Peña</span></div>
+            </div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:12px 15px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#59636B;letter-spacing:.5px;">DIAGNÓSTICO</div><div style="font-size:13px;margin-top:5px;line-height:1.45;">Balatas al límite y discos con desgaste. Amortiguadores traseros con fuga leve.</div></div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:3px 15px;">
+              <div style="display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #EAEBE6;"><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:600;color:#454B4F;background:#EDEEEA;border-radius:5px;padding:3px 6px;">MO</span><div style="flex:1;font-size:13px;font-weight:600;">Cambio de balatas</div><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;">1,600</span></div>
+              <div style="display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #EAEBE6;"><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:600;color:#0F7345;background:#D7EFE2;border-radius:5px;padding:3px 6px;">PZ</span><div style="flex:1;font-size:13px;font-weight:600;">Balatas Brembo × 2</div><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;">2,520</span></div>
+              <div style="display:flex;align-items:center;gap:10px;padding:11px 0;"><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:600;color:#0F7345;background:#D7EFE2;border-radius:5px;padding:3px 6px;">PZ</span><div style="flex:1;font-size:13px;font-weight:600;">Líquido DOT4</div><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;">480</span></div>
+            </div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:13px 15px;display:flex;align-items:center;justify-content:space-between;"><span style="font-size:13px;color:#59636B;">Total</span><span style="font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:26px;">RD$ 4,600</span></div>
+            <div style="flex:1;"></div>
+            <div style="display:flex;gap:10px;">
+              <div onClick="{{ go_dvi }}" style="flex:1;height:54px;border-radius:14px;background:#fff;border:1.5px solid #17191A;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#17191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg><span style="font-weight:600;font-size:15px;">Hacer DVI</span></div>
+              <div onClick="{{ go_cobro }}" style="flex:1.3;height:54px;border-radius:14px;background:#1C8C57;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;box-shadow:0 6px 16px rgba(28,140,87,.22);" style-active="transform:scale(.98);"><span style="font-weight:700;font-size:15.5px;color:#fff;">Cobrar</span><span style="font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:13.5px;color:#fff;opacity:.85;">4,600</span></div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== ORDEN FORM (regla stock viva) ===== -->
+        <sc-if value="{{ show_ordenForm }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;padding:8px 18px 16px;display:flex;flex-direction:column;gap:11px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div onClick="{{ goBack }}" style="width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid #D5D8D1;display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#17191A" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></div>
+              <span style="font-size:15.5px;font-weight:600;">Nueva orden</span>
+              <div style="width:40px;"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:9px 13px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#59636B;">CLIENTE</div><div style="font-size:13.5px;font-weight:600;margin-top:1px;">Wellington M.</div></div>
+              <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:9px 13px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#59636B;">PLACA</div><div style="font-family:'IBM Plex Mono',monospace;font-size:13.5px;font-weight:600;margin-top:1px;">A203945</div></div>
+            </div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:11px 14px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#59636B;">DIAGNÓSTICO</div><div style="font-size:13.5px;margin-top:3px;line-height:1.4;">Vibración al frenar, balatas y amortiguadores.</div></div>
+            <div style="font-size:12px;color:#59636B;font-weight:500;padding-left:3px;">Piezas usadas</div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:11px 13px;display:flex;align-items:center;gap:10px;">
+              <div style="flex:1;"><div style="font-size:13px;font-weight:600;">Balatas Brembo</div><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#59636B;margin-top:1px;">RD$ 1,260 · quedan 2</div></div>
+              <div style="display:flex;align-items:center;gap:8px;"><div style="width:26px;height:26px;border-radius:8px;background:#EDEEEA;display:flex;align-items:center;justify-content:center;color:#454B4F;font-size:15px;font-weight:600;cursor:pointer;">−</div><span style="font-family:'Chakra Petch',sans-serif;font-size:15px;font-weight:700;width:14px;text-align:center;">2</span><div style="width:26px;height:26px;border-radius:8px;background:#17191A;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:600;cursor:pointer;">+</div></div>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;width:46px;text-align:right;">2,520</span>
+            </div>
+            <div>
+              <div style="background:#fff;border:{{ amortBorder }};border-radius:13px;padding:11px 13px;display:flex;align-items:center;gap:10px;">
+                <div style="flex:1;"><div style="font-size:13px;font-weight:600;">Amortiguador KYB</div><div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#59636B;margin-top:1px;">RD$ 4,200 · quedan 3</div></div>
+                <div style="display:flex;align-items:center;gap:8px;"><div onClick="{{ decAmort }}" style="width:26px;height:26px;border-radius:8px;background:#EDEEEA;display:flex;align-items:center;justify-content:center;color:#454B4F;font-size:15px;font-weight:600;cursor:pointer;" style-active="transform:scale(.9);">−</div><span style="font-family:'Chakra Petch',sans-serif;font-size:15px;font-weight:700;width:14px;text-align:center;color:{{ qtyColor }};">{{ qtyAmort }}</span><div onClick="{{ incAmort }}" style="width:26px;height:26px;border-radius:8px;background:#17191A;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:600;cursor:pointer;" style-active="transform:scale(.9);">+</div></div>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;width:46px;text-align:right;">{{ amortSubtotal }}</span>
+              </div>
+              <sc-if value="{{ stockError }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;align-items:center;gap:6px;margin-top:6px;padding-left:3px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#D2382F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><span style="font-size:12px;color:#D2382F;">Solo quedan 3 en inventario. Baja la cantidad o pide más.</span></div>
+              </sc-if>
+            </div>
+            <div style="border:1.5px dashed #C3C7BF;border-radius:13px;padding:10px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;" style-hover="border-color:#17191A;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#17191A" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span style="font-size:13px;font-weight:600;">Agregar pieza</span></div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:5px 15px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #EAEBE6;"><span style="font-size:12.5px;color:#59636B;">Piezas</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;">{{ subtotalPiezas }}</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #EAEBE6;"><span style="font-size:12.5px;color:#59636B;">Mano de obra</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;">RD$ 1,600</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;"><span style="font-size:13.5px;font-weight:700;">Total</span><span style="font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:19px;">{{ totalOrden }}</span></div>
+            </div>
+            <div style="flex:1;"></div>
+            <div onClick="{{ crearOrden }}" style="height:54px;border-radius:14px;background:{{ btnCrearBg }};display:flex;align-items:center;justify-content:center;cursor:pointer;" style-active="transform:scale(.98);"><span style="font-weight:700;font-size:16px;color:{{ btnCrearColor }};">Crear orden</span></div>
+          </div>
+        </sc-if>
+
+        <!-- ===== DVI ===== -->
+        <sc-if value="{{ show_dvi }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;padding:8px 18px 16px;display:flex;flex-direction:column;gap:12px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div onClick="{{ goBack }}" style="width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid #D5D8D1;display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#17191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></div>
+              <span style="font-size:15.5px;font-weight:600;">Inspección digital</span>
+              <div style="width:40px;"></div>
+            </div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:13px 15px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#59636B;letter-spacing:.5px;">COROLLA · A412678</span><span style="font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:14px;">9/12</span></div>
+              <div style="display:flex;gap:4px;"><div style="flex:5;height:6px;border-radius:3px;background:#1C8C57;"></div><div style="flex:2;height:6px;border-radius:3px;background:#F3A007;"></div><div style="flex:2;height:6px;border-radius:3px;background:#D2382F;"></div><div style="flex:3;height:6px;border-radius:3px;background:#E1E3DD;"></div></div>
+              <div style="display:flex;gap:14px;margin-top:10px;"><span style="font-size:11px;color:#59636B;display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:#1C8C57;"></span>Bien 5</span><span style="font-size:11px;color:#59636B;display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:#F3A007;"></span>Atención 2</span><span style="font-size:11px;color:#59636B;display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:#D2382F;"></span>Falla 2</span></div>
+            </div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-left:4px solid #D2382F;border-radius:14px;padding:13px 15px;">
+              <div style="display:flex;align-items:center;gap:9px;"><span style="width:10px;height:10px;border-radius:50%;background:#D2382F;flex:none;"></span><span style="flex:1;font-size:13.5px;font-weight:600;">Pastillas traseras</span><span style="font-size:11px;font-weight:600;color:#B4231B;background:#F7DAD8;padding:3px 9px;border-radius:6px;">Falla</span></div>
+              <div style="font-size:12px;color:#454B4F;margin-top:7px;line-height:1.45;">Desgaste al límite, metal con metal. Cambio inmediato.</div>
+              <div style="display:flex;gap:7px;margin-top:10px;">
+                <div style="width:60px;height:60px;border-radius:10px;background:#DCDED8;border:1px solid #CFD2CB;display:flex;align-items:center;justify-content:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9aa1a6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+                <div style="width:60px;height:60px;border-radius:10px;background:#DCDED8;border:1px solid #CFD2CB;display:flex;align-items:center;justify-content:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9aa1a6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+                <div style="width:60px;height:60px;border-radius:10px;background:#F4F5F1;border:1.5px dashed #C3C7BF;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#17191A" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span style="font-size:9px;color:#59636B;">Foto</span></div>
+              </div>
+            </div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-left:4px solid #F3A007;border-radius:14px;padding:12px 15px;display:flex;align-items:center;gap:9px;"><span style="width:10px;height:10px;border-radius:50%;background:#F3A007;flex:none;"></span><div style="flex:1;"><div style="font-size:13.5px;font-weight:600;">Gomas delanteras</div><div style="font-size:11.5px;color:#59636B;margin-top:1px;">Labrado 3 mm · cambiar pronto</div></div><div style="display:flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#59636B;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#59636B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>1</div></div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-left:4px solid #1C8C57;border-radius:14px;padding:12px 15px;display:flex;align-items:center;gap:9px;"><span style="width:10px;height:10px;border-radius:50%;background:#1C8C57;flex:none;"></span><div style="flex:1;"><div style="font-size:13.5px;font-weight:600;">Batería y carga</div><div style="font-size:11.5px;color:#59636B;margin-top:1px;">12.6 V · buen estado</div></div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1C8C57" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div style="flex:1;"></div>
+            <div onClick="{{ go_dviAprobado }}" style="height:54px;border-radius:14px;background:#17191A;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;" style-active="transform:scale(.98);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg><span style="font-weight:700;font-size:15.5px;color:#fff;">Enviar al cliente</span></div>
+          </div>
+        </sc-if>
+
+        <!-- ===== DVI APROBADO ===== -->
+        <sc-if value="{{ show_dviAprobado }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;padding:8px 18px 16px;display:flex;flex-direction:column;gap:12px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div onClick="{{ goBack }}" style="width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid #D5D8D1;display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#17191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></div>
+              <span style="font-size:15.5px;font-weight:600;">Inspección enviada</span>
+              <div style="width:40px;"></div>
+            </div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:16px;padding:20px 18px;display:flex;flex-direction:column;align-items:center;gap:11px;text-align:center;">
+              <div style="width:60px;height:60px;border-radius:50%;background:#D7EFE2;display:flex;align-items:center;justify-content:center;"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#1C8C57" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div><div style="font-size:17px;font-weight:700;">El cliente aprobó 2 de 3</div><div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#59636B;margin-top:3px;">Yohan Peña · hace 6 min</div></div>
+            </div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;color:#59636B;letter-spacing:.5px;padding-left:3px;">RESPUESTA DEL CLIENTE</div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:12px 15px;display:flex;align-items:center;gap:11px;"><div style="width:36px;height:36px;border-radius:10px;background:#DCDED8;display:flex;align-items:center;justify-content:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa1a6" stroke-width="1.8"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Pastillas traseras</div><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#59636B;margin-top:1px;">RD$ 2,520</div></div><span style="font-size:10.5px;font-weight:600;color:#0F7345;background:#D7EFE2;padding:4px 10px;border-radius:6px;">Aprobado</span></div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:12px 15px;display:flex;align-items:center;gap:11px;"><div style="width:36px;height:36px;border-radius:10px;background:#DCDED8;display:flex;align-items:center;justify-content:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa1a6" stroke-width="1.8"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Líquido de frenos</div><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#59636B;margin-top:1px;">RD$ 480</div></div><span style="font-size:10.5px;font-weight:600;color:#0F7345;background:#D7EFE2;padding:4px 10px;border-radius:6px;">Aprobado</span></div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:12px 15px;display:flex;align-items:center;gap:11px;opacity:.65;"><div style="width:36px;height:36px;border-radius:10px;background:#DCDED8;display:flex;align-items:center;justify-content:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa1a6" stroke-width="1.8"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Gomas delanteras</div><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#59636B;margin-top:1px;">RD$ 9,800</div></div><span style="font-size:10.5px;font-weight:600;color:#454B4F;background:#EAEBE6;padding:4px 10px;border-radius:6px;">Después</span></div>
+            <div style="flex:1;"></div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:11px 15px;display:flex;align-items:center;justify-content:space-between;"><span style="font-size:12.5px;color:#59636B;">Aprobado para trabajar</span><span style="font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:18px;">RD$ 3,000</span></div>
+            <div onClick="{{ go_ordenDetalle }}" style="height:54px;border-radius:14px;background:#17191A;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-active="transform:scale(.98);"><span style="font-weight:700;font-size:15.5px;color:#fff;">Agregar a la orden</span></div>
+          </div>
+        </sc-if>
+
+        <!-- ===== COBRO ===== -->
+        <sc-if value="{{ show_cobro }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;padding:8px 18px 16px;display:flex;flex-direction:column;gap:12px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div onClick="{{ goBack }}" style="width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid #D5D8D1;display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#17191A" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></div>
+              <span style="font-size:15.5px;font-weight:600;">Cobrar</span>
+              <div style="width:40px;"></div>
+            </div>
+            <div style="background:#17191A;border-radius:18px;padding:20px;color:#fff;text-align:center;"><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#8B949B;">TOTAL A COBRAR</div><div style="font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:42px;letter-spacing:-1px;line-height:1;margin-top:6px;">RD$ 4,600</div><div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#8B949B;margin-top:8px;">OT-0148 · Yohan Peña</div></div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;color:#59636B;letter-spacing:.5px;padding-left:3px;">MÉTODO</div>
+            <div style="display:flex;gap:9px;">
+              <div style="flex:1;background:#fff;border:1.5px solid #17191A;border-radius:13px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#17191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><span style="font-size:12.5px;font-weight:600;">Tarjeta</span></div>
+              <div style="flex:1;background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#454B4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg><span style="font-size:12.5px;font-weight:600;color:#454B4F;">Link</span></div>
+              <div style="flex:1;background:#fff;border:1px solid #D5D8D1;border-radius:13px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#454B4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span style="font-size:12.5px;font-weight:600;color:#454B4F;">Efectivo</span></div>
+            </div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:5px 15px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid #EAEBE6;"><span style="font-size:13px;color:#454B4F;">Monto del servicio</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13.5px;font-weight:600;">RD$ 4,600.00</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid #EAEBE6;"><span style="font-size:13px;color:#454B4F;display:flex;align-items:center;gap:6px;">Comisión <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#59636B;background:#EDEEEA;border-radius:5px;padding:2px 6px;">2.95% + RD$5</span></span><span style="font-family:'IBM Plex Mono',monospace;font-size:13.5px;font-weight:600;color:#D2382F;">− 140.70</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 0;"><span style="font-size:13.5px;font-weight:700;">Recibes</span><span style="font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:22px;color:#1C8C57;">RD$ 4,459.30</span></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:7px;padding:0 2px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#59636B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg><span style="font-size:11.5px;color:#59636B;line-height:1.4;">La comisión se descuenta una vez. El cliente paga RD$ 4,600.</span></div>
+            <div style="flex:1;"></div>
+            <div onClick="{{ go_cobrado }}" style="height:56px;border-radius:14px;background:#1C8C57;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;box-shadow:0 7px 18px rgba(28,140,87,.25);" style-active="transform:scale(.98);"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><span style="font-weight:700;font-size:16.5px;color:#fff;">Cobrar RD$ 4,600</span></div>
+          </div>
+        </sc-if>
+
+        <!-- ===== COBRADO ===== -->
+        <sc-if value="{{ show_cobrado }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;background:#1C8C57;display:flex;flex-direction:column;padding:8px 22px 22px;color:#fff;">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;">
+              <div style="width:92px;height:92px;border-radius:50%;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;"><div style="width:64px;height:64px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#1C8C57" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div></div>
+              <div style="text-align:center;"><div style="font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:30px;">Cobrado</div><div style="font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:44px;letter-spacing:-1px;line-height:1;margin-top:8px;">RD$ 4,600</div><div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:rgba(255,255,255,.8);margin-top:12px;">Recibes RD$ 4,459.30 en 1–2 días</div></div>
+              <div style="background:rgba(255,255,255,.13);border-radius:13px;padding:13px 18px;width:100%;display:flex;align-items:center;justify-content:space-between;"><div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:rgba(255,255,255,.85);">OT-0148 · Yohan Peña</div><div style="font-family:'IBM Plex Mono',monospace;font-size:12px;">Visa ···· 4821</div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="height:54px;border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1C8C57" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span style="font-weight:700;font-size:15.5px;color:#1C8C57;">Enviar recibo</span></div>
+              <div onClick="{{ go_dashboard }}" style="height:50px;border-radius:14px;background:rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;cursor:pointer;"><span style="font-weight:600;font-size:15px;color:#fff;">Listo</span></div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== AJUSTES ===== -->
+        <sc-if value="{{ show_ajustes }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;padding:8px 18px 16px;display:flex;flex-direction:column;gap:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div onClick="{{ goBack }}" style="width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid #D5D8D1;display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#17191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></div>
+              <span style="font-size:15.5px;font-weight:600;">Ajustes</span>
+              <div style="width:40px;"></div>
+            </div>
+            <div style="background:#17191A;border-radius:18px;padding:16px;display:flex;align-items:center;gap:14px;color:#fff;">
+              <div style="width:56px;height:56px;border-radius:18px;background:#F3A007;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:19px;color:#17191A;">CN</div>
+              <div style="flex:1;"><div style="font-size:16px;font-weight:700;">Carlos Núñez</div><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8B949B;margin-top:2px;">carlos<span>@</span>tallerdeltoro.do</div><span style="display:inline-block;margin-top:7px;font-size:10px;font-weight:600;color:#17191A;background:#F3A007;padding:3px 9px;border-radius:6px;">Admin</span></div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8B949B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+            </div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:1px;color:#9aa1a6;padding-left:3px;">CUENTA</div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:2px 15px;">
+              <div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #EAEBE6;cursor:pointer;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#454B4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-3.5 4.5-5 8-5s6.5 1.5 8 5"/></svg><span style="flex:1;font-size:14px;">Editar perfil</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#bcc1bd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>
+              <div style="display:flex;align-items:center;gap:12px;padding:13px 0;cursor:pointer;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#454B4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg><span style="flex:1;font-size:14px;">Cambiar contraseña</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#bcc1bd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>
+            </div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:1px;color:#9aa1a6;padding-left:3px;">TALLER</div>
+            <div style="background:#fff;border:1px solid #D5D8D1;border-radius:14px;padding:2px 15px;">
+              <div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #EAEBE6;cursor:pointer;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#454B4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 19c1.2-2.8 3.6-4 6.5-4s5.3 1.2 6.5 4"/></svg><span style="flex:1;font-size:14px;">Técnicos</span><span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#59636B;">3</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#bcc1bd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>
+              <div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #EAEBE6;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#454B4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M10 21a2 2 0 004 0"/></svg><span style="flex:1;font-size:14px;">Alertas de bajo stock</span><div style="width:46px;height:27px;border-radius:14px;background:#1C8C57;position:relative;cursor:pointer;"><div style="position:absolute;top:3px;right:3px;width:21px;height:21px;border-radius:50%;background:#fff;"></div></div></div>
+              <div style="display:flex;align-items:center;gap:12px;padding:13px 0;cursor:pointer;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#454B4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><span style="flex:1;font-size:14px;">Cuenta de cobro</span><span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#1C8C57;">activa</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#bcc1bd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>
+            </div>
+            <div onClick="{{ logout }}" style="background:#fff;border:1px solid #E7B6B1;border-radius:14px;padding:13px 15px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#D2382F;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#D2382F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg><span style="font-size:14px;font-weight:600;color:#D2382F;">Cerrar sesión</span></div>
+            <div style="flex:1;"></div>
+            <div style="text-align:center;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#9aa1a6;">MechMate v1.0.0 · Taller Del Toro</div>
+          </div>
+        </sc-if>
+
+        <!-- @SCREENS -->
+
+        <!-- ===== NAV (clara) ===== -->
+        <sc-if value="{{ showNav }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;left:0;right:0;bottom:0;height:62px;background:#fff;border-top:1px solid #D5D8D1;display:grid;grid-template-columns:repeat(5,1fr);align-items:center;">
+            <div onClick="{{ go_dashboard }}" style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{ cInicio }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 9.5V20h14V9.5"/></svg><span style="font-size:9.5px;font-weight:600;color:{{ cInicio }};">Inicio</span></div>
+            <div onClick="{{ go_clientes }}" style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{ cClientes }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-3.5 4.5-5 8-5s6.5 1.5 8 5"/></svg><span style="font-size:9.5px;font-weight:600;color:{{ cClientes }};">Clientes</span></div>
+            <div onClick="{{ go_inventario }}" style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{ cInventario }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7.5L12 3 3 7.5v9L12 21l9-4.5z"/><path d="M3 7.5l9 4.5 9-4.5"/></svg><span style="font-size:9.5px;font-weight:600;color:{{ cInventario }};">Inventario</span></div>
+            <div onClick="{{ go_citas }}" style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{ cCitas }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span style="font-size:9.5px;font-weight:600;color:{{ cCitas }};">Citas</span></div>
+            <div onClick="{{ go_ordenes }}" style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{ cOrdenes }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4a3 3 0 016 0"/><path d="M9 12h6M9 16h4"/></svg><span style="font-size:9.5px;font-weight:600;color:{{ cOrdenes }};">Órdenes</span></div>
+          </div>
+        </sc-if>
+      </div>
+    </x-import>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1040,&quot;height&quot;:1010}}">
+class Component extends DCLogic {
+  state = { screen: 'login', history: [], qtyAmort: 4 };
+
+  nav(screen){ this.setState(s => ({ screen, history: [...s.history, s.screen] })); }
+  back(){ this.setState(s => { const h=[...s.history]; const p=h.pop()||'dashboard'; return { screen:p, history:h }; }); }
+
+  renderVals(){
+    const s = this.state.screen;
+    const screens = ['login','dashboard','clientes','clienteDetalle','clienteForm','vehiculos','vehiculoDetalle','vehiculoForm','inventario','piezaDetalle','piezaForm','citas','citaDetalle','citaForm','ordenes','ordenDetalle','ordenForm','dvi','dviAprobado','cobro','cobrado','ajustes'];
+    const v = {};
+    for (const sc of screens){ v['show_'+sc] = s===sc; v['go_'+sc] = () => this.nav(sc); }
+    v.goBack = () => this.back();
+    v.logout = () => this.setState({ screen:'login', history:[], qtyAmort:4 });
+
+    const tabMap = { dashboard:'inicio', clientes:'clientes', vehiculos:'clientes', inventario:'inventario', citas:'citas', ordenes:'ordenes' };
+    v.showNav = !!tabMap[s];
+    const active = tabMap[s] || '';
+    const on='#17191A', off='#9aa1a6';
+    v.cInicio = active==='inicio'?on:off;
+    v.cClientes = active==='clientes'?on:off;
+    v.cInventario = active==='inventario'?on:off;
+    v.cCitas = active==='citas'?on:off;
+    v.cOrdenes = active==='ordenes'?on:off;
+
+    // Regla de stock viva — amortiguador KYB, quedan 3
+    const stock = 3, qty = this.state.qtyAmort, ok = qty>0 && qty<=stock;
+    v.qtyAmort = qty;
+    v.incAmort = () => this.setState(st => ({ qtyAmort: Math.min(st.qtyAmort+1, 9) }));
+    v.decAmort = () => this.setState(st => ({ qtyAmort: Math.max(st.qtyAmort-1, 0) }));
+    v.stockError = qty>stock;
+    v.qtyColor = ok ? '#17191A' : '#D2382F';
+    v.amortBorder = ok ? '1px solid #D5D8D1' : '1.5px solid #D2382F';
+    const amortSub = ok ? qty*4200 : 0;
+    v.amortSubtotal = ok ? (qty*4200).toLocaleString() : '—';
+    const sub = 2520 + amortSub;
+    v.subtotalPiezas = 'RD$ '+sub.toLocaleString();
+    v.totalOrden = 'RD$ '+(sub+1600).toLocaleString();
+    v.btnCrearBg = ok ? '#17191A' : '#C9CCC6';
+    v.btnCrearColor = ok ? '#fff' : '#8A908F';
+    v.crearOrden = () => { if(ok) this.nav('ordenes'); };
+    return v;
+  }
+}
+</script>
+</body>
+</html>

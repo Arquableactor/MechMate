@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Archivo:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#E9EBEE;padding:48px 40px 72px;font-family:'Space Grotesk',sans-serif;color:#16181C;}
+</style>
+</helmet>
+
+<div style="max-width:1060px;margin:0 auto;display:flex;gap:56px;align-items:flex-start;justify-content:center;flex-wrap:wrap;">
+
+  <!-- GUÍA -->
+  <div style="width:300px;display:flex;flex-direction:column;gap:18px;padding-top:24px;">
+    <div>
+      <div style="font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#8A949C;font-weight:600;margin-bottom:12px;">Prototipo navegable</div>
+      <h1 style="font-family:'Archivo',sans-serif;font-weight:900;font-size:36px;letter-spacing:-1px;line-height:1.05;">MechMate</h1>
+      <p style="margin-top:12px;font-size:14.5px;color:#5C656D;line-height:1.55;">Todo es clickeable: inicia sesión, navega con la barra inferior, abre detalles, crea registros y prueba la regla de stock.</p>
+    </div>
+    <div style="background:#fff;border-radius:16px;padding:18px 20px;box-shadow:0 1px 2px rgba(0,0,0,.06);">
+      <div style="font-weight:700;font-size:13px;margin-bottom:10px;">Rutas para probar</div>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:#5C656D;line-height:1.45;">
+        <div>① <b>Iniciar sesión</b> → Dashboard</div>
+        <div>② Tarjetas del dashboard → cada módulo</div>
+        <div>③ Cliente → vehículo → historial → orden</div>
+        <div>④ Cita confirmada → <b>Iniciar orden</b></div>
+        <div>⑤ En <b>Nueva orden</b>: sube el amortiguador a 4 → error de stock; bájalo a 2 → se habilita el botón</div>
+        <div>⑥ Avatar del dashboard → Ajustes → <b>Cerrar sesión</b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELÉFONO -->
+  <div data-screen-label="Prototipo MechMate">
+    <x-import component="AndroidDevice" from="./android-frame.jsx" dark="{{ true }}" hint-size="412px,892px">
+      <div style="position:relative;height:100%;background:#0D0F12;font-family:'Space Grotesk',sans-serif;color:#E8ECEE;overflow:hidden;">
+
+        <!-- ===== LOGIN ===== -->
+        <sc-if value="{{ show_login }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;padding:0 28px;background:radial-gradient(120% 80% at 50% -5%,#1A1E24,#0C0D10);">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;">
+              <svg viewBox="0 0 100 100" style="width:80px;height:80px;">
+                <g fill="#A5B5BF"><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(0 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(36 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(72 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(108 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(144 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(180 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(216 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(252 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(288 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(324 50 50)"/></g>
+                <circle cx="50" cy="50" r="31" fill="none" stroke="#A5B5BF" stroke-width="6"/><text x="50" y="50" dy=".36em" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="34" fill="#fff">M</text>
+              </svg>
+              <div style="text-align:center;">
+                <div style="font-weight:700;font-size:34px;letter-spacing:-1px;color:#fff;line-height:1;">Mech<span style="color:#A5B5BF;">Mate</span></div>
+                <div style="font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#79838B;margin-top:10px;font-weight:600;">Workshop Manager</div>
+              </div>
+            </div>
+            <div style="flex:1.1;display:flex;flex-direction:column;gap:13px;">
+              <div style="font-size:14px;color:#8A949C;">Inicia sesión para continuar</div>
+              <div style="background:#15181C;border:1px solid #272C33;border-radius:14px;padding:11px 16px;">
+                <div style="font-size:11px;letter-spacing:.5px;color:#79838B;font-weight:500;">Correo</div>
+                <div style="font-size:16px;color:#E8ECEE;-webkit-text-fill-color:#E8ECEE;margin-top:3px;">carlos<span>@</span>tallerdeltro.mx</div>
+              </div>
+              <div style="background:#15181C;border:1px solid #272C33;border-radius:14px;padding:11px 16px;display:flex;align-items:center;justify-content:space-between;">
+                <div>
+                  <div style="font-size:11px;letter-spacing:.5px;color:#79838B;font-weight:500;">Contraseña</div>
+                  <div style="font-size:18px;color:#E8ECEE;margin-top:5px;letter-spacing:3px;">••••••••</div>
+                </div>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#79838B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </div>
+              <div onClick="{{ go_dashboard }}" style="margin-top:8px;height:56px;border-radius:14px;background:#A5B5BF;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;box-shadow:0 8px 22px rgba(165,181,191,.18);" style-hover="background:#B9C7CF;" style-active="transform:scale(.98);">
+                <span style="font-weight:700;font-size:16.5px;color:#0E0F12;">Iniciar sesión</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E0F12" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </div>
+            </div>
+            <div style="padding:16px 0 22px;text-align:center;font-size:12px;color:#5C656D;">MechMate v1.0 · Taller mecánico</div>
+          </div>
+        </sc-if>
+
+        <!-- ===== DASHBOARD ===== -->
+        <sc-if value="{{ show_dashboard }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0 0 64px 0;padding:6px 20px 10px;display:flex;flex-direction:column;gap:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:9px;">
+                <svg viewBox="0 0 100 100" style="width:28px;height:28px;">
+                  <g fill="#A5B5BF"><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(0 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(36 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(72 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(108 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(144 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(180 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(216 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(252 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(288 50 50)"/><rect x="46" y="2" width="8" height="14" rx="2.5" transform="rotate(324 50 50)"/></g>
+                  <circle cx="50" cy="50" r="31" fill="none" stroke="#A5B5BF" stroke-width="6"/><text x="50" y="50" dy=".36em" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="34" fill="#fff">M</text>
+                </svg>
+                <span style="font-weight:700;font-size:17px;color:#fff;">Mech<span style="color:#A5B5BF;">Mate</span></span>
+              </div>
+              <div style="display:flex;gap:9px;">
+                <div style="width:38px;height:38px;border-radius:12px;background:#15181C;border:1px solid #232830;display:flex;align-items:center;justify-content:center;position:relative;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9AA4AC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M10 21a2 2 0 004 0"/></svg>
+                  <div style="position:absolute;top:9px;right:9px;width:7px;height:7px;border-radius:50%;background:#D4A96A;border:1.5px solid #15181C;"></div>
+                </div>
+                <div onClick="{{ go_ajustes }}" style="width:38px;height:38px;border-radius:12px;background:rgba(165,181,191,.16);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#A5B5BF;cursor:pointer;" style-hover="background:rgba(165,181,191,.28);">C</div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:21px;font-weight:700;color:#fff;">Hola, Carlos</div>
+              <div style="font-size:12.5px;color:#79838B;margin-top:2px;">Miércoles 11 de junio · Taller Del Toro</div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div onClick="{{ go_clientes }}" style="background:#15181C;border:1px solid #232830;border-radius:16px;padding:13px 14px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="font-size:24px;font-weight:700;color:#fff;line-height:1;">128</div>
+                <div style="font-size:12px;color:#79838B;margin-top:5px;">Clientes</div>
+              </div>
+              <div onClick="{{ go_vehiculos }}" style="background:#15181C;border:1px solid #232830;border-radius:16px;padding:13px 14px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="font-size:24px;font-weight:700;color:#fff;line-height:1;">173</div>
+                <div style="font-size:12px;color:#79838B;margin-top:5px;">Vehículos</div>
+              </div>
+              <div onClick="{{ go_citas }}" style="background:#15181C;border:1px solid #232830;border-radius:16px;padding:13px 14px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="font-size:24px;font-weight:700;color:#A5B5BF;line-height:1;">6</div>
+                <div style="font-size:12px;color:#79838B;margin-top:5px;">Citas hoy</div>
+              </div>
+              <div onClick="{{ go_ordenes }}" style="background:#15181C;border:1px solid #232830;border-radius:16px;padding:13px 14px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="font-size:24px;font-weight:700;color:#D4A96A;line-height:1;">9</div>
+                <div style="font-size:12px;color:#79838B;margin-top:5px;">Órdenes abiertas</div>
+              </div>
+            </div>
+            <div style="background:#15181C;border:1px solid #232830;border-radius:16px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;">
+              <div>
+                <div style="font-size:11.5px;letter-spacing:.5px;color:#79838B;font-weight:500;">INGRESOS DEL MES</div>
+                <div style="font-size:25px;font-weight:700;color:#fff;margin-top:4px;line-height:1;">$48,250</div>
+                <div style="font-size:12px;color:#84BD9C;margin-top:5px;">▲ 12% vs mayo</div>
+              </div>
+              <div style="display:flex;align-items:flex-end;gap:5px;height:52px;">
+                <div style="width:8px;border-radius:4px;background:#2A3036;height:18px;"></div>
+                <div style="width:8px;border-radius:4px;background:#2A3036;height:28px;"></div>
+                <div style="width:8px;border-radius:4px;background:#2A3036;height:16px;"></div>
+                <div style="width:8px;border-radius:4px;background:#2A3036;height:34px;"></div>
+                <div style="width:8px;border-radius:4px;background:#2A3036;height:24px;"></div>
+                <div style="width:8px;border-radius:4px;background:#A5B5BF;height:46px;"></div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:9px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="font-size:14px;font-weight:700;color:#fff;">Bajo stock</span>
+                  <span style="padding:3px 9px;border-radius:999px;font-size:11px;font-weight:600;background:rgba(212,169,106,.13);color:#D4A96A;">4 piezas</span>
+                </div>
+                <span onClick="{{ go_inventario }}" style="font-size:12.5px;color:#A5B5BF;font-weight:500;cursor:pointer;">Ver todo</span>
+              </div>
+              <div onClick="{{ go_piezaDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#D4A96A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+                <div style="flex:1;">
+                  <div style="font-size:13.5px;font-weight:600;color:#E8ECEE;">Balatas delanteras Brembo</div>
+                  <div style="font-size:11.5px;color:#79838B;margin-top:1px;">BAL-2241 · quedan 2 · mín 5</div>
+                </div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#525A62" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:9px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-size:14px;font-weight:700;color:#fff;">Citas de hoy</span>
+                <span onClick="{{ go_citas }}" style="font-size:12.5px;color:#A5B5BF;font-weight:500;cursor:pointer;">Ver todo</span>
+              </div>
+              <div onClick="{{ go_citaDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="background:#1A1F26;border-radius:9px;padding:6px 9px;font-size:12.5px;font-weight:700;color:#A5B5BF;">10:30</div>
+                <div style="flex:1;">
+                  <div style="font-size:13.5px;font-weight:600;color:#E8ECEE;">Lucía Ramírez · Versa 2021</div>
+                  <div style="font-size:11.5px;color:#79838B;margin-top:1px;">Cambio de aceite y revisión</div>
+                </div>
+                <span style="padding:4px 10px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(165,181,191,.13);color:#A5B5BF;">Confirmada</span>
+              </div>
+              <div onClick="{{ go_citaDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="background:#1A1F26;border-radius:9px;padding:6px 9px;font-size:12.5px;font-weight:700;color:#A5B5BF;">12:00</div>
+                <div style="flex:1;">
+                  <div style="font-size:13.5px;font-weight:600;color:#E8ECEE;">Jorge Ortega · Hilux 2019</div>
+                  <div style="font-size:11.5px;color:#79838B;margin-top:1px;">Vibración al frenar</div>
+                </div>
+                <span style="padding:4px 10px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(212,169,106,.13);color:#D4A96A;">Pendiente</span>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== CLIENTES LISTA ===== -->
+        <sc-if value="{{ show_clientes }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0 0 64px 0;padding:6px 20px 10px;display:flex;flex-direction:column;gap:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:23px;font-weight:700;color:#fff;">Clientes</span>
+                <span style="padding:3px 10px;border-radius:999px;font-size:11.5px;font-weight:600;background:rgba(165,181,191,.13);color:#A5B5BF;">128</span>
+              </div>
+              <div onClick="{{ go_ajustes }}" style="width:38px;height:38px;border-radius:12px;background:#15181C;border:1px solid #232830;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="border-color:#39424C;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9AA4AC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33h.01a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51h.01a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v.01a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;background:#15181C;border:1px solid #232830;border-radius:13px;padding:0 14px;height:46px;flex:none;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#5C656D" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>
+              <span style="font-size:14px;color:#4C545B;">Buscar por nombre o teléfono</span>
+            </div>
+            <div style="display:flex;background:#15181C;border:1px solid #232830;border-radius:12px;padding:4px;gap:4px;">
+              <div style="flex:1;text-align:center;padding:7px 0;border-radius:9px;background:#262C34;color:#fff;font-size:13px;font-weight:600;">Clientes</div>
+              <div onClick="{{ go_vehiculos }}" style="flex:1;text-align:center;padding:7px 0;border-radius:9px;color:#79838B;font-size:13px;font-weight:600;cursor:pointer;" style-hover="color:#B7BEC4;">Vehículos</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:9px;">
+              <div onClick="{{ go_clienteDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="width:42px;height:42px;border-radius:13px;background:rgba(165,181,191,.14);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#A5B5BF;">LR</div>
+                <div style="flex:1;"><div style="font-size:14.5px;font-weight:600;color:#E8ECEE;">Lucía Ramírez</div><div style="font-size:12px;color:#79838B;margin-top:1px;">55 1234 5678</div></div>
+                <span style="font-size:11.5px;color:#79838B;">2 autos</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#525A62" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+              </div>
+              <div onClick="{{ go_clienteDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="width:42px;height:42px;border-radius:13px;background:rgba(165,181,191,.14);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#A5B5BF;">JO</div>
+                <div style="flex:1;"><div style="font-size:14.5px;font-weight:600;color:#E8ECEE;">Jorge Ortega</div><div style="font-size:12px;color:#79838B;margin-top:1px;">33 8765 4321</div></div>
+                <span style="font-size:11.5px;color:#79838B;">3 autos</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#525A62" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+              </div>
+              <div onClick="{{ go_clienteDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="width:42px;height:42px;border-radius:13px;background:rgba(165,181,191,.14);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#A5B5BF;">AB</div>
+                <div style="flex:1;"><div style="font-size:14.5px;font-weight:600;color:#E8ECEE;">Ana Beltrán</div><div style="font-size:12px;color:#79838B;margin-top:1px;">81 2345 6789</div></div>
+                <span style="font-size:11.5px;color:#79838B;">1 auto</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#525A62" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+              </div>
+              <div onClick="{{ go_clienteDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="width:42px;height:42px;border-radius:13px;background:rgba(165,181,191,.14);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#A5B5BF;">MS</div>
+                <div style="flex:1;"><div style="font-size:14.5px;font-weight:600;color:#E8ECEE;">Miguel Soto</div><div style="font-size:12px;color:#79838B;margin-top:1px;">55 9988 7766</div></div>
+                <span style="font-size:11.5px;color:#79838B;">2 autos</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#525A62" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+              </div>
+              <div onClick="{{ go_clienteDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="width:42px;height:42px;border-radius:13px;background:rgba(165,181,191,.14);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#A5B5BF;">FR</div>
+                <div style="flex:1;"><div style="font-size:14.5px;font-weight:600;color:#E8ECEE;">Fernanda Ríos</div><div style="font-size:12px;color:#79838B;margin-top:1px;">22 1122 3344</div></div>
+                <span style="font-size:11.5px;color:#79838B;">1 auto</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#525A62" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+              </div>
+            </div>
+            <div onClick="{{ go_clienteForm }}" style="position:absolute;right:18px;bottom:14px;width:56px;height:56px;border-radius:18px;background:#A5B5BF;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(165,181,191,.25);cursor:pointer;" style-hover="background:#B9C7CF;" style-active="transform:scale(.94);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0E0F12" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== CLIENTE DETALLE ===== -->
+        <sc-if value="{{ show_clienteDetalle }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;padding:6px 20px 16px;display:flex;flex-direction:column;gap:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div onClick="{{ goBack }}" style="width:40px;height:40px;border-radius:13px;background:#15181C;border:1px solid #232830;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="border-color:#39424C;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E8ECEE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+              </div>
+              <span style="font-size:16px;font-weight:700;color:#fff;">Cliente</span>
+              <div onClick="{{ go_clienteForm }}" style="width:40px;height:40px;border-radius:13px;background:#15181C;border:1px solid #232830;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="border-color:#39424C;">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9AA4AC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3l4 4L8 20l-5 1 1-5z"/></svg>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:6px 0 0;">
+              <div style="width:74px;height:74px;border-radius:24px;background:rgba(165,181,191,.14);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:24px;color:#A5B5BF;">LR</div>
+              <div style="text-align:center;">
+                <div style="font-size:20px;font-weight:700;color:#fff;">Lucía Ramírez</div>
+                <div style="font-size:12.5px;color:#79838B;margin-top:3px;">Cliente desde marzo 2024 · 8 visitas</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div style="height:46px;border-radius:13px;background:#A5B5BF;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;" style-hover="background:#B9C7CF;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0E0F12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.12.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.34 1.85.58 2.81.7A2 2 0 0122 16.92z"/></svg>
+                <span style="font-weight:700;font-size:14px;color:#0E0F12;">Llamar</span>
+              </div>
+              <div style="height:46px;border-radius:13px;background:#15181C;border:1px solid #2A313A;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A5B5BF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                <span style="font-weight:700;font-size:14px;color:#A5B5BF;">Mensaje</span>
+              </div>
+            </div>
+            <div style="background:#15181C;border:1px solid #232830;border-radius:16px;padding:4px 16px;">
+              <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #1E232A;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#79838B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 6L22 7"/></svg>
+                <div><div style="font-size:11px;color:#79838B;">Correo</div><div style="font-size:13.5px;color:#E8ECEE;margin-top:1px;">lucia.ramirez<span>@</span>gmail.com</div></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;padding:12px 0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#79838B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 12-9 12S3 17 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <div><div style="font-size:11px;color:#79838B;">Dirección</div><div style="font-size:13.5px;color:#E8ECEE;margin-top:1px;">Av. Reforma 123, Col. Centro</div></div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:9px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-size:14px;font-weight:700;color:#fff;">Vehículos (2)</span>
+                <span onClick="{{ go_vehiculoForm }}" style="font-size:12.5px;color:#A5B5BF;font-weight:500;cursor:pointer;">+ Agregar</span>
+              </div>
+              <div onClick="{{ go_vehiculoDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="background:#1A1F26;border:1px solid #2A313A;border-radius:8px;padding:5px 9px;font-size:11px;font-weight:700;letter-spacing:1px;color:#C8D2D8;">UTR-905-B</div>
+                <div style="flex:1;"><div style="font-size:13.5px;font-weight:600;color:#E8ECEE;">Nissan Versa 2021</div><div style="font-size:11.5px;color:#79838B;">Sedán · Gris</div></div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#525A62" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+              </div>
+              <div onClick="{{ go_vehiculoDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="background:#1A1F26;border:1px solid #2A313A;border-radius:8px;padding:5px 9px;font-size:11px;font-weight:700;letter-spacing:1px;color:#C8D2D8;">PGD-331-C</div>
+                <div style="flex:1;"><div style="font-size:13.5px;font-weight:600;color:#E8ECEE;">VW Jetta 2017</div><div style="font-size:11.5px;color:#79838B;">Sedán · Negro</div></div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#525A62" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:9px;">
+              <span style="font-size:14px;font-weight:700;color:#fff;">Órdenes recientes</span>
+              <div onClick="{{ go_ordenDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="flex:1;"><div style="font-size:13.5px;font-weight:600;color:#E8ECEE;">OT-0142 · Cambio de balatas</div><div style="font-size:11.5px;color:#79838B;margin-top:1px;">28 may 2026 · $2,180</div></div>
+                <span style="padding:4px 10px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(132,189,156,.13);color:#84BD9C;">Completada</span>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== CLIENTE FORM ===== -->
+        <sc-if value="{{ show_clienteForm }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;padding:6px 20px 16px;display:flex;flex-direction:column;gap:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div onClick="{{ goBack }}" style="width:40px;height:40px;border-radius:13px;background:#15181C;border:1px solid #232830;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="border-color:#39424C;">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#E8ECEE" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              </div>
+              <span style="font-size:16px;font-weight:700;color:#fff;">Nuevo cliente</span>
+              <div style="width:40px;"></div>
+            </div>
+            <div style="background:#15181C;border:1px solid #272C33;border-radius:14px;padding:11px 16px;">
+              <div style="font-size:11px;letter-spacing:.5px;color:#79838B;font-weight:500;">Nombre *</div>
+              <div style="font-size:15.5px;color:#E8ECEE;margin-top:3px;">Ana Beltrán</div>
+            </div>
+            <div>
+              <div style="background:#15181C;border:1.5px solid #D08A7E;border-radius:14px;padding:11px 16px;">
+                <div style="font-size:11px;letter-spacing:.5px;color:#D08A7E;font-weight:600;">Teléfono *</div>
+                <div style="font-size:15.5px;color:#4C545B;margin-top:3px;">10 dígitos</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;margin-top:6px;padding-left:4px;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#D08A7E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+                <span style="font-size:12px;color:#D08A7E;">El teléfono es obligatorio</span>
+              </div>
+            </div>
+            <div style="background:#15181C;border:1px solid #272C33;border-radius:14px;padding:11px 16px;">
+              <div style="font-size:11px;letter-spacing:.5px;color:#79838B;font-weight:500;">Correo</div>
+              <div style="font-size:15.5px;color:#4C545B;margin-top:3px;">opcional</div>
+            </div>
+            <div style="background:#15181C;border:1px solid #272C33;border-radius:14px;padding:11px 16px;">
+              <div style="font-size:11px;letter-spacing:.5px;color:#79838B;font-weight:500;">Dirección</div>
+              <div style="font-size:15.5px;color:#4C545B;margin-top:3px;">Calle, número, colonia</div>
+            </div>
+            <div style="background:#15181C;border:1px solid #272C33;border-radius:14px;padding:11px 16px;height:104px;">
+              <div style="font-size:11px;letter-spacing:.5px;color:#79838B;font-weight:500;">Observaciones</div>
+              <div style="font-size:15.5px;color:#4C545B;margin-top:3px;">Notas internas del taller…</div>
+            </div>
+            <div style="flex:1;"></div>
+            <div style="font-size:12px;color:#5C656D;">* Campos obligatorios</div>
+            <div onClick="{{ go_clientes }}" style="height:54px;border-radius:14px;background:#A5B5BF;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="background:#B9C7CF;" style-active="transform:scale(.98);">
+              <span style="font-weight:700;font-size:16px;color:#0E0F12;">Guardar cliente</span>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== VEHÍCULOS LISTA ===== -->
+        <sc-if value="{{ show_vehiculos }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0 0 64px 0;padding:6px 20px 10px;display:flex;flex-direction:column;gap:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:23px;font-weight:700;color:#fff;">Vehículos</span>
+              <span style="padding:3px 10px;border-radius:999px;font-size:11.5px;font-weight:600;background:rgba(165,181,191,.13);color:#A5B5BF;">173</span>
+            </div>
+            <div style="display:flex;background:#15181C;border:1px solid #232830;border-radius:12px;padding:4px;gap:4px;">
+              <div onClick="{{ go_clientes }}" style="flex:1;text-align:center;padding:7px 0;border-radius:9px;color:#79838B;font-size:13px;font-weight:600;cursor:pointer;" style-hover="color:#B7BEC4;">Clientes</div>
+              <div style="flex:1;text-align:center;padding:7px 0;border-radius:9px;background:#262C34;color:#fff;font-size:13px;font-weight:600;">Vehículos</div>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <span style="padding:7px 14px;border-radius:999px;font-size:12.5px;font-weight:600;background:#A5B5BF;color:#0E0F12;">Todos</span>
+              <span style="padding:7px 14px;border-radius:999px;font-size:12.5px;font-weight:600;background:#15181C;border:1px solid #232830;color:#9AA4AC;cursor:pointer;">Sedán</span>
+              <span style="padding:7px 14px;border-radius:999px;font-size:12.5px;font-weight:600;background:#15181C;border:1px solid #232830;color:#9AA4AC;cursor:pointer;">SUV</span>
+              <span style="padding:7px 14px;border-radius:999px;font-size:12.5px;font-weight:600;background:#15181C;border:1px solid #232830;color:#9AA4AC;cursor:pointer;">Pickup</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:9px;">
+              <div onClick="{{ go_vehiculoDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="background:#1A1F26;border:1px solid #2A313A;border-radius:8px;padding:6px 9px;font-size:11px;font-weight:700;letter-spacing:1px;color:#C8D2D8;">JKM-482-A</div>
+                <div style="flex:1;"><div style="font-size:14px;font-weight:600;color:#E8ECEE;">Toyota Hilux 2019</div><div style="font-size:11.5px;color:#79838B;margin-top:1px;">Jorge Ortega</div></div>
+                <span style="padding:4px 9px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(121,131,139,.13);color:#9AA4AC;">Pickup</span>
+              </div>
+              <div onClick="{{ go_vehiculoDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="background:#1A1F26;border:1px solid #2A313A;border-radius:8px;padding:6px 9px;font-size:11px;font-weight:700;letter-spacing:1px;color:#C8D2D8;">UTR-905-B</div>
+                <div style="flex:1;"><div style="font-size:14px;font-weight:600;color:#E8ECEE;">Nissan Versa 2021</div><div style="font-size:11.5px;color:#79838B;margin-top:1px;">Lucía Ramírez</div></div>
+                <span style="padding:4px 9px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(121,131,139,.13);color:#9AA4AC;">Sedán</span>
+              </div>
+              <div onClick="{{ go_vehiculoDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="background:#1A1F26;border:1px solid #2A313A;border-radius:8px;padding:6px 9px;font-size:11px;font-weight:700;letter-spacing:1px;color:#C8D2D8;">PGD-331-C</div>
+                <div style="flex:1;"><div style="font-size:14px;font-weight:600;color:#E8ECEE;">VW Jetta 2017</div><div style="font-size:11.5px;color:#79838B;margin-top:1px;">Lucía Ramírez</div></div>
+                <span style="padding:4px 9px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(121,131,139,.13);color:#9AA4AC;">Sedán</span>
+              </div>
+              <div onClick="{{ go_vehiculoDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="background:#1A1F26;border:1px solid #2A313A;border-radius:8px;padding:6px 9px;font-size:11px;font-weight:700;letter-spacing:1px;color:#C8D2D8;">HTV-208-D</div>
+                <div style="flex:1;"><div style="font-size:14px;font-weight:600;color:#E8ECEE;">Honda CR-V 2020</div><div style="font-size:11.5px;color:#79838B;margin-top:1px;">Ana Beltrán</div></div>
+                <span style="padding:4px 9px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(121,131,139,.13);color:#9AA4AC;">SUV</span>
+              </div>
+              <div onClick="{{ go_vehiculoDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="background:#1A1F26;border:1px solid #2A313A;border-radius:8px;padding:6px 9px;font-size:11px;font-weight:700;letter-spacing:1px;color:#C8D2D8;">XCB-114-E</div>
+                <div style="flex:1;"><div style="font-size:14px;font-weight:600;color:#E8ECEE;">Ford Ranger 2018</div><div style="font-size:11.5px;color:#79838B;margin-top:1px;">Miguel Soto</div></div>
+                <span style="padding:4px 9px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(121,131,139,.13);color:#9AA4AC;">Pickup</span>
+              </div>
+            </div>
+            <div onClick="{{ go_vehiculoForm }}" style="position:absolute;right:18px;bottom:14px;width:56px;height:56px;border-radius:18px;background:#A5B5BF;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(165,181,191,.25);cursor:pointer;" style-hover="background:#B9C7CF;" style-active="transform:scale(.94);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0E0F12" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== VEHÍCULO DETALLE ===== -->
+        <sc-if value="{{ show_vehiculoDetalle }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;padding:6px 20px 16px;display:flex;flex-direction:column;gap:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div onClick="{{ goBack }}" style="width:40px;height:40px;border-radius:13px;background:#15181C;border:1px solid #232830;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="border-color:#39424C;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E8ECEE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+              </div>
+              <span style="font-size:16px;font-weight:700;color:#fff;">Vehículo</span>
+              <div onClick="{{ go_vehiculoForm }}" style="width:40px;height:40px;border-radius:13px;background:#15181C;border:1px solid #232830;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="border-color:#39424C;">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9AA4AC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3l4 4L8 20l-5 1 1-5z"/></svg>
+              </div>
+            </div>
+            <div style="background:#15181C;border:1px solid #232830;border-radius:18px;padding:20px 16px;display:flex;flex-direction:column;align-items:center;gap:10px;">
+              <div style="background:#1A1F26;border:1.5px solid #39424C;border-radius:10px;padding:8px 16px;font-size:16px;font-weight:700;letter-spacing:2.5px;color:#E8ECEE;">JKM-482-A</div>
+              <div style="font-size:21px;font-weight:700;color:#fff;">Toyota Hilux</div>
+              <div style="display:flex;gap:7px;align-items:center;">
+                <span style="padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600;background:rgba(121,131,139,.13);color:#9AA4AC;">Pickup</span>
+                <span style="padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600;background:rgba(121,131,139,.13);color:#9AA4AC;">2019</span>
+                <span style="padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600;background:rgba(121,131,139,.13);color:#9AA4AC;display:flex;align-items:center;gap:6px;"><span style="width:9px;height:9px;border-radius:50%;background:#E8ECEE;border:1px solid #39424C;"></span>Blanco</span>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:9px;">
+              <span style="font-size:14px;font-weight:700;color:#fff;">Propietario</span>
+              <div onClick="{{ go_clienteDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="width:42px;height:42px;border-radius:13px;background:rgba(165,181,191,.14);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#A5B5BF;">JO</div>
+                <div style="flex:1;"><div style="font-size:14px;font-weight:600;color:#E8ECEE;">Jorge Ortega</div><div style="font-size:12px;color:#79838B;margin-top:1px;">33 8765 4321</div></div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#525A62" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:9px;">
+              <span style="font-size:14px;font-weight:700;color:#fff;">Historial de servicio</span>
+              <div onClick="{{ go_ordenDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="flex:1;"><div style="font-size:13.5px;font-weight:600;color:#E8ECEE;">OT-0148 · Frenos y suspensión</div><div style="font-size:11.5px;color:#79838B;margin-top:1px;">Hoy · $1,820</div></div>
+                <span style="padding:4px 10px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(130,167,204,.13);color:#82A7CC;">En proceso</span>
+              </div>
+              <div onClick="{{ go_ordenDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="flex:1;"><div style="font-size:13.5px;font-weight:600;color:#E8ECEE;">OT-0131 · Afinación mayor</div><div style="font-size:11.5px;color:#79838B;margin-top:1px;">14 abr 2026 · $3,450</div></div>
+                <span style="padding:4px 10px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(132,189,156,.13);color:#84BD9C;">Completada</span>
+              </div>
+            </div>
+            <div style="flex:1;"></div>
+            <div onClick="{{ go_citaForm }}" style="height:54px;border-radius:14px;background:#A5B5BF;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;" style-hover="background:#B9C7CF;" style-active="transform:scale(.98);">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0E0F12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+              <span style="font-weight:700;font-size:15.5px;color:#0E0F12;">Agendar cita</span>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== VEHÍCULO FORM ===== -->
+        <sc-if value="{{ show_vehiculoForm }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;padding:6px 20px 16px;display:flex;flex-direction:column;gap:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div onClick="{{ goBack }}" style="width:40px;height:40px;border-radius:13px;background:#15181C;border:1px solid #232830;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="border-color:#39424C;">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#E8ECEE" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              </div>
+              <span style="font-size:16px;font-weight:700;color:#fff;">Nuevo vehículo</span>
+              <div style="width:40px;"></div>
+            </div>
+            <div style="background:#15181C;border:1px solid #272C33;border-radius:14px;padding:11px 16px;display:flex;align-items:center;gap:12px;">
+              <div style="width:36px;height:36px;border-radius:11px;background:rgba(165,181,191,.14);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#A5B5BF;">JO</div>
+              <div style="flex:1;">
+                <div style="font-size:11px;letter-spacing:.5px;color:#79838B;font-weight:500;">Cliente *</div>
+                <div style="font-size:15px;color:#E8ECEE;margin-top:2px;">Jorge Ortega</div>
+              </div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#79838B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div style="background:#15181C;border:1px solid #272C33;border-radius:14px;padding:11px 16px;">
+                <div style="font-size:11px;letter-spacing:.5px;color:#79838B;font-weight:500;">Marca *</div>
+                <div style="font-size:15.5px;color:#E8ECEE;margin-top:3px;">Toyota</div>
+              </div>
+              <div style="background:#15181C;border:1px solid #272C33;border-radius:14px;padding:11px 16px;">
+                <div style="font-size:11px;letter-spacing:.5px;color:#79838B;font-weight:500;">Modelo *</div>
+                <div style="font-size:15.5px;color:#E8ECEE;margin-top:3px;">Hilux</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div style="background:#15181C;border:1px solid #272C33;border-radius:14px;padding:11px 16px;">
+                <div style="font-size:11px;letter-spacing:.5px;color:#79838B;font-weight:500;">Año</div>
+                <div style="font-size:15.5px;color:#E8ECEE;margin-top:3px;">2019</div>
+              </div>
+              <div style="background:#15181C;border:1px solid #272C33;border-radius:14px;padding:11px 16px;">
+                <div style="font-size:11px;letter-spacing:.5px;color:#79838B;font-weight:500;">Placa *</div>
+                <div style="font-size:15.5px;color:#E8ECEE;margin-top:3px;letter-spacing:1.5px;">JKM-482-A</div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:12px;color:#79838B;font-weight:500;margin-bottom:8px;padding-left:4px;">Tipo de vehículo</div>
+              <div style="display:flex;gap:8px;">
+                <span style="padding:8px 15px;border-radius:999px;font-size:12.5px;font-weight:600;background:#15181C;border:1px solid #232830;color:#9AA4AC;cursor:pointer;">Sedán</span>
+                <span style="padding:8px 15px;border-radius:999px;font-size:12.5px;font-weight:600;background:#15181C;border:1px solid #232830;color:#9AA4AC;cursor:pointer;">SUV</span>
+                <span style="padding:8px 15px;border-radius:999px;font-size:12.5px;font-weight:600;background:#A5B5BF;color:#0E0F12;cursor:pointer;">Pickup</span>
+                <span style="padding:8px 15px;border-radius:999px;font-size:12.5px;font-weight:600;background:#15181C;border:1px solid #232830;color:#9AA4AC;cursor:pointer;">Moto</span>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:12px;color:#79838B;font-weight:500;margin-bottom:8px;padding-left:4px;">Color</div>
+              <div style="display:flex;gap:10px;">
+                <div style="width:34px;height:34px;border-radius:50%;background:#F2F4F5;border:2.5px solid #A5B5BF;cursor:pointer;"></div>
+                <div style="width:34px;height:34px;border-radius:50%;background:#23272E;border:2px solid #2A313A;cursor:pointer;"></div>
+                <div style="width:34px;height:34px;border-radius:50%;background:#8B959D;border:2px solid #2A313A;cursor:pointer;"></div>
+                <div style="width:34px;height:34px;border-radius:50%;background:#7A2E2A;border:2px solid #2A313A;cursor:pointer;"></div>
+                <div style="width:34px;height:34px;border-radius:50%;background:#2A4365;border:2px solid #2A313A;cursor:pointer;"></div>
+              </div>
+            </div>
+            <div style="flex:1;"></div>
+            <div onClick="{{ go_vehiculos }}" style="height:54px;border-radius:14px;background:#A5B5BF;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="background:#B9C7CF;" style-active="transform:scale(.98);">
+              <span style="font-weight:700;font-size:16px;color:#0E0F12;">Guardar vehículo</span>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== INVENTARIO LISTA ===== -->
+        <sc-if value="{{ show_inventario }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0 0 64px 0;padding:6px 20px 10px;display:flex;flex-direction:column;gap:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:23px;font-weight:700;color:#fff;">Inventario</span>
+              <span style="padding:3px 10px;border-radius:999px;font-size:11.5px;font-weight:600;background:rgba(165,181,191,.13);color:#A5B5BF;">342 piezas</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;background:#15181C;border:1px solid #232830;border-radius:13px;padding:0 14px;height:46px;flex:none;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#5C656D" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>
+              <span style="font-size:14px;color:#4C545B;">Buscar por nombre o código</span>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <span style="padding:7px 14px;border-radius:999px;font-size:12.5px;font-weight:600;background:#A5B5BF;color:#0E0F12;">Todas</span>
+              <span style="padding:7px 14px;border-radius:999px;font-size:12.5px;font-weight:600;background:rgba(212,169,106,.13);border:1px solid rgba(212,169,106,.35);color:#D4A96A;cursor:pointer;">⚠ Bajo stock · 4</span>
+              <span style="padding:7px 14px;border-radius:999px;font-size:12.5px;font-weight:600;background:#15181C;border:1px solid #232830;color:#9AA4AC;cursor:pointer;">Frenos</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:9px;">
+              <div onClick="{{ go_piezaDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="flex:1;"><div style="font-size:14px;font-weight:600;color:#E8ECEE;">Aceite 5W-30 Mobil 1L</div><div style="font-size:11.5px;color:#79838B;margin-top:1px;">ACE-5301 · Aceites</div></div>
+                <div style="text-align:right;"><div style="font-size:13.5px;font-weight:700;color:#E8ECEE;">48 uds</div><div style="font-size:11.5px;color:#79838B;">$220</div></div>
+                <span style="padding:4px 10px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(165,181,191,.13);color:#A5B5BF;">OK</span>
+              </div>
+              <div onClick="{{ go_piezaDetalle }}" style="background:#15181C;border:1px solid rgba(212,169,106,.4);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:rgba(212,169,106,.7);">
+                <div style="flex:1;"><div style="font-size:14px;font-weight:600;color:#E8ECEE;">Balatas delanteras Brembo</div><div style="font-size:11.5px;color:#79838B;margin-top:1px;">BAL-2241 · Frenos</div></div>
+                <div style="text-align:right;"><div style="font-size:13.5px;font-weight:700;color:#D4A96A;">2 uds</div><div style="font-size:11.5px;color:#79838B;">$420</div></div>
+                <span style="padding:4px 10px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(212,169,106,.13);color:#D4A96A;">Bajo stock</span>
+              </div>
+              <div onClick="{{ go_piezaDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="flex:1;"><div style="font-size:14px;font-weight:600;color:#E8ECEE;">Filtro de aceite Mann W610</div><div style="font-size:11.5px;color:#79838B;margin-top:1px;">FIL-0610 · Filtros</div></div>
+                <div style="text-align:right;"><div style="font-size:13.5px;font-weight:700;color:#E8ECEE;">23 uds</div><div style="font-size:11.5px;color:#79838B;">$180</div></div>
+                <span style="padding:4px 10px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(165,181,191,.13);color:#A5B5BF;">OK</span>
+              </div>
+              <div onClick="{{ go_piezaDetalle }}" style="background:#15181C;border:1px solid rgba(208,138,126,.45);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:rgba(208,138,126,.75);">
+                <div style="flex:1;"><div style="font-size:14px;font-weight:600;color:#E8ECEE;">Banda de distribución Gates</div><div style="font-size:11.5px;color:#79838B;margin-top:1px;">BAN-7705 · Motor</div></div>
+                <div style="text-align:right;"><div style="font-size:13.5px;font-weight:700;color:#D08A7E;">0 uds</div><div style="font-size:11.5px;color:#79838B;">$640</div></div>
+                <span style="padding:4px 10px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(208,138,126,.13);color:#D08A7E;">Sin stock</span>
+              </div>
+              <div onClick="{{ go_piezaDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="flex:1;"><div style="font-size:14px;font-weight:600;color:#E8ECEE;">Bujía NGK Iridium</div><div style="font-size:11.5px;color:#79838B;margin-top:1px;">BUJ-1187 · Encendido</div></div>
+                <div style="text-align:right;"><div style="font-size:13.5px;font-weight:700;color:#E8ECEE;">35 uds</div><div style="font-size:11.5px;color:#79838B;">$165</div></div>
+                <span style="padding:4px 10px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(165,181,191,.13);color:#A5B5BF;">OK</span>
+              </div>
+              <div onClick="{{ go_piezaDetalle }}" style="background:#15181C;border:1px solid rgba(212,169,106,.4);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:rgba(212,169,106,.7);">
+                <div style="flex:1;"><div style="font-size:14px;font-weight:600;color:#E8ECEE;">Amortiguador KYB trasero</div><div style="font-size:11.5px;color:#79838B;margin-top:1px;">AMO-3320 · Suspensión</div></div>
+                <div style="text-align:right;"><div style="font-size:13.5px;font-weight:700;color:#D4A96A;">3 uds</div><div style="font-size:11.5px;color:#79838B;">$890</div></div>
+                <span style="padding:4px 10px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(212,169,106,.13);color:#D4A96A;">Bajo stock</span>
+              </div>
+            </div>
+            <div onClick="{{ go_piezaForm }}" style="position:absolute;right:18px;bottom:14px;width:56px;height:56px;border-radius:18px;background:#A5B5BF;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(165,181,191,.25);cursor:pointer;" style-hover="background:#B9C7CF;" style-active="transform:scale(.94);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0E0F12" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== PIEZA DETALLE ===== -->
+        <sc-if value="{{ show_piezaDetalle }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;padding:6px 20px 16px;display:flex;flex-direction:column;gap:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div onClick="{{ goBack }}" style="width:40px;height:40px;border-radius:13px;background:#15181C;border:1px solid #232830;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="border-color:#39424C;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E8ECEE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+              </div>
+              <span style="font-size:16px;font-weight:700;color:#fff;">Pieza</span>
+              <div onClick="{{ go_piezaForm }}" style="width:40px;height:40px;border-radius:13px;background:#15181C;border:1px solid #232830;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="border-color:#39424C;">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9AA4AC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3l4 4L8 20l-5 1 1-5z"/></svg>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:20px;font-weight:700;color:#fff;line-height:1.25;">Balatas delanteras Brembo</div>
+              <div style="display:flex;gap:7px;margin-top:9px;">
+                <span style="background:#1A1F26;border:1px solid #2A313A;border-radius:7px;padding:4px 9px;font-size:11px;font-weight:700;letter-spacing:1px;color:#C8D2D8;">BAL-2241</span>
+                <span style="padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600;background:rgba(121,131,139,.13);color:#9AA4AC;">Frenos</span>
+                <span style="padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600;background:rgba(132,189,156,.13);color:#84BD9C;">Activa</span>
+              </div>
+            </div>
+            <div style="background:#15181C;border:1px solid rgba(212,169,106,.4);border-radius:16px;padding:16px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div style="font-size:11.5px;letter-spacing:.5px;color:#79838B;font-weight:500;">EXISTENCIAS</div>
+                <span style="padding:4px 10px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(212,169,106,.13);color:#D4A96A;">Bajo stock</span>
+              </div>
+              <div style="display:flex;align-items:baseline;gap:8px;margin-top:8px;">
+                <span style="font-size:32px;font-weight:700;color:#D4A96A;line-height:1;">2</span>
+                <span style="font-size:14px;color:#79838B;">unidades · mínimo 5</span>
+              </div>
+              <div style="height:8px;border-radius:4px;background:#23282F;margin-top:13px;overflow:hidden;">
+                <div style="width:28%;height:100%;border-radius:4px;background:#D4A96A;"></div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:13px 14px;">
+                <div style="font-size:11px;color:#79838B;font-weight:500;">Precio compra</div>
+                <div style="font-size:19px;font-weight:700;color:#E8ECEE;margin-top:4px;">$310</div>
+              </div>
+              <div style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:13px 14px;">
+                <div style="font-size:11px;color:#79838B;font-weight:500;">Precio venta</div>
+                <div style="font-size:19px;font-weight:700;color:#E8ECEE;margin-top:4px;">$420 <span style="font-size:11.5px;font-weight:600;color:#84BD9C;">+35%</span></div>
+              </div>
+            </div>
+            <div style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;">
+              <div style="font-size:12px;color:#79838B;">Proveedor</div>
+              <div style="font-size:13.5px;font-weight:600;color:#E8ECEE;">Refacciones GLZ</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:9px;">
+              <span style="font-size:14px;font-weight:700;color:#fff;">Movimientos</span>
+              <div style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;">
+                <span style="font-size:14px;font-weight:700;color:#D08A7E;width:34px;">−2</span>
+                <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:#E8ECEE;">Orden OT-0148</div><div style="font-size:11.5px;color:#79838B;">Hoy, 12:40</div></div>
+              </div>
+              <div style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;">
+                <span style="font-size:14px;font-weight:700;color:#84BD9C;width:34px;">+10</span>
+                <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:#E8ECEE;">Entrada de proveedor</div><div style="font-size:11.5px;color:#79838B;">3 jun 2026</div></div>
+              </div>
+            </div>
+            <div style="flex:1;"></div>
+            <div onClick="{{ go_piezaForm }}" style="height:54px;border-radius:14px;background:#15181C;border:1.5px solid #A5B5BF;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="background:#1A1F26;">
+              <span style="font-weight:700;font-size:15.5px;color:#A5B5BF;">Ajustar stock</span>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== PIEZA FORM ===== -->
+        <sc-if value="{{ show_piezaForm }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;padding:6px 20px 16px;display:flex;flex-direction:column;gap:12px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div onClick="{{ goBack }}" style="width:40px;height:40px;border-radius:13px;background:#15181C;border:1px solid #232830;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="border-color:#39424C;">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#E8ECEE" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              </div>
+              <span style="font-size:16px;font-weight:700;color:#fff;">Nueva pieza</span>
+              <div style="width:40px;"></div>
+            </div>
+            <div style="background:#15181C;border:1px solid #272C33;border-radius:14px;padding:11px 16px;">
+              <div style="font-size:11px;letter-spacing:.5px;color:#79838B;font-weight:500;">Nombre *</div>
+              <div style="font-size:15.5px;color:#E8ECEE;margin-top:3px;">Amortiguador KYB trasero</div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div style="background:#15181C;border:1px solid #272C33;border-radius:14px;padding:11px 16px;">
+                <div style="font-size:11px;letter-spacing:.5px;color:#79838B;font-weight:500;">Código *</div>
+                <div style="font-size:15px;color:#E8ECEE;margin-top:3px;letter-spacing:1px;">AMO-3320</div>
+              </div>
+              <div style="background:#15181C;border:1px solid #272C33;border-radius:14px;padding:11px 16px;display:flex;align-items:center;justify-content:space-between;">
+                <div>
+                  <div style="font-size:11px;letter-spacing:.5px;color:#79838B;font-weight:500;">Categoría</div>
+                  <div style="font-size:15px;color:#E8ECEE;margin-top:3px;">Suspensión</div>
+                </div>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#79838B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div style="background:#15181C;border:1px solid #272C33;border-radius:14px;padding:11px 14px;">
+                <div style="font-size:11px;letter-spacing:.5px;color:#79838B;font-weight:500;">Cantidad</div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;">
+                  <div style="width:30px;height:30px;border-radius:10px;background:#1E242B;display:flex;align-items:center;justify-content:center;color:#9AA4AC;font-size:17px;font-weight:600;cursor:pointer;">−</div>
+                  <span style="font-size:17px;font-weight:700;color:#fff;">3</span>
+                  <div style="width:30px;height:30px;border-radius:10px;background:#A5B5BF;display:flex;align-items:center;justify-content:center;color:#0E0F12;font-size:17px;font-weight:600;cursor:pointer;">+</div>
+                </div>
+              </div>
+              <div style="background:#15181C;border:1px solid #272C33;border-radius:14px;padding:11px 14px;">
+                <div style="font-size:11px;letter-spacing:.5px;color:#79838B;font-weight:500;">Stock mínimo</div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;">
+                  <div style="width:30px;height:30px;border-radius:10px;background:#1E242B;display:flex;align-items:center;justify-content:center;color:#9AA4AC;font-size:17px;font-weight:600;cursor:pointer;">−</div>
+                  <span style="font-size:17px;font-weight:700;color:#fff;">4</span>
+                  <div style="width:30px;height:30px;border-radius:10px;background:#A5B5BF;display:flex;align-items:center;justify-content:center;color:#0E0F12;font-size:17px;font-weight:600;cursor:pointer;">+</div>
+                </div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div style="background:#15181C;border:1px solid #272C33;border-radius:14px;padding:11px 16px;">
+                <div style="font-size:11px;letter-spacing:.5px;color:#79838B;font-weight:500;">Precio compra</div>
+                <div style="font-size:15.5px;color:#E8ECEE;margin-top:3px;">$ 690</div>
+              </div>
+              <div style="background:#15181C;border:1px solid #272C33;border-radius:14px;padding:11px 16px;">
+                <div style="font-size:11px;letter-spacing:.5px;color:#79838B;font-weight:500;">Precio venta</div>
+                <div style="font-size:15.5px;color:#E8ECEE;margin-top:3px;">$ 890</div>
+              </div>
+            </div>
+            <div style="background:#15181C;border:1px solid #272C33;border-radius:14px;padding:13px 16px;display:flex;align-items:center;justify-content:space-between;">
+              <div>
+                <div style="font-size:14px;font-weight:600;color:#E8ECEE;">Pieza activa</div>
+                <div style="font-size:11.5px;color:#79838B;margin-top:1px;">Visible al crear órdenes</div>
+              </div>
+              <div style="width:46px;height:27px;border-radius:14px;background:#A5B5BF;position:relative;cursor:pointer;">
+                <div style="position:absolute;top:3px;right:3px;width:21px;height:21px;border-radius:50%;background:#0E0F12;"></div>
+              </div>
+            </div>
+            <div style="flex:1;"></div>
+            <div onClick="{{ go_inventario }}" style="height:54px;border-radius:14px;background:#A5B5BF;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="background:#B9C7CF;" style-active="transform:scale(.98);">
+              <span style="font-weight:700;font-size:16px;color:#0E0F12;">Guardar pieza</span>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== CITAS LISTA ===== -->
+        <sc-if value="{{ show_citas }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0 0 64px 0;padding:6px 20px 10px;display:flex;flex-direction:column;gap:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:23px;font-weight:700;color:#fff;">Citas</span>
+              <div style="display:flex;align-items:center;gap:8px;background:#15181C;border:1px solid #232830;border-radius:11px;padding:7px 12px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9AA4AC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                <span style="font-size:13px;font-weight:600;color:#E8ECEE;">Junio 2026</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9AA4AC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+              </div>
+            </div>
+            <div style="background:#15181C;border:1px solid #232830;border-radius:16px;padding:12px 10px;display:grid;grid-template-columns:repeat(7,1fr);gap:4px;">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:7px 0;border-radius:11px;cursor:pointer;">
+                <span style="font-size:10.5px;font-weight:600;color:#5C656D;">LUN</span><span style="font-size:15px;font-weight:600;color:#9AA4AC;">8</span><span style="width:4px;height:4px;border-radius:50%;background:#39424C;"></span>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:7px 0;border-radius:11px;cursor:pointer;">
+                <span style="font-size:10.5px;font-weight:600;color:#5C656D;">MAR</span><span style="font-size:15px;font-weight:600;color:#9AA4AC;">9</span><span style="width:4px;height:4px;border-radius:50%;background:#39424C;"></span>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:7px 0;border-radius:11px;cursor:pointer;">
+                <span style="font-size:10.5px;font-weight:600;color:#5C656D;">MIÉ</span><span style="font-size:15px;font-weight:600;color:#9AA4AC;">10</span><span style="width:4px;height:4px;border-radius:50%;background:transparent;"></span>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:7px 0;border-radius:11px;background:#A5B5BF;cursor:pointer;">
+                <span style="font-size:10.5px;font-weight:700;color:#3A4046;">JUE</span><span style="font-size:15px;font-weight:700;color:#0E0F12;">11</span><span style="width:4px;height:4px;border-radius:50%;background:#0E0F12;"></span>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:7px 0;border-radius:11px;cursor:pointer;">
+                <span style="font-size:10.5px;font-weight:600;color:#5C656D;">VIE</span><span style="font-size:15px;font-weight:600;color:#9AA4AC;">12</span><span style="width:4px;height:4px;border-radius:50%;background:#39424C;"></span>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:7px 0;border-radius:11px;cursor:pointer;">
+                <span style="font-size:10.5px;font-weight:600;color:#5C656D;">SÁB</span><span style="font-size:15px;font-weight:600;color:#9AA4AC;">13</span><span style="width:4px;height:4px;border-radius:50%;background:transparent;"></span>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:7px 0;border-radius:11px;cursor:pointer;">
+                <span style="font-size:10.5px;font-weight:600;color:#5C656D;">DOM</span><span style="font-size:15px;font-weight:600;color:#525A62;">14</span><span style="width:4px;height:4px;border-radius:50%;background:transparent;"></span>
+              </div>
+            </div>
+            <div style="font-size:13.5px;font-weight:700;color:#fff;">Hoy · Jueves 11 <span style="font-weight:500;color:#79838B;">· 6 citas</span></div>
+            <div style="display:flex;flex-direction:column;gap:9px;">
+              <div onClick="{{ go_citaDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:13px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="text-align:center;width:48px;"><div style="font-size:15px;font-weight:700;color:#fff;">09:00</div><div style="font-size:10.5px;color:#79838B;">45 min</div></div>
+                <div style="width:1px;height:38px;background:#232830;"></div>
+                <div style="flex:1;"><div style="font-size:13.5px;font-weight:600;color:#E8ECEE;">Ana Beltrán · CR-V 2020</div><div style="font-size:11.5px;color:#79838B;margin-top:1px;">Servicio de 10,000 km</div></div>
+                <span style="padding:4px 10px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(132,189,156,.13);color:#84BD9C;">Completada</span>
+              </div>
+              <div onClick="{{ go_citaDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:13px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="text-align:center;width:48px;"><div style="font-size:15px;font-weight:700;color:#fff;">10:30</div><div style="font-size:10.5px;color:#79838B;">1 h</div></div>
+                <div style="width:1px;height:38px;background:#232830;"></div>
+                <div style="flex:1;"><div style="font-size:13.5px;font-weight:600;color:#E8ECEE;">Lucía Ramírez · Versa 2021</div><div style="font-size:11.5px;color:#79838B;margin-top:1px;">Cambio de aceite · Raúl</div></div>
+                <span style="padding:4px 10px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(165,181,191,.13);color:#A5B5BF;">Confirmada</span>
+              </div>
+              <div onClick="{{ go_citaDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:13px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="text-align:center;width:48px;"><div style="font-size:15px;font-weight:700;color:#fff;">12:00</div><div style="font-size:10.5px;color:#79838B;">2 h</div></div>
+                <div style="width:1px;height:38px;background:#232830;"></div>
+                <div style="flex:1;"><div style="font-size:13.5px;font-weight:600;color:#E8ECEE;">Jorge Ortega · Hilux 2019</div><div style="font-size:11.5px;color:#79838B;margin-top:1px;">Vibración al frenar · Beto</div></div>
+                <span style="padding:4px 10px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(130,167,204,.13);color:#82A7CC;">En proceso</span>
+              </div>
+              <div style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:13px;opacity:.6;">
+                <div style="text-align:center;width:48px;"><div style="font-size:15px;font-weight:700;color:#fff;text-decoration:line-through;">16:00</div><div style="font-size:10.5px;color:#79838B;">30 min</div></div>
+                <div style="width:1px;height:38px;background:#232830;"></div>
+                <div style="flex:1;"><div style="font-size:13.5px;font-weight:600;color:#9AA4AC;text-decoration:line-through;">Miguel Soto · Ranger 2018</div><div style="font-size:11.5px;color:#79838B;margin-top:1px;">Diagnóstico general</div></div>
+                <span style="padding:4px 10px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(208,138,126,.13);color:#D08A7E;">Cancelada</span>
+              </div>
+            </div>
+            <div onClick="{{ go_citaForm }}" style="position:absolute;right:18px;bottom:14px;width:56px;height:56px;border-radius:18px;background:#A5B5BF;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(165,181,191,.25);cursor:pointer;" style-hover="background:#B9C7CF;" style-active="transform:scale(.94);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0E0F12" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== CITA DETALLE ===== -->
+        <sc-if value="{{ show_citaDetalle }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;padding:6px 20px 16px;display:flex;flex-direction:column;gap:12px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div onClick="{{ goBack }}" style="width:40px;height:40px;border-radius:13px;background:#15181C;border:1px solid #232830;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="border-color:#39424C;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E8ECEE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+              </div>
+              <span style="font-size:16px;font-weight:700;color:#fff;">Cita</span>
+              <div onClick="{{ go_citaForm }}" style="width:40px;height:40px;border-radius:13px;background:#15181C;border:1px solid #232830;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="border-color:#39424C;">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9AA4AC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3l4 4L8 20l-5 1 1-5z"/></svg>
+              </div>
+            </div>
+            <div style="background:#15181C;border:1px solid #232830;border-radius:18px;padding:18px 16px;display:flex;flex-direction:column;align-items:center;gap:8px;">
+              <span style="padding:5px 13px;border-radius:999px;font-size:11.5px;font-weight:600;background:rgba(165,181,191,.13);color:#A5B5BF;">Confirmada</span>
+              <div style="font-size:34px;font-weight:700;color:#fff;line-height:1;">10:30</div>
+              <div style="font-size:13px;color:#79838B;">Jueves 11 de junio, 2026 · 1 hora</div>
+            </div>
+            <div onClick="{{ go_clienteDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#39424C;">
+              <div style="width:42px;height:42px;border-radius:13px;background:rgba(165,181,191,.14);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#A5B5BF;">LR</div>
+              <div style="flex:1;"><div style="font-size:14px;font-weight:600;color:#E8ECEE;">Lucía Ramírez</div><div style="font-size:12px;color:#79838B;margin-top:1px;">55 1234 5678</div></div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#525A62" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+            </div>
+            <div onClick="{{ go_vehiculoDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#39424C;">
+              <div style="background:#1A1F26;border:1px solid #2A313A;border-radius:8px;padding:5px 9px;font-size:11px;font-weight:700;letter-spacing:1px;color:#C8D2D8;">UTR-905-B</div>
+              <div style="flex:1;"><div style="font-size:13.5px;font-weight:600;color:#E8ECEE;">Nissan Versa 2021</div><div style="font-size:11.5px;color:#79838B;">Sedán · Gris</div></div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#525A62" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+            </div>
+            <div style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:12px 16px;">
+              <div style="font-size:11px;letter-spacing:.5px;color:#79838B;font-weight:500;">MOTIVO</div>
+              <div style="font-size:14px;color:#E8ECEE;margin-top:5px;line-height:1.45;">Cambio de aceite y revisión general de frenos. La cliente reporta rechinido leve al frenar en frío.</div>
+            </div>
+            <div style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;">
+              <div style="width:38px;height:38px;border-radius:50%;background:rgba(132,189,156,.14);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#84BD9C;">R</div>
+              <div style="flex:1;"><div style="font-size:13.5px;font-weight:600;color:#E8ECEE;">Raúl Herrera</div><div style="font-size:11.5px;color:#79838B;">Mecánico asignado</div></div>
+              <span style="font-size:12px;color:#A5B5BF;font-weight:500;cursor:pointer;">Cambiar</span>
+            </div>
+            <div style="flex:1;"></div>
+            <div onClick="{{ go_ordenForm }}" style="height:54px;border-radius:14px;background:#A5B5BF;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;" style-hover="background:#B9C7CF;" style-active="transform:scale(.98);">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0E0F12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4a3 3 0 016 0"/><path d="M9 12h6M9 16h4"/></svg>
+              <span style="font-weight:700;font-size:15.5px;color:#0E0F12;">Iniciar orden de trabajo</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div onClick="{{ go_citaForm }}" style="height:48px;border-radius:13px;background:#15181C;border:1px solid #2A313A;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="border-color:#39424C;">
+                <span style="font-weight:600;font-size:14px;color:#A5B5BF;">Reagendar</span>
+              </div>
+              <div onClick="{{ go_citas }}" style="height:48px;border-radius:13px;background:#15181C;border:1px solid rgba(208,138,126,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="border-color:rgba(208,138,126,.7);">
+                <span style="font-weight:600;font-size:14px;color:#D08A7E;">Cancelar cita</span>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== CITA FORM ===== -->
+        <sc-if value="{{ show_citaForm }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;padding:6px 20px 16px;display:flex;flex-direction:column;gap:12px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div onClick="{{ goBack }}" style="width:40px;height:40px;border-radius:13px;background:#15181C;border:1px solid #232830;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="border-color:#39424C;">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#E8ECEE" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              </div>
+              <span style="font-size:16px;font-weight:700;color:#fff;">Nueva cita</span>
+              <div style="width:40px;"></div>
+            </div>
+            <div style="background:#15181C;border:1px solid #272C33;border-radius:14px;padding:11px 16px;display:flex;align-items:center;gap:12px;">
+              <div style="width:36px;height:36px;border-radius:11px;background:rgba(165,181,191,.14);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#A5B5BF;">LR</div>
+              <div style="flex:1;">
+                <div style="font-size:11px;letter-spacing:.5px;color:#79838B;font-weight:500;">Cliente *</div>
+                <div style="font-size:15px;color:#E8ECEE;margin-top:2px;">Lucía Ramírez</div>
+              </div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#79838B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div style="background:#15181C;border:1px solid #272C33;border-radius:14px;padding:11px 16px;display:flex;align-items:center;gap:12px;">
+              <div style="background:#1A1F26;border:1px solid #2A313A;border-radius:8px;padding:5px 9px;font-size:10.5px;font-weight:700;letter-spacing:1px;color:#C8D2D8;">UTR-905-B</div>
+              <div style="flex:1;">
+                <div style="font-size:11px;letter-spacing:.5px;color:#79838B;font-weight:500;">Vehículo *</div>
+                <div style="font-size:15px;color:#E8ECEE;margin-top:2px;">Nissan Versa 2021</div>
+              </div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#79838B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div>
+              <div style="font-size:12px;color:#79838B;font-weight:500;margin-bottom:8px;padding-left:4px;">Fecha *</div>
+              <div style="display:flex;gap:8px;">
+                <span style="padding:8px 15px;border-radius:999px;font-size:12.5px;font-weight:600;background:#A5B5BF;color:#0E0F12;cursor:pointer;">Hoy</span>
+                <span style="padding:8px 15px;border-radius:999px;font-size:12.5px;font-weight:600;background:#15181C;border:1px solid #232830;color:#9AA4AC;cursor:pointer;">Mañana</span>
+                <span style="padding:8px 15px;border-radius:999px;font-size:12.5px;font-weight:600;background:#15181C;border:1px solid #232830;color:#9AA4AC;cursor:pointer;">Vie 12</span>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:12px;color:#79838B;font-weight:500;margin-bottom:8px;padding-left:4px;">Hora *</div>
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+                <span style="padding:9px 0;text-align:center;border-radius:11px;font-size:12.5px;font-weight:600;background:#15181C;border:1px solid #232830;color:#9AA4AC;cursor:pointer;">09:00</span>
+                <span style="padding:9px 0;text-align:center;border-radius:11px;font-size:12.5px;font-weight:600;background:#15181C;border:1px solid #232830;color:#9AA4AC;cursor:pointer;">09:30</span>
+                <span style="padding:9px 0;text-align:center;border-radius:11px;font-size:12.5px;font-weight:600;background:#A5B5BF;color:#0E0F12;cursor:pointer;">10:30</span>
+                <span style="padding:9px 0;text-align:center;border-radius:11px;font-size:12.5px;font-weight:600;background:#15181C;border:1px solid #232830;color:#9AA4AC;cursor:pointer;">11:00</span>
+                <span style="padding:9px 0;text-align:center;border-radius:11px;font-size:12.5px;font-weight:600;background:#15181C;border:1px solid #232830;color:#9AA4AC;cursor:pointer;">12:00</span>
+                <span style="padding:9px 0;text-align:center;border-radius:11px;font-size:12.5px;font-weight:600;background:#1A1D21;border:1px solid #1E232A;color:#4C545B;text-decoration:line-through;">13:00</span>
+                <span style="padding:9px 0;text-align:center;border-radius:11px;font-size:12.5px;font-weight:600;background:#15181C;border:1px solid #232830;color:#9AA4AC;cursor:pointer;">16:00</span>
+                <span style="padding:9px 0;text-align:center;border-radius:11px;font-size:12.5px;font-weight:600;background:#15181C;border:1px solid #232830;color:#9AA4AC;cursor:pointer;">17:30</span>
+              </div>
+            </div>
+            <div style="background:#15181C;border:1px solid #272C33;border-radius:14px;padding:11px 16px;height:80px;">
+              <div style="font-size:11px;letter-spacing:.5px;color:#79838B;font-weight:500;">Motivo *</div>
+              <div style="font-size:15px;color:#E8ECEE;margin-top:3px;line-height:1.4;">Cambio de aceite y revisión de frenos</div>
+            </div>
+            <div>
+              <div style="font-size:12px;color:#79838B;font-weight:500;margin-bottom:8px;padding-left:4px;">Mecánico</div>
+              <div style="display:flex;gap:8px;">
+                <span style="display:flex;align-items:center;gap:7px;padding:7px 13px 7px 7px;border-radius:999px;font-size:12.5px;font-weight:600;background:#A5B5BF;color:#0E0F12;cursor:pointer;"><span style="width:24px;height:24px;border-radius:50%;background:#0E0F12;color:#A5B5BF;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">R</span>Raúl</span>
+                <span style="display:flex;align-items:center;gap:7px;padding:7px 13px 7px 7px;border-radius:999px;font-size:12.5px;font-weight:600;background:#15181C;border:1px solid #232830;color:#9AA4AC;cursor:pointer;"><span style="width:24px;height:24px;border-radius:50%;background:rgba(165,181,191,.14);color:#A5B5BF;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">B</span>Beto</span>
+                <span style="display:flex;align-items:center;gap:7px;padding:7px 13px 7px 7px;border-radius:999px;font-size:12.5px;font-weight:600;background:#15181C;border:1px solid #232830;color:#9AA4AC;cursor:pointer;"><span style="width:24px;height:24px;border-radius:50%;background:rgba(165,181,191,.14);color:#A5B5BF;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">S</span>Said</span>
+              </div>
+            </div>
+            <div style="flex:1;"></div>
+            <div onClick="{{ go_citas }}" style="height:54px;border-radius:14px;background:#A5B5BF;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="background:#B9C7CF;" style-active="transform:scale(.98);">
+              <span style="font-weight:700;font-size:16px;color:#0E0F12;">Agendar cita</span>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== ÓRDENES LISTA ===== -->
+        <sc-if value="{{ show_ordenes }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0 0 64px 0;padding:6px 20px 10px;display:flex;flex-direction:column;gap:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:23px;font-weight:700;color:#fff;">Órdenes</span>
+              <span style="padding:3px 10px;border-radius:999px;font-size:11.5px;font-weight:600;background:rgba(212,169,106,.13);color:#D4A96A;">9 abiertas</span>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <span style="padding:7px 14px;border-radius:999px;font-size:12.5px;font-weight:600;background:#A5B5BF;color:#0E0F12;">Todas</span>
+              <span style="padding:7px 14px;border-radius:999px;font-size:12.5px;font-weight:600;background:#15181C;border:1px solid #232830;color:#9AA4AC;cursor:pointer;">Abiertas</span>
+              <span style="padding:7px 14px;border-radius:999px;font-size:12.5px;font-weight:600;background:#15181C;border:1px solid #232830;color:#9AA4AC;cursor:pointer;">En proceso</span>
+              <span style="padding:7px 14px;border-radius:999px;font-size:12.5px;font-weight:600;background:#15181C;border:1px solid #232830;color:#9AA4AC;cursor:pointer;">Completadas</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div onClick="{{ go_ordenDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:16px;padding:13px 15px;display:flex;flex-direction:column;gap:9px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                  <span style="font-size:13px;font-weight:700;letter-spacing:1px;color:#A5B5BF;">OT-0148</span>
+                  <span style="padding:4px 10px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(130,167,204,.13);color:#82A7CC;">En proceso</span>
+                </div>
+                <div style="font-size:14px;font-weight:600;color:#E8ECEE;">Jorge Ortega · Toyota Hilux 2019</div>
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                  <span style="font-size:11.5px;color:#79838B;">3 piezas · M.O. $800 · hoy</span>
+                  <span style="font-size:16px;font-weight:700;color:#fff;">$1,820</span>
+                </div>
+              </div>
+              <div onClick="{{ go_ordenDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:16px;padding:13px 15px;display:flex;flex-direction:column;gap:9px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                  <span style="font-size:13px;font-weight:700;letter-spacing:1px;color:#A5B5BF;">OT-0147</span>
+                  <span style="padding:4px 10px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(212,169,106,.13);color:#D4A96A;">Abierta</span>
+                </div>
+                <div style="font-size:14px;font-weight:600;color:#E8ECEE;">Fernanda Ríos · Chevrolet Aveo 2022</div>
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                  <span style="font-size:11.5px;color:#79838B;">Diagnóstico · hoy</span>
+                  <span style="font-size:16px;font-weight:700;color:#fff;">—</span>
+                </div>
+              </div>
+              <div onClick="{{ go_ordenDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:16px;padding:13px 15px;display:flex;flex-direction:column;gap:9px;cursor:pointer;" style-hover="border-color:#39424C;">
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                  <span style="font-size:13px;font-weight:700;letter-spacing:1px;color:#A5B5BF;">OT-0146</span>
+                  <span style="padding:4px 10px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(132,189,156,.13);color:#84BD9C;">Completada</span>
+                </div>
+                <div style="font-size:14px;font-weight:600;color:#E8ECEE;">Ana Beltrán · Honda CR-V 2020</div>
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                  <span style="font-size:11.5px;color:#79838B;">5 piezas · M.O. $1,200 · ayer</span>
+                  <span style="font-size:16px;font-weight:700;color:#fff;">$4,310</span>
+                </div>
+              </div>
+              <div onClick="{{ go_ordenDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:16px;padding:13px 15px;display:flex;flex-direction:column;gap:9px;cursor:pointer;opacity:.65;" style-hover="border-color:#39424C;">
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                  <span style="font-size:13px;font-weight:700;letter-spacing:1px;color:#A5B5BF;">OT-0145</span>
+                  <span style="padding:4px 10px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(121,131,139,.13);color:#9AA4AC;">Cancelada</span>
+                </div>
+                <div style="font-size:14px;font-weight:600;color:#9AA4AC;">Miguel Soto · Ford Ranger 2018</div>
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                  <span style="font-size:11.5px;color:#79838B;">9 jun 2026</span>
+                  <span style="font-size:16px;font-weight:700;color:#5C656D;text-decoration:line-through;">$2,140</span>
+                </div>
+              </div>
+            </div>
+            <div onClick="{{ go_ordenForm }}" style="position:absolute;right:18px;bottom:14px;width:56px;height:56px;border-radius:18px;background:#A5B5BF;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(165,181,191,.25);cursor:pointer;" style-hover="background:#B9C7CF;" style-active="transform:scale(.94);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0E0F12" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== ORDEN DETALLE ===== -->
+        <sc-if value="{{ show_ordenDetalle }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;padding:6px 20px 16px;display:flex;flex-direction:column;gap:12px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div onClick="{{ goBack }}" style="width:40px;height:40px;border-radius:13px;background:#15181C;border:1px solid #232830;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="border-color:#39424C;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E8ECEE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+              </div>
+              <div style="display:flex;align-items:center;gap:9px;">
+                <span style="font-size:16px;font-weight:700;letter-spacing:1px;color:#fff;">OT-0148</span>
+                <span style="padding:4px 10px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(130,167,204,.13);color:#82A7CC;">En proceso</span>
+              </div>
+              <div style="width:40px;height:40px;border-radius:13px;background:#15181C;border:1px solid #232830;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9AA4AC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3l4 4L8 20l-5 1 1-5z"/></svg>
+              </div>
+            </div>
+            <div onClick="{{ go_clienteDetalle }}" style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:#39424C;">
+              <div style="width:42px;height:42px;border-radius:13px;background:rgba(165,181,191,.14);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#A5B5BF;">JO</div>
+              <div style="flex:1;"><div style="font-size:14px;font-weight:600;color:#E8ECEE;">Jorge Ortega</div><div style="font-size:11.5px;color:#79838B;margin-top:1px;">Toyota Hilux 2019 · JKM-482-A</div></div>
+              <div style="text-align:right;"><div style="font-size:11px;color:#79838B;">Creada</div><div style="font-size:12px;font-weight:600;color:#E8ECEE;">Hoy, 12:15</div></div>
+            </div>
+            <div style="background:#15181C;border:1px solid #232830;border-radius:14px;padding:12px 16px;">
+              <div style="font-size:11px;letter-spacing:.5px;color:#79838B;font-weight:500;">DIAGNÓSTICO</div>
+              <div style="font-size:13.5px;color:#E8ECEE;margin-top:5px;line-height:1.45;">Balatas delanteras al 10%, discos con desgaste irregular. Amortiguadores traseros con fuga leve.</div>
+            </div>
+            <div style="background:#15181C;border:1px solid #232830;border-radius:16px;padding:4px 16px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #1E232A;">
+                <div><div style="font-size:13.5px;font-weight:600;color:#E8ECEE;">Balatas delanteras Brembo</div><div style="font-size:11.5px;color:#79838B;margin-top:1px;">2 × $420</div></div>
+                <span style="font-size:14px;font-weight:700;color:#E8ECEE;">$840</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #1E232A;">
+                <div><div style="font-size:13.5px;font-weight:600;color:#E8ECEE;">Filtro de aceite Mann W610</div><div style="font-size:11.5px;color:#79838B;margin-top:1px;">1 × $180</div></div>
+                <span style="font-size:14px;font-weight:700;color:#E8ECEE;">$180</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid #1E232A;">
+                <span style="font-size:12.5px;color:#79838B;">Subtotal piezas</span>
+                <span style="font-size:13.5px;font-weight:600;color:#E8ECEE;">$1,020</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid #1E232A;">
+                <span style="font-size:12.5px;color:#79838B;">Mano de obra</span>
+                <span style="font-size:13.5px;font-weight:600;color:#E8ECEE;">$800</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 0;">
+                <span style="font-size:14px;font-weight:700;color:#fff;">Total</span>
+                <span style="font-size:20px;font-weight:700;color:#A5B5BF;">$1,820</span>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;background:rgba(165,181,191,.07);border:1px solid rgba(165,181,191,.2);border-radius:12px;padding:10px 13px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A5B5BF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+              <span style="font-size:12px;color:#A5B5BF;line-height:1.4;">Las piezas se descontaron del inventario al crear la orden.</span>
+            </div>
+            <div style="flex:1;"></div>
+            <div onClick="{{ go_ordenes }}" style="height:54px;border-radius:14px;background:#A5B5BF;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;" style-hover="background:#B9C7CF;" style-active="transform:scale(.98);">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0E0F12" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span style="font-weight:700;font-size:15.5px;color:#0E0F12;">Marcar como completada</span>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== ORDEN FORM (regla de stock viva) ===== -->
+        <sc-if value="{{ show_ordenForm }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;padding:6px 20px 16px;display:flex;flex-direction:column;gap:11px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div onClick="{{ goBack }}" style="width:40px;height:40px;border-radius:13px;background:#15181C;border:1px solid #232830;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="border-color:#39424C;">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#E8ECEE" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              </div>
+              <span style="font-size:16px;font-weight:700;color:#fff;">Nueva orden</span>
+              <div style="width:40px;"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div style="background:#15181C;border:1px solid #272C33;border-radius:14px;padding:10px 14px;">
+                <div style="font-size:11px;letter-spacing:.5px;color:#79838B;font-weight:500;">Cliente *</div>
+                <div style="font-size:14px;color:#E8ECEE;margin-top:2px;">Jorge Ortega</div>
+              </div>
+              <div style="background:#15181C;border:1px solid #272C33;border-radius:14px;padding:10px 14px;">
+                <div style="font-size:11px;letter-spacing:.5px;color:#79838B;font-weight:500;">Vehículo *</div>
+                <div style="font-size:14px;color:#E8ECEE;margin-top:2px;">Hilux · JKM-482-A</div>
+              </div>
+            </div>
+            <div style="background:#15181C;border:1px solid #272C33;border-radius:14px;padding:11px 16px;">
+              <div style="font-size:11px;letter-spacing:.5px;color:#79838B;font-weight:500;">Diagnóstico</div>
+              <div style="font-size:14px;color:#E8ECEE;margin-top:3px;line-height:1.4;">Vibración al frenar, desgaste de balatas y amortiguadores.</div>
+            </div>
+            <div>
+              <div style="font-size:12px;color:#79838B;font-weight:500;margin-bottom:8px;padding-left:4px;">Piezas usadas</div>
+              <div style="display:flex;flex-direction:column;gap:9px;">
+                <div style="background:#15181C;border:1px solid #272C33;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:11px;">
+                  <div style="flex:1;"><div style="font-size:13.5px;font-weight:600;color:#E8ECEE;">Balatas delanteras Brembo</div><div style="font-size:11.5px;color:#79838B;margin-top:1px;">$420 c/u · quedan 2</div></div>
+                  <div style="display:flex;align-items:center;gap:9px;">
+                    <div style="width:27px;height:27px;border-radius:9px;background:#1E242B;display:flex;align-items:center;justify-content:center;color:#9AA4AC;font-size:15px;font-weight:600;cursor:pointer;">−</div>
+                    <span style="font-size:15px;font-weight:700;color:#fff;width:16px;text-align:center;">2</span>
+                    <div style="width:27px;height:27px;border-radius:9px;background:#A5B5BF;display:flex;align-items:center;justify-content:center;color:#0E0F12;font-size:15px;font-weight:600;cursor:pointer;">+</div>
+                  </div>
+                  <span style="font-size:14px;font-weight:700;color:#E8ECEE;width:48px;text-align:right;">$840</span>
+                </div>
+                <div>
+                  <div style="background:#15181C;border:{{ amortBorder }};border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:11px;">
+                    <div style="flex:1;"><div style="font-size:13.5px;font-weight:600;color:#E8ECEE;">Amortiguador KYB trasero</div><div style="font-size:11.5px;color:#79838B;margin-top:1px;">$890 c/u · quedan 3</div></div>
+                    <div style="display:flex;align-items:center;gap:9px;">
+                      <div onClick="{{ decAmort }}" style="width:27px;height:27px;border-radius:9px;background:#1E242B;display:flex;align-items:center;justify-content:center;color:#9AA4AC;font-size:15px;font-weight:600;cursor:pointer;" style-hover="background:#262D35;" style-active="transform:scale(.9);">−</div>
+                      <span style="font-size:15px;font-weight:700;color:{{ qtyColor }};width:16px;text-align:center;">{{ qtyAmort }}</span>
+                      <div onClick="{{ incAmort }}" style="width:27px;height:27px;border-radius:9px;background:#A5B5BF;display:flex;align-items:center;justify-content:center;color:#0E0F12;font-size:15px;font-weight:600;cursor:pointer;" style-hover="background:#B9C7CF;" style-active="transform:scale(.9);">+</div>
+                    </div>
+                    <span style="font-size:14px;font-weight:700;color:#E8ECEE;width:48px;text-align:right;">{{ amortSubtotal }}</span>
+                  </div>
+                  <sc-if value="{{ stockError }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;align-items:center;gap:6px;margin-top:6px;padding-left:4px;">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#D08A7E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+                      <span style="font-size:12px;color:#D08A7E;">Stock insuficiente — solo quedan 3 unidades</span>
+                    </div>
+                  </sc-if>
+                </div>
+                <div style="border:1.5px dashed #2E343C;border-radius:14px;padding:11px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;" style-hover="border-color:#A5B5BF;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A5B5BF" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                  <span style="font-size:13px;font-weight:600;color:#A5B5BF;">Agregar pieza</span>
+                </div>
+              </div>
+            </div>
+            <div style="background:#15181C;border:1px solid #272C33;border-radius:14px;padding:11px 16px;display:flex;align-items:center;justify-content:space-between;">
+              <div style="font-size:11px;letter-spacing:.5px;color:#79838B;font-weight:500;">Mano de obra</div>
+              <div style="font-size:15.5px;font-weight:700;color:#E8ECEE;">$ 800</div>
+            </div>
+            <div style="background:rgba(165,181,191,.06);border:1px solid rgba(165,181,191,.18);border-radius:14px;padding:2px 16px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(165,181,191,.12);">
+                <span style="font-size:12.5px;color:#79838B;">Subtotal piezas</span><span style="font-size:13px;font-weight:600;color:#E8ECEE;">{{ subtotalPiezas }}</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(165,181,191,.12);">
+                <span style="font-size:12.5px;color:#79838B;">Mano de obra</span><span style="font-size:13px;font-weight:600;color:#E8ECEE;">$800</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;">
+                <span style="font-size:13.5px;font-weight:700;color:#fff;">Total</span><span style="font-size:18px;font-weight:700;color:#A5B5BF;">{{ totalOrden }}</span>
+              </div>
+            </div>
+            <div style="flex:1;"></div>
+            <div onClick="{{ crearOrden }}" style="height:54px;border-radius:14px;background:{{ btnCrearBg }};display:flex;align-items:center;justify-content:center;cursor:pointer;" style-active="transform:scale(.98);">
+              <span style="font-weight:700;font-size:16px;color:{{ btnCrearColor }};">Crear orden</span>
+            </div>
+            <sc-if value="{{ stockError }}" hint-placeholder-val="{{ false }}">
+              <div style="text-align:center;font-size:12px;color:#D08A7E;">Corrige el stock insuficiente para continuar</div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <!-- ===== AJUSTES ===== -->
+        <sc-if value="{{ show_ajustes }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;padding:6px 20px 16px;display:flex;flex-direction:column;gap:13px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div onClick="{{ goBack }}" style="width:40px;height:40px;border-radius:13px;background:#15181C;border:1px solid #232830;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="border-color:#39424C;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E8ECEE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+              </div>
+              <span style="font-size:16px;font-weight:700;color:#fff;">Ajustes</span>
+              <div style="width:40px;"></div>
+            </div>
+            <div style="background:#15181C;border:1px solid #232830;border-radius:18px;padding:16px;display:flex;align-items:center;gap:14px;">
+              <div style="width:58px;height:58px;border-radius:19px;background:rgba(165,181,191,.14);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;color:#A5B5BF;">C</div>
+              <div style="flex:1;">
+                <div style="font-size:16px;font-weight:700;color:#fff;">Carlos Núñez</div>
+                <div style="font-size:12px;color:#79838B;margin-top:2px;">carlos<span>@</span>tallerdeltro.mx</div>
+                <span style="display:inline-block;margin-top:7px;padding:3px 10px;border-radius:999px;font-size:10.5px;font-weight:600;background:rgba(165,181,191,.13);color:#A5B5BF;">Administrador</span>
+              </div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#525A62" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+            </div>
+            <div>
+              <div style="font-size:11.5px;letter-spacing:1.5px;text-transform:uppercase;color:#5C656D;font-weight:600;margin-bottom:8px;padding-left:4px;">Cuenta</div>
+              <div style="background:#15181C;border:1px solid #232830;border-radius:16px;padding:2px 16px;">
+                <div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #1E232A;cursor:pointer;">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9AA4AC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-3.5 4.5-5 8-5s6.5 1.5 8 5"/></svg>
+                  <span style="flex:1;font-size:14px;color:#E8ECEE;">Editar perfil</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#525A62" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;padding:13px 0;cursor:pointer;">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9AA4AC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                  <span style="flex:1;font-size:14px;color:#E8ECEE;">Cambiar contraseña</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#525A62" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:11.5px;letter-spacing:1.5px;text-transform:uppercase;color:#5C656D;font-weight:600;margin-bottom:8px;padding-left:4px;">Taller</div>
+              <div style="background:#15181C;border:1px solid #232830;border-radius:16px;padding:2px 16px;">
+                <div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #1E232A;cursor:pointer;">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9AA4AC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 19c1.2-2.8 3.6-4 6.5-4s5.3 1.2 6.5 4"/><circle cx="17.5" cy="9" r="2.5"/><path d="M16 14.5c2.4 0 4.4 1 5.5 3.2"/></svg>
+                  <span style="flex:1;font-size:14px;color:#E8ECEE;">Usuarios y roles</span>
+                  <span style="font-size:12px;color:#79838B;">3 usuarios</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#525A62" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #1E232A;">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9AA4AC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M10 21a2 2 0 004 0"/></svg>
+                  <span style="flex:1;font-size:14px;color:#E8ECEE;">Alertas de bajo stock</span>
+                  <div style="width:46px;height:27px;border-radius:14px;background:#A5B5BF;position:relative;cursor:pointer;">
+                    <div style="position:absolute;top:3px;right:3px;width:21px;height:21px;border-radius:50%;background:#0E0F12;"></div>
+                  </div>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;padding:13px 0;cursor:pointer;">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9AA4AC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-2.6-6.3"/><path d="M21 3v6h-6"/></svg>
+                  <span style="flex:1;font-size:14px;color:#E8ECEE;">Respaldo de datos</span>
+                  <span style="font-size:12px;color:#79838B;">Hace 2 h</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#525A62" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                </div>
+              </div>
+            </div>
+            <div onClick="{{ logout }}" style="background:#15181C;border:1px solid rgba(208,138,126,.35);border-radius:16px;padding:13px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;" style-hover="border-color:rgba(208,138,126,.65);">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#D08A7E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>
+              <span style="font-size:14px;font-weight:600;color:#D08A7E;">Cerrar sesión</span>
+            </div>
+            <div style="flex:1;"></div>
+            <div style="text-align:center;font-size:11.5px;color:#4C545B;">MechMate v1.0.0 · Taller Del Toro</div>
+          </div>
+        </sc-if>
+
+        <!-- ===== NAV ===== -->
+        <sc-if value="{{ showNav }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;left:0;right:0;bottom:0;">
+            <dc-import name="MechNav" active="{{ navActive }}" on-inicio="{{ go_dashboard }}" on-clientes="{{ go_clientes }}" on-inventario="{{ go_inventario }}" on-citas="{{ go_citas }}" on-ordenes="{{ go_ordenes }}" hint-size="100%,64px"></dc-import>
+          </div>
+        </sc-if>
+      </div>
+    </x-import>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1100,&quot;height&quot;:1020}}">
+class Component extends DCLogic {
+  state = { screen: 'login', history: [], qtyAmort: 4 };
+
+  nav(screen) {
+    this.setState(s => ({ screen, history: [...s.history, s.screen] }));
+  }
+
+  back() {
+    this.setState(s => {
+      const h = [...s.history];
+      const prev = h.pop() || 'dashboard';
+      return { screen: prev, history: h };
+    });
+  }
+
+  renderVals() {
+    const s = this.state.screen;
+    const screens = ['login','dashboard','clientes','clienteDetalle','clienteForm','vehiculos','vehiculoDetalle','vehiculoForm','inventario','piezaDetalle','piezaForm','citas','citaDetalle','citaForm','ordenes','ordenDetalle','ordenForm','ajustes'];
+    const vals = {};
+    for (const sc of screens) {
+      vals['show_' + sc] = s === sc;
+      vals['go_' + sc] = () => this.nav(sc);
+    }
+    vals.goBack = () => this.back();
+    vals.logout = () => this.setState({ screen: 'login', history: [], qtyAmort: 4 });
+
+    const tabMap = { dashboard: 'inicio', clientes: 'clientes', vehiculos: 'clientes', inventario: 'inventario', citas: 'citas', ordenes: 'ordenes' };
+    vals.showNav = !!tabMap[s];
+    vals.navActive = tabMap[s] || 'inicio';
+
+    // Regla de stock: amortiguador KYB, quedan 3
+    const stock = 3;
+    const qty = this.state.qtyAmort;
+    const ok = qty <= stock && qty > 0;
+    vals.qtyAmort = qty;
+    vals.incAmort = () => this.setState(st => ({ qtyAmort: Math.min(st.qtyAmort + 1, 9) }));
+    vals.decAmort = () => this.setState(st => ({ qtyAmort: Math.max(st.qtyAmort - 1, 0) }));
+    vals.stockOk = ok;
+    vals.stockError = !ok && qty > stock;
+    vals.qtyColor = ok ? '#fff' : '#D08A7E';
+    vals.amortBorder = ok ? '1px solid #272C33' : '1.5px solid #D08A7E';
+    const amortSub = ok ? qty * 890 : 0;
+    vals.amortSubtotal = ok ? '$' + (qty * 890).toLocaleString() : '—';
+    const subtotal = 840 + amortSub;
+    vals.subtotalPiezas = '$' + subtotal.toLocaleString();
+    vals.totalOrden = '$' + (subtotal + 800).toLocaleString();
+    vals.btnCrearBg = ok ? '#A5B5BF' : '#2A2F36';
+    vals.btnCrearColor = ok ? '#0E0F12' : '#6B747B';
+    vals.crearOrden = () => { if (ok) this.nav('ordenes'); };
+    return vals;
+  }
+}
+</script>
+</body>
+</html>
