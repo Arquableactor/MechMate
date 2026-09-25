@@ -1,4 +1,6 @@
-// Debe ir primero: parchea BigInt.prototype.toJSON antes de cualquier serialización.
+// Deben ir primero: el entorno antes de que @prisma/client lo lea, y el parche
+// de BigInt.prototype.toJSON antes de cualquier serialización.
+import './config/load-env';
 import './common/bigint-serializer';
 
 import { Logger, ValidationPipe } from '@nestjs/common';
