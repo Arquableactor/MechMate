@@ -10,11 +10,13 @@ services:
     # buildea el API y aplica migraciones pendientes contra Neon.
     # NODE_ENV=development solo en el install: con NODE_ENV=production pnpm omite
     # devDependencies (nest CLI, prisma, typescript) y el build fallaría.
+    # turbo (no `pnpm --filter api build`): compila primero los paquetes de los
+    # que depende el API (@repo/types), cuyo dist/ no está en git.
     buildCommand: >-
       corepack enable &&
       NODE_ENV=development pnpm install --frozen-lockfile &&
       pnpm --filter api exec prisma generate &&
-      pnpm --filter api build &&
+      pnpm turbo run build --filter=api &&
       pnpm --filter api exec prisma migrate deploy
     startCommand: pnpm --filter api start:prod
     healthCheckPath: /v1/health
