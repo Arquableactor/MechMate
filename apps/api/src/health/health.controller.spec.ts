@@ -3,6 +3,7 @@ import type { HealthStatus } from '@repo/types';
 import { HealthController } from './health.controller';
 import { HealthService } from './health.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { QueueHealthService } from '../queue/queue-health.service';
 
 describe('HealthController', () => {
   const buildController = async (db: HealthStatus['db']): Promise<HealthController> => {
@@ -15,7 +16,11 @@ describe('HealthController', () => {
 
     const moduleRef = await Test.createTestingModule({
       controllers: [HealthController],
-      providers: [HealthService, { provide: PrismaService, useValue: prismaMock }],
+      providers: [
+        HealthService,
+        { provide: PrismaService, useValue: prismaMock },
+        { provide: QueueHealthService, useValue: { check: jest.fn().mockResolvedValue('up') } },
+      ],
     }).compile();
 
     return moduleRef.get(HealthController);
@@ -27,6 +32,7 @@ describe('HealthController', () => {
 
     expect(result.status).toBe('ok');
     expect(result.db).toBe('up');
+    expect(result.redis).toBe('up');
     expect(typeof result.uptime).toBe('number');
     expect(() => new Date(result.timestamp).toISOString()).not.toThrow();
   });

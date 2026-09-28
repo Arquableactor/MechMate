@@ -10,7 +10,7 @@ export class HealthController {
 
   @Get()
   @ApiOkResponse({
-    description: 'Estado del servicio y conectividad a la base de datos.',
+    description: 'Estado del servicio y conectividad a la base de datos y a Redis.',
     schema: {
       type: 'object',
       properties: {
@@ -18,6 +18,7 @@ export class HealthController {
         uptime: { type: 'number', example: 12.34 },
         timestamp: { type: 'string', example: '2026-06-20T12:00:00.000Z' },
         db: { type: 'string', enum: ['up', 'down'], example: 'up' },
+        redis: { type: 'string', enum: ['up', 'down', 'disabled'], example: 'up' },
       },
     },
   })

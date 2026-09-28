@@ -15,6 +15,8 @@ export interface HealthStatus {
   timestamp: string;
   /** Resultado del `SELECT 1` contra Postgres. */
   db: 'up' | 'down';
+  /** Ping a Redis (colas BullMQ). 'disabled' = sin REDIS_URL (solo dev/test). */
+  redis: 'up' | 'down' | 'disabled';
 }
 
 // --- Identity (Día 2) ---

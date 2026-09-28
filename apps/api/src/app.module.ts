@@ -8,11 +8,13 @@ import { MeModule } from './me/me.module';
 import { PaymentsModule } from './payments/payments.module';
 import { PayoutsModule } from './payouts/payouts.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { QueueModule } from './queue/queue.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule,
+    QueueModule.forRoot(),
     AuthModule,
     AccountsModule,
     HealthModule,

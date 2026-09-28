@@ -32,6 +32,9 @@ services:
         sync: false
       - key: CARDNET_WEBHOOK_SECRET
         sync: false
+      # Internal URL del Key Value de Render (Redis para BullMQ). Obligatorio en prod.
+      - key: REDIS_URL
+        sync: false
       - key: NODE_VERSION
         value: "20"
       # Activa el fail-closed de CardnetProvider: sin CARDNET_WEBHOOK_SECRET la
