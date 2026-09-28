@@ -129,7 +129,7 @@ describe('AccountsService', () => {
   describe('addRole + multi-rol', () => {
     it('una sola cuenta puede tener mechanic + seller + customer a la vez', async () => {
       // Simula el estado acumulado tras añadir los 3 roles.
-      const upsert = jest.fn().mockResolvedValue(undefined);
+      const createMany = jest.fn().mockResolvedValue({ count: 1 });
       const findUniqueOrThrow = jest
         .fn()
         .mockResolvedValueOnce(baseAccount({ roles: rolesOf('mechanic') }))
@@ -137,7 +137,7 @@ describe('AccountsService', () => {
         .mockResolvedValueOnce(
           baseAccount({ roles: rolesOf('mechanic', 'seller', 'customer') }),
         );
-      const service = buildService({ accountRole: { upsert }, account: { findUniqueOrThrow } });
+      const service = buildService({ accountRole: { createMany }, account: { findUniqueOrThrow } });
 
       await service.addRole('acc-1', 'mechanic');
       await service.addRole('acc-1', 'seller');
@@ -146,13 +146,13 @@ describe('AccountsService', () => {
       const roles = final.roles.map((r) => r.role);
       expect(roles).toEqual(expect.arrayContaining(['mechanic', 'seller', 'customer']));
       expect(roles).toHaveLength(3);
-      expect(upsert).toHaveBeenCalledTimes(3);
+      expect(createMany).toHaveBeenCalledTimes(3);
     });
 
-    it('es idempotente: añadir un rol existente no duplica (upsert con update vacío)', async () => {
-      const upsert = jest.fn().mockResolvedValue(undefined);
+    it('es idempotente: añadir un rol existente no duplica (ON CONFLICT DO NOTHING)', async () => {
+      const createMany = jest.fn().mockResolvedValue({ count: 0 });
       const service = buildService({
-        accountRole: { upsert },
+        accountRole: { createMany },
         account: {
           findUniqueOrThrow: jest.fn().mockResolvedValue(baseAccount({ roles: rolesOf('mechanic') })),
         },
@@ -160,12 +160,10 @@ describe('AccountsService', () => {
 
       const result = await service.addRole('acc-1', 'mechanic');
 
-      expect(upsert).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: { account_id_role: { account_id: 'acc-1', role: 'mechanic' } },
-          update: {},
-        }),
-      );
+      expect(createMany).toHaveBeenCalledWith({
+        data: [{ account_id: 'acc-1', role: 'mechanic' }],
+        skipDuplicates: true,
+      });
       expect(result.roles).toHaveLength(1);
     });
   });

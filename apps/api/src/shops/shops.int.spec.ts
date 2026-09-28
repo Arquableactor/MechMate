@@ -63,6 +63,16 @@ describe('Shops (integración, Postgres real)', () => {
     expect(sellerRoles.map((r) => r.role)).toEqual(['seller']);
   });
 
+  it('concurrencia: crear varios talleres a la vez (mismo dueño) no choca al asignar el rol', async () => {
+    const owner = await newAccount();
+    const created = await Promise.all(
+      Array.from({ length: 6 }, (_, i) => shops.create(owner.id, { name: `Sucursal ${i}`, type: 'mechanic_shop' })),
+    );
+    expect(created).toHaveLength(6);
+    const roles = await prisma.accountRole.findMany({ where: { account_id: owner.id } });
+    expect(roles.map((r) => r.role)).toEqual(['mechanic']);
+  });
+
   it('listMine: cada cuenta ve solo sus talleres', async () => {
     const a = await newAccount();
     const b = await newAccount();

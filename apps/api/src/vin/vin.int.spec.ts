@@ -93,11 +93,14 @@ describe('VinService (integración, Postgres real)', () => {
     expect(decode).not.toHaveBeenCalled();
   });
 
-  it('concurrencia: dos consultas simultáneas del mismo VIN dejan una fila', async () => {
-    const vin = randomValidVin();
+  it('concurrencia: muchas consultas simultáneas del mismo VIN → todas responden y queda una fila', async () => {
     const service = new VinService(prisma, fakeDecoder().decoder);
-    await Promise.all([service.decode(vin), service.decode(vin)]);
-    expect(await prisma.vinDecode.count({ where: { vin } })).toBe(1);
+    for (let round = 0; round < 10; round++) {
+      const vin = randomValidVin();
+      const results = await Promise.all(Array.from({ length: 8 }, () => service.decode(vin)));
+      expect(results.every((r) => r.found && r.vehicle?.make === 'HONDA')).toBe(true);
+      expect(await prisma.vinDecode.count({ where: { vin } })).toBe(1);
+    }
   });
 
   it('la DB rechaza un VIN sin normalizar (CHECK)', async () => {

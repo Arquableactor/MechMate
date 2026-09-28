@@ -1,5 +1,5 @@
 import { BadRequestException, Inject, Injectable, Logger } from '@nestjs/common';
-import type { Prisma, VinDecode } from '@prisma/client';
+import { Prisma, type VinDecode } from '@prisma/client';
 import type { DecodedVehicleView, VinDecodeView } from '@repo/types';
 import { PrismaService } from '../prisma/prisma.service';
 import { hasValidCheckDigit, isValidVinFormat, normalizeVin } from './vin';
@@ -85,12 +85,7 @@ export class VinService {
       provider_warnings: decoded.warnings,
       raw: decoded.raw as Prisma.InputJsonValue,
     };
-    // upsert: dos consultas simultáneas del mismo VIN no chocan en el UNIQUE.
-    const saved = await this.prisma.vinDecode.upsert({
-      where: { vin },
-      create: { vin, ...data },
-      update: {},
-    });
+    const saved = await this.saveOnce(vin, data);
     return {
       ...base,
       found: true,
@@ -98,5 +93,22 @@ export class VinService {
       provider_unavailable: false,
       vehicle: toVehicleView(saved),
     };
+  }
+
+  /**
+   * Guarda la decodificación una sola vez. El `upsert` de Prisma NO siempre es
+   * atómico (a veces lo ejecuta como SELECT + INSERT): con dos consultas
+   * simultáneas del mismo VIN, una choca con el UNIQUE (P2002). Ese choque solo
+   * significa "otra consulta ya lo guardó": se lee esa fila.
+   */
+  private async saveOnce(vin: string, data: Omit<Prisma.VinDecodeCreateInput, 'vin'>): Promise<VinDecode> {
+    try {
+      return await this.prisma.vinDecode.create({ data: { vin, ...data } });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        return this.prisma.vinDecode.findUniqueOrThrow({ where: { vin } });
+      }
+      throw error;
+    }
   }
 }

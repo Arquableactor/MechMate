@@ -96,14 +96,14 @@ export class AccountsService {
   }
 
   /**
-   * Añade un rol a la cuenta. Idempotente: si ya lo tiene, no duplica (upsert
-   * sobre la PK compuesta `(account_id, role)`).
+   * Añade un rol a la cuenta. Idempotente y seguro ante concurrencia:
+   * `ON CONFLICT DO NOTHING` sobre la PK `(account_id, role)`. (El `upsert` de
+   * Prisma no es atómico: dos llamadas simultáneas podían chocar con P2002.)
    */
   async addRole(accountId: string, role: Role): Promise<AccountWithRoles> {
-    await this.prisma.accountRole.upsert({
-      where: { account_id_role: { account_id: accountId, role } },
-      create: { account_id: accountId, role },
-      update: {},
+    await this.prisma.accountRole.createMany({
+      data: [{ account_id: accountId, role }],
+      skipDuplicates: true,
     });
 
     return this.prisma.account.findUniqueOrThrow({
