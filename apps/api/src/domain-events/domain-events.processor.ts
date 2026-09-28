@@ -1,6 +1,7 @@
 import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 import { Logger } from '@nestjs/common';
 import { ACTIVE_OUTBOX_TOPICS, type OutboxTopic, RESERVED_OUTBOX_TOPICS } from '@repo/types';
+import * as Sentry from '@sentry/nestjs';
 import { type Job, UnrecoverableError } from 'bullmq';
 import type { DomainEventJob } from '../outbox/outbox-relay.service';
 import { DOMAIN_EVENTS_QUEUE } from '../queue/queue.constants';
@@ -54,6 +55,11 @@ export class DomainEventsProcessor extends WorkerHost {
     const where = `${job.data.topic} ${job.data.id} (intento ${job.attemptsMade}/${max})`;
     if (final) {
       this.logger.error(`Evento a dead-letter: ${where}: ${error.message}`);
+      // Un evento en dead-letter pide intervención humana: va a Sentry.
+      Sentry.captureException(error, {
+        tags: { topic: job.data.topic, queue: DOMAIN_EVENTS_QUEUE },
+        extra: { eventId: job.data.id, attemptsMade: job.attemptsMade },
+      });
     } else {
       this.logger.warn(`Evento falló, se reintenta: ${where}: ${error.message}`);
     }

@@ -1,9 +1,12 @@
+import * as Sentry from '@sentry/nestjs';
 import { type Job, UnrecoverableError } from 'bullmq';
 import type { DomainEventJob } from '../outbox/outbox-relay.service';
 import { DOMAIN_EVENTS_JOB_OPTIONS } from '../queue/queue.constants';
 import { DomainEventsModule } from './domain-events.module';
 import { DomainEventsProcessor } from './domain-events.processor';
 import { DomainEventsRegistry } from './domain-events.registry';
+
+jest.mock('@sentry/nestjs', () => ({ captureException: jest.fn() }));
 
 const event = (topic: string, id = 'evt-1'): DomainEventJob =>
   ({
@@ -71,18 +74,26 @@ describe('DomainEventsProcessor.onFailed', () => {
   beforeEach(() => {
     logger.warn = jest.fn();
     logger.error = jest.fn();
+    jest.mocked(Sentry.captureException).mockClear();
   });
 
-  it('intento intermedio: warning (se reintenta)', () => {
+  it('intento intermedio: warning (se reintenta), sin molestar a Sentry', () => {
     processor.onFailed(jobOf(event('PaymentCaptured'), 2), new Error('x'));
     expect(logger.warn).toHaveBeenCalled();
     expect(logger.error).not.toHaveBeenCalled();
+    expect(Sentry.captureException).not.toHaveBeenCalled();
   });
 
-  it('último intento o error irrecuperable: error (dead-letter)', () => {
-    processor.onFailed(jobOf(event('PaymentCaptured'), 5), new Error('x'));
+  it('último intento o error irrecuperable: error (dead-letter) y reporte a Sentry', () => {
+    const error = new Error('x');
+    processor.onFailed(jobOf(event('PaymentCaptured'), 5), error);
     processor.onFailed(jobOf(event('Inventado'), 1), new UnrecoverableError('y'));
     expect(logger.error).toHaveBeenCalledTimes(2);
+    expect(Sentry.captureException).toHaveBeenCalledTimes(2);
+    expect(Sentry.captureException).toHaveBeenCalledWith(error, {
+      tags: { topic: 'PaymentCaptured', queue: 'domain-events' },
+      extra: { eventId: 'evt-1', attemptsMade: 5 },
+    });
   });
 });
 

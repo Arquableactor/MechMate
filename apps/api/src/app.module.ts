@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { APP_FILTER } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { AccountsModule } from './accounts/accounts.module';
 import { AuthModule } from './auth/auth.module';
@@ -8,6 +9,7 @@ import { LedgerModule } from './ledger/ledger.module';
 import { MeModule } from './me/me.module';
 import { MessagingModule } from './messaging/messaging.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { SentryExceptionFilter } from './observability/sentry-exception.filter';
 import { OutboxModule } from './outbox/outbox.module';
 import { PaymentsModule } from './payments/payments.module';
 import { PayoutsModule } from './payouts/payouts.module';
@@ -31,5 +33,7 @@ import { QueueModule } from './queue/queue.module';
     PaymentsModule,
     PayoutsModule,
   ],
+  // Reporta 5xx a Sentry; la respuesta HTTP la sigue armando Nest.
+  providers: [{ provide: APP_FILTER, useClass: SentryExceptionFilter }],
 })
 export class AppModule {}

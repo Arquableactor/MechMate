@@ -40,6 +40,9 @@ services:
         sync: false
       - key: EMAIL_FROM
         sync: false
+      # Opcional: sin SENTRY_DSN no se reportan errores (solo un warning al arrancar).
+      - key: SENTRY_DSN
+        sync: false
       - key: NODE_VERSION
         value: "20"
       # Activa el fail-closed de CardnetProvider: sin CARDNET_WEBHOOK_SECRET la
