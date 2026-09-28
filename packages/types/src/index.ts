@@ -65,13 +65,18 @@ export interface PaymentView {
   created_at: string;
 }
 
+/** Tópicos de eventos de dominio con lógica en esta fase. */
+export const ACTIVE_OUTBOX_TOPICS = ['PaymentCaptured', 'CommissionAccrued', 'PaymentRefunded'] as const;
+
+/** Reservados para Fase 3 (courier) — solo el contrato, sin lógica. */
+export const RESERVED_OUTBOX_TOPICS = [
+  'DeliveryRequested',
+  'CourierAssigned',
+  'DeliveryInTransit',
+  'DeliveryCompleted',
+] as const;
+
 /** Tópicos de eventos de dominio escritos al outbox. */
 export type OutboxTopic =
-  | 'PaymentCaptured'
-  | 'CommissionAccrued'
-  | 'PaymentRefunded'
-  // Reservados para Fase 3 (courier) — solo el contrato, sin lógica.
-  | 'DeliveryRequested'
-  | 'CourierAssigned'
-  | 'DeliveryInTransit'
-  | 'DeliveryCompleted';
+  | (typeof ACTIVE_OUTBOX_TOPICS)[number]
+  | (typeof RESERVED_OUTBOX_TOPICS)[number];

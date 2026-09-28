@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AccountsModule } from './accounts/accounts.module';
 import { AuthModule } from './auth/auth.module';
+import { DomainEventsModule } from './domain-events/domain-events.module';
 import { HealthModule } from './health/health.module';
 import { LedgerModule } from './ledger/ledger.module';
 import { MeModule } from './me/me.module';
@@ -17,6 +18,7 @@ import { QueueModule } from './queue/queue.module';
     PrismaModule,
     QueueModule.forRoot(),
     OutboxModule,
+    DomainEventsModule.forRoot(),
     AuthModule,
     AccountsModule,
     HealthModule,

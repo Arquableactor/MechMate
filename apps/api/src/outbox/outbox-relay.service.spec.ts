@@ -1,4 +1,4 @@
-import { ConfigService } from '@nestjs/config';
+import type { ConfigService } from '@nestjs/config';
 import type { Queue } from 'bullmq';
 import type { PrismaService } from '../prisma/prisma.service';
 import { OutboxRelayService } from './outbox-relay.service';
@@ -10,6 +10,13 @@ const row = (id: string, topic = 'PaymentCaptured') => ({
   created_at: new Date('2026-09-28T12:00:00.000Z'),
 });
 
+/**
+ * ConfigService de prueba: solo lee del mapa dado, nunca de `process.env` (el
+ * real sí lo hace, y @prisma/client carga el `.env` local al importarse).
+ */
+const stubConfig = (values: Record<string, string> = {}) =>
+  ({ get: (key: string) => values[key] }) as unknown as ConfigService;
+
 function build(rows: ReturnType<typeof row>[], addBulk?: jest.Mock) {
   const tx = {
     $queryRaw: jest.fn().mockResolvedValue(rows),
@@ -19,7 +26,7 @@ function build(rows: ReturnType<typeof row>[], addBulk?: jest.Mock) {
     $transaction: jest.fn((fn: (t: typeof tx) => Promise<unknown>) => fn(tx)),
   } as unknown as PrismaService;
   const queue = addBulk ? ({ addBulk } as unknown as Queue) : undefined;
-  const relay = new OutboxRelayService(prisma, new ConfigService({}), queue);
+  const relay = new OutboxRelayService(prisma, stubConfig(), queue);
   return { relay, tx, prisma };
 }
 
@@ -103,7 +110,7 @@ describe('OutboxRelayService (ciclo de vida)', () => {
     const prisma = { $transaction: jest.fn() } as unknown as PrismaService;
     const relay = new OutboxRelayService(
       prisma,
-      new ConfigService({ OUTBOX_RELAY_ENABLED: 'false' }),
+      stubConfig({ OUTBOX_RELAY_ENABLED: 'false' }),
       { addBulk: jest.fn() } as unknown as Queue,
     );
     relay.onApplicationBootstrap();

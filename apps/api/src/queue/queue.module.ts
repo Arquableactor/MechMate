@@ -1,6 +1,6 @@
 import { BullModule } from '@nestjs/bullmq';
 import { type DynamicModule, Logger, Module } from '@nestjs/common';
-import { DOMAIN_EVENTS_QUEUE } from './queue.constants';
+import { DOMAIN_EVENTS_JOB_OPTIONS, DOMAIN_EVENTS_QUEUE } from './queue.constants';
 import { QueueHealthService } from './queue-health.service';
 
 /**
@@ -31,7 +31,13 @@ export class QueueModule {
   static forRoot(env: NodeJS.ProcessEnv = process.env): DynamicModule {
     const url = resolveRedisUrl(env);
     const bull = url
-      ? [BullModule.forRoot({ connection: { url } }), BullModule.registerQueue({ name: DOMAIN_EVENTS_QUEUE })]
+      ? [
+          BullModule.forRoot({ connection: { url } }),
+          BullModule.registerQueue({
+            name: DOMAIN_EVENTS_QUEUE,
+            defaultJobOptions: DOMAIN_EVENTS_JOB_OPTIONS,
+          }),
+        ]
       : [];
 
     return {
