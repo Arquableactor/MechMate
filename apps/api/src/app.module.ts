@@ -3,6 +3,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { AccountsModule } from './accounts/accounts.module';
 import { AuthModule } from './auth/auth.module';
+import { CustomersModule } from './customers/customers.module';
 import { DomainEventsModule } from './domain-events/domain-events.module';
 import { HealthModule } from './health/health.module';
 import { LedgerModule } from './ledger/ledger.module';
@@ -33,6 +34,7 @@ import { VinModule } from './vin/vin.module';
     MeModule,
     ShopsModule,
     VinModule,
+    CustomersModule,
     LedgerModule,
     PaymentsModule,
     PayoutsModule,

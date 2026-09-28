@@ -119,9 +119,10 @@ model Shop {
   created_at     DateTime @default(now()) @db.Timestamptz(6)
   updated_at     DateTime @updatedAt @db.Timestamptz(6)
 
-  owner   Account      @relation(fields: [owner_id], references: [id])
-  payouts Payout[]
-  members ShopMember[]
+  owner     Account      @relation(fields: [owner_id], references: [id])
+  payouts   Payout[]
+  members   ShopMember[]
+  customers Customer[]
 
   @@map("shops")
 }
@@ -325,4 +326,30 @@ model VinDecode {
   updated_at   DateTime @updatedAt @db.Timestamptz(6)
 
   @@map("vin_decodes")
+}
+
+// --- Clientes del taller (Día 4) ---
+
+/// Cliente de UN taller (multi-tenant por `shop_id`): el mecánico lo registra
+/// aunque nunca instale la app. `account_id` lo vincula a una cuenta si luego se
+/// registra (cruce a Identity por ID, sin FK). Teléfono en E.164 y cédula en
+/// 11 dígitos: un mismo cliente no se duplica dentro del taller.
+model Customer {
+  id          String   @id @default(uuid(7)) @db.Uuid
+  shop_id     String   @db.Uuid
+  full_name   String
+  phone       String?
+  email       String?
+  document_id String?
+  account_id  String?  @db.Uuid
+  notes       String?
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime @updatedAt @db.Timestamptz(6)
+
+  shop Shop @relation(fields: [shop_id], references: [id])
+
+  @@unique([shop_id, phone])
+  @@unique([shop_id, document_id])
+  @@index([shop_id, created_at])
+  @@map("customers")
 }

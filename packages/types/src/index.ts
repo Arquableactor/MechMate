@@ -188,3 +188,27 @@ export interface VinDecodeView {
   /** Avisos en español para mostrar al mecánico. */
   warnings: string[];
 }
+
+// --- Clientes del taller (Día 4) ---
+
+export interface CustomerView {
+  id: string;
+  full_name: string;
+  /** E.164, p. ej. `+18095551234`. */
+  phone: string | null;
+  email: string | null;
+  /** Cédula: 11 dígitos sin guiones. */
+  document_id: string | null;
+  /** Cuenta de la app vinculada, si el cliente se registró. */
+  account_id: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+/** Página de resultados con paginación por cursor. */
+export interface Page<T> {
+  items: T[];
+  /** Pasar como `cursor` para la siguiente página; null si no hay más. */
+  next_cursor: string | null;
+}
