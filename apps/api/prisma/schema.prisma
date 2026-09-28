@@ -88,8 +88,9 @@ model Account {
   created_at DateTime @default(now()) @db.Timestamptz(6)
   updated_at DateTime @updatedAt @db.Timestamptz(6)
 
-  roles AccountRole[]
-  shops Shop[]
+  roles       AccountRole[]
+  shops       Shop[]
+  memberships ShopMember[]
 
   @@map("accounts")
 }
@@ -115,8 +116,9 @@ model Shop {
   created_at     DateTime @default(now()) @db.Timestamptz(6)
   updated_at     DateTime @updatedAt @db.Timestamptz(6)
 
-  owner   Account  @relation(fields: [owner_id], references: [id])
+  owner   Account      @relation(fields: [owner_id], references: [id])
   payouts Payout[]
+  members ShopMember[]
 
   @@map("shops")
 }
@@ -257,4 +259,40 @@ model Message {
   @@index([account_id])
   @@index([status])
   @@map("messages")
+}
+
+// --- Shops: membresía y roles dentro del taller (Día 4) ---
+
+enum ShopMemberRole {
+  owner
+  mechanic
+  advisor
+}
+
+enum ShopMemberStatus {
+  invited
+  active
+}
+
+/// Quién trabaja en cada taller y con qué rol. Es la base del aislamiento
+/// multi-tenant: solo un miembro `active` accede a `/v1/shops/:shopId/...`.
+/// Una invitación pendiente tiene `invited_email` y aún no `account_id`
+/// (CHECKs en la migración: email en minúsculas; `active` exige cuenta).
+model ShopMember {
+  id            String           @id @default(uuid(7)) @db.Uuid
+  shop_id       String           @db.Uuid
+  account_id    String?          @db.Uuid
+  invited_email String?
+  role          ShopMemberRole
+  status        ShopMemberStatus @default(active)
+  created_at    DateTime         @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime         @updatedAt @db.Timestamptz(6)
+
+  shop    Shop     @relation(fields: [shop_id], references: [id])
+  account Account? @relation(fields: [account_id], references: [id], onDelete: Restrict)
+
+  @@unique([shop_id, account_id])
+  @@unique([shop_id, invited_email])
+  @@index([account_id])
+  @@map("shop_members")
 }

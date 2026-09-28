@@ -101,3 +101,24 @@ export interface PaymentRefundedPayload {
 export type OutboxTopic =
   | (typeof ACTIVE_OUTBOX_TOPICS)[number]
   | (typeof RESERVED_OUTBOX_TOPICS)[number];
+
+// --- Shops (Día 4) ---
+
+export const SHOP_TYPES = ['mechanic_shop', 'parts_seller'] as const;
+export type ShopType = (typeof SHOP_TYPES)[number];
+
+/** Rol de una cuenta DENTRO de un taller (distinto del rol global de la cuenta). */
+export const SHOP_MEMBER_ROLES = ['owner', 'mechanic', 'advisor'] as const;
+export type ShopMemberRole = (typeof SHOP_MEMBER_ROLES)[number];
+
+/** Un taller visto por uno de sus miembros. */
+export interface ShopView {
+  id: string;
+  name: string;
+  type: ShopType;
+  /** Comisión de la plataforma en basis points (800 = 8%). */
+  commission_bps: number;
+  /** Rol de quien consulta en este taller. */
+  my_role: ShopMemberRole;
+  created_at: string;
+}

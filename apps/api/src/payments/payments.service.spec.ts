@@ -4,6 +4,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { LedgerService } from '../ledger/ledger.service';
 import { LedgerAccountsService } from '../ledger/ledger-accounts.service';
 import type { PaymentProvider } from './providers/payment-provider.interface';
+import type { ShopsService } from '../shops/shops.service';
 
 const existingPayment = {
   id: 'pay-1',
@@ -31,7 +32,7 @@ const build = (paymentFindUnique: jest.Mock) => {
   const ledger = {} as LedgerService;
   const ledgerAccounts = {} as LedgerAccountsService;
   const provider = {} as PaymentProvider;
-  return new PaymentsService(prisma, ledger, ledgerAccounts, provider);
+  return new PaymentsService(prisma, ledger, ledgerAccounts, provider, {} as ShopsService);
 };
 
 describe('PaymentsService.capture — idempotencia', () => {
@@ -69,6 +70,7 @@ describe('PaymentsService.handleWebhook — máquina de estados', () => {
       {} as LedgerService,
       {} as LedgerAccountsService,
       {} as PaymentProvider,
+      {} as ShopsService,
     );
   };
 

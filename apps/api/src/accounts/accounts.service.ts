@@ -21,11 +21,6 @@ export interface AccountContact {
   fullName: string | null;
 }
 
-export interface ShopOwnerContact {
-  shopName: string;
-  owner: AccountContact;
-}
-
 const toContact = (a: Pick<Account, 'id' | 'email' | 'phone' | 'full_name'>): AccountContact => ({
   accountId: a.id,
   email: a.email,
@@ -104,18 +99,6 @@ export class AccountsService {
       select: { id: true, email: true, phone: true, full_name: true },
     });
     return account && toContact(account);
-  }
-
-  /** Nombre del taller + contacto de su dueño. `null` si el taller no existe. */
-  async getShopOwnerContact(shopId: string): Promise<ShopOwnerContact | null> {
-    const shop = await this.prisma.shop.findUnique({
-      where: { id: shopId },
-      select: {
-        name: true,
-        owner: { select: { id: true, email: true, phone: true, full_name: true } },
-      },
-    });
-    return shop && { shopName: shop.name, owner: toContact(shop.owner) };
   }
 
   /** Mapea la entidad Prisma al contrato público `MeResponse`. */

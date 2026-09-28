@@ -5,6 +5,7 @@ import { commissionCents } from '../common/money';
 import { LedgerAccountsService } from '../ledger/ledger-accounts.service';
 import { LedgerService } from '../ledger/ledger.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { ShopsService } from '../shops/shops.service';
 import { PAYMENT_PROVIDER, type PaymentProvider } from './providers/payment-provider.interface';
 
 export interface CaptureInput {
@@ -56,6 +57,7 @@ export class PaymentsService {
     private readonly ledger: LedgerService,
     private readonly ledgerAccounts: LedgerAccountsService,
     @Inject(PAYMENT_PROVIDER) private readonly provider: PaymentProvider,
+    private readonly shops: ShopsService,
   ) {}
 
   /**
@@ -85,8 +87,8 @@ export class PaymentsService {
     }
 
     // 2) Comisión (BigInt puro). net = total - commission ⇒ el asiento balancea.
-    const shop = await this.prisma.shop.findUniqueOrThrow({ where: { id: input.shopId } });
-    const commission = commissionCents(input.totalCents, shop.commission_bps);
+    const commissionBps = await this.shops.getCommissionBps(input.shopId);
+    const commission = commissionCents(input.totalCents, commissionBps);
     const net = input.totalCents - commission;
 
     // 3) Provisiona las cuentas FUERA de la tx (no envenenar la captura).

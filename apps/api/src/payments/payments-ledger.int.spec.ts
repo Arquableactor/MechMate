@@ -1,7 +1,9 @@
 import { randomUUID } from 'node:crypto';
 import { LedgerAccountsService } from '../ledger/ledger-accounts.service';
 import { LedgerService } from '../ledger/ledger.service';
+import { AccountsService } from '../accounts/accounts.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { ShopsService } from '../shops/shops.service';
 import { PaymentsService, type CaptureInput } from './payments.service';
 import type { PaymentProvider } from './providers/payment-provider.interface';
 
@@ -20,7 +22,8 @@ beforeAll(async () => {
   await prisma.$connect();
   ledger = new LedgerService(prisma);
   ledgerAccounts = new LedgerAccountsService(prisma);
-  payments = new PaymentsService(prisma, ledger, ledgerAccounts, {} as PaymentProvider);
+  const shops = new ShopsService(prisma, new AccountsService(prisma));
+  payments = new PaymentsService(prisma, ledger, ledgerAccounts, {} as PaymentProvider, shops);
 });
 
 afterAll(async () => {

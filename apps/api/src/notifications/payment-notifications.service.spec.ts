@@ -1,7 +1,8 @@
-import type { AccountContact, AccountsService, ShopOwnerContact } from '../accounts/accounts.service';
+import type { AccountContact, AccountsService } from '../accounts/accounts.service';
 import { DomainEventsRegistry } from '../domain-events/domain-events.registry';
 import type { MessagingService, SendMessageInput } from '../messaging/messaging.service';
 import type { DomainEventJob } from '../outbox/outbox-relay.service';
+import type { ShopOwnerContact, ShopsService } from '../shops/shops.service';
 import { PaymentNotificationsService } from './payment-notifications.service';
 import { paymentReceipt, paymentReceived, paymentRefunded } from './payment-templates';
 
@@ -61,11 +62,13 @@ function build(opts: {
     }),
   } as unknown as MessagingService;
   const accounts = {
-    getShopOwnerContact: jest.fn().mockResolvedValue(opts.shop === undefined ? shop : opts.shop),
     getContact: jest.fn().mockResolvedValue(opts.buyer === undefined ? buyer : opts.buyer),
   } as unknown as AccountsService;
+  const shops = {
+    getOwnerContact: jest.fn().mockResolvedValue(opts.shop === undefined ? shop : opts.shop),
+  } as unknown as ShopsService;
   const registry = new DomainEventsRegistry();
-  const service = new PaymentNotificationsService(registry, messaging, accounts);
+  const service = new PaymentNotificationsService(registry, messaging, accounts, shops);
   return { service, registry, sent, messaging };
 }
 

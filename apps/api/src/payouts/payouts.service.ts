@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { LedgerAccountsService } from '../ledger/ledger-accounts.service';
 import { LedgerService } from '../ledger/ledger.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { ShopsService } from '../shops/shops.service';
 
 @Injectable()
 export class PayoutsService {
@@ -9,6 +10,7 @@ export class PayoutsService {
     private readonly prisma: PrismaService,
     private readonly ledger: LedgerService,
     private readonly ledgerAccounts: LedgerAccountsService,
+    private readonly shops: ShopsService,
   ) {}
 
   /**
@@ -25,7 +27,7 @@ export class PayoutsService {
     if (amountCents <= 0n) {
       throw new BadRequestException('El monto del payout debe ser > 0');
     }
-    await this.prisma.shop.findUniqueOrThrow({ where: { id: shopId } });
+    await this.shops.assertExists(shopId);
 
     const sellerAvailable = await this.ledgerAccounts.getOrCreateOwned(
       'seller',

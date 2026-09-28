@@ -15,6 +15,7 @@ import { PaymentsModule } from './payments/payments.module';
 import { PayoutsModule } from './payouts/payouts.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { QueueModule } from './queue/queue.module';
+import { ShopsModule } from './shops/shops.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { QueueModule } from './queue/queue.module';
     AccountsModule,
     HealthModule,
     MeModule,
+    ShopsModule,
     LedgerModule,
     PaymentsModule,
     PayoutsModule,

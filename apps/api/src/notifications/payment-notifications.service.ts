@@ -5,6 +5,7 @@ import { type AccountContact, AccountsService } from '../accounts/accounts.servi
 import { DomainEventsRegistry } from '../domain-events/domain-events.registry';
 import { MessagingService } from '../messaging/messaging.service';
 import type { DomainEventJob } from '../outbox/outbox-relay.service';
+import { ShopsService } from '../shops/shops.service';
 import {
   paymentReceipt,
   paymentReceived,
@@ -34,6 +35,7 @@ export class PaymentNotificationsService implements OnModuleInit {
     private readonly registry: DomainEventsRegistry,
     private readonly messaging: MessagingService,
     private readonly accounts: AccountsService,
+    private readonly shops: ShopsService,
   ) {}
 
   onModuleInit(): void {
@@ -44,7 +46,7 @@ export class PaymentNotificationsService implements OnModuleInit {
   async onPaymentCaptured(event: DomainEventJob): Promise<void> {
     const p = event.payload as PaymentCapturedPayload;
     const [shop, buyer] = await Promise.all([
-      this.accounts.getShopOwnerContact(p.shopId),
+      this.shops.getOwnerContact(p.shopId),
       this.accounts.getContact(p.buyerAccountId),
     ]);
     const shopName = shop?.shopName ?? 'el taller';
@@ -86,7 +88,7 @@ export class PaymentNotificationsService implements OnModuleInit {
   async onPaymentRefunded(event: DomainEventJob): Promise<void> {
     const p = event.payload as PaymentRefundedPayload;
     const [shop, buyer] = await Promise.all([
-      this.accounts.getShopOwnerContact(p.shopId),
+      this.shops.getOwnerContact(p.shopId),
       this.accounts.getContact(p.buyerAccountId),
     ]);
     const shopName = shop?.shopName ?? 'el taller';
