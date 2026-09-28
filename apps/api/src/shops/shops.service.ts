@@ -108,6 +108,16 @@ export class ShopsService {
     return member?.status === 'active' ? member : null;
   }
 
+  /** ¿Es `memberId` un miembro ACTIVO de este taller? (para asignar trabajo) */
+  async isActiveMember(shopId: string, memberId: string): Promise<boolean> {
+    if (!isUUID(memberId)) return false;
+    const member = await this.prisma.shopMember.findFirst({
+      where: { id: memberId, shop_id: shopId, status: 'active' },
+      select: { id: true },
+    });
+    return member !== null;
+  }
+
   /** El taller visto por un miembro (ya autorizado por el guard). */
   async getView(shopId: string, myRole: ShopMemberRole): Promise<ShopView> {
     return toShopView(await this.getOrThrow(shopId), myRole);

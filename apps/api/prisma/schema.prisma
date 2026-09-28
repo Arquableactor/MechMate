@@ -122,8 +122,10 @@ model Shop {
   owner     Account      @relation(fields: [owner_id], references: [id])
   payouts   Payout[]
   members   ShopMember[]
-  customers Customer[]
-  vehicles  Vehicle[]
+  customers   Customer[]
+  vehicles    Vehicle[]
+  sequences   ShopSequence[]
+  work_orders WorkOrder[]
 
   @@map("shops")
 }
@@ -347,8 +349,9 @@ model Customer {
   created_at  DateTime @default(now()) @db.Timestamptz(6)
   updated_at  DateTime @updatedAt @db.Timestamptz(6)
 
-  shop     Shop      @relation(fields: [shop_id], references: [id])
-  vehicles Vehicle[]
+  shop        Shop        @relation(fields: [shop_id], references: [id])
+  vehicles    Vehicle[]
+  work_orders WorkOrder[]
 
   /// Destino de la FK compuesta de vehicles: un vehículo solo puede ser de un
   /// cliente del MISMO taller (lo garantiza la DB, no solo el código).
@@ -390,12 +393,87 @@ model Vehicle {
   created_at     DateTime          @default(now()) @db.Timestamptz(6)
   updated_at     DateTime          @updatedAt @db.Timestamptz(6)
 
-  shop     Shop     @relation(fields: [shop_id], references: [id])
-  customer Customer @relation(fields: [customer_id, shop_id], references: [id, shop_id])
+  shop        Shop        @relation(fields: [shop_id], references: [id])
+  customer    Customer    @relation(fields: [customer_id, shop_id], references: [id, shop_id])
+  work_orders WorkOrder[]
 
+  /// Destino de la FK compuesta de work_orders (vehículo del MISMO taller).
+  @@unique([id, shop_id])
   @@unique([shop_id, vin])
   @@unique([shop_id, chassis_number])
   @@unique([shop_id, plate])
   @@index([shop_id, customer_id])
   @@map("vehicles")
+}
+
+// --- Órdenes de trabajo (Día 5) ---
+
+/// Contadores por taller (p. ej. número de OT). Se incrementan con un
+/// INSERT … ON CONFLICT DO UPDATE … RETURNING atómico, dentro de la tx del
+/// alta: sin duplicados bajo concurrencia y sin huecos (un rollback deshace
+/// también el incremento).
+model ShopSequence {
+  id         String   @id @default(uuid(7)) @db.Uuid
+  shop_id    String   @db.Uuid
+  name       String
+  value      Int
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @updatedAt @db.Timestamptz(6)
+
+  shop Shop @relation(fields: [shop_id], references: [id])
+
+  @@unique([shop_id, name])
+  @@map("shop_sequences")
+}
+
+/// Estados de la OT. Día 5 usa draft → in_progress → completed y cancelled;
+/// awaiting_approval/approved llegan con la DVI (Día 6) e invoiced/paid con el
+/// cobro (Día 7).
+enum WorkOrderStatus {
+  draft
+  awaiting_approval
+  approved
+  in_progress
+  completed
+  invoiced
+  paid
+  cancelled
+}
+
+/// Orden de trabajo de un taller. FKs compuestas: cliente y vehículo del MISMO
+/// taller (lo garantiza la DB). Que el vehículo sea de ese cliente se valida en
+/// el servicio al crear (sin FK: si el vehículo cambia de dueño, las OT viejas
+/// conservan al dueño de ese momento). Totales en centavos, recalculados en la
+/// misma tx que cada cambio de ítems (Día 5.2).
+model WorkOrder {
+  id                    String          @id @default(uuid(7)) @db.Uuid
+  shop_id               String          @db.Uuid
+  number                Int
+  customer_id           String          @db.Uuid
+  vehicle_id            String          @db.Uuid
+  status                WorkOrderStatus @default(draft)
+  complaint             String
+  notes                 String?
+  mileage_in            Int?
+  /// Miembro del taller asignado (shop_members.id). Sin FK: si se le quita del
+  /// taller, la OT conserva el dato histórico y la vista lo ignora.
+  assigned_member_id    String?         @db.Uuid
+  promised_at           DateTime?       @db.Timestamptz(6)
+  currency              String          @default("DOP")
+  subtotal_cents        BigInt          @default(0)
+  tax_cents             BigInt          @default(0)
+  total_cents           BigInt          @default(0)
+  created_by_account_id String          @db.Uuid
+  created_at            DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime        @updatedAt @db.Timestamptz(6)
+
+  shop     Shop     @relation(fields: [shop_id], references: [id])
+  customer Customer @relation(fields: [customer_id, shop_id], references: [id, shop_id])
+  vehicle  Vehicle  @relation(fields: [vehicle_id, shop_id], references: [id, shop_id])
+
+  @@unique([shop_id, number])
+  @@index([shop_id, status])
+  @@index([shop_id, customer_id])
+  @@index([shop_id, vehicle_id])
+  @@map("work_orders")
 }

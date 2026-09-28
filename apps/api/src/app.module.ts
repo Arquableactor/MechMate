@@ -19,6 +19,7 @@ import { QueueModule } from './queue/queue.module';
 import { ShopsModule } from './shops/shops.module';
 import { VehiclesModule } from './vehicles/vehicles.module';
 import { VinModule } from './vin/vin.module';
+import { WorkOrdersModule } from './work-orders/work-orders.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { VinModule } from './vin/vin.module';
     VinModule,
     CustomersModule,
     VehiclesModule,
+    WorkOrdersModule,
     LedgerModule,
     PaymentsModule,
     PayoutsModule,

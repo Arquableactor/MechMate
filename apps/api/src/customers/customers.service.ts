@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { type Customer, Prisma } from '@prisma/client';
-import type { CustomerView, Page } from '@repo/types';
+import type { CustomerSummary, CustomerView, Page } from '@repo/types';
 import { isUUID } from 'class-validator';
 import { PrismaService } from '../prisma/prisma.service';
 import { normalizeCedula, normalizeEmail, normalizeName, normalizePhone } from './contact-normalize';
@@ -62,6 +62,15 @@ export class CustomersService {
 
   async get(shopId: string, customerId: string): Promise<CustomerView> {
     return toCustomerView(await this.getOrThrow(shopId, customerId));
+  }
+
+  /** Resúmenes en lote (una consulta), solo de este taller. Para listas de OT. */
+  async getSummaries(shopId: string, ids: string[]): Promise<Map<string, CustomerSummary>> {
+    const rows = await this.prisma.customer.findMany({
+      where: { shop_id: shopId, id: { in: [...new Set(ids)] } },
+      select: { id: true, full_name: true, phone: true },
+    });
+    return new Map(rows.map((r) => [r.id, r]));
   }
 
   /** Lanza 404 si el cliente no es de este taller (lo usa Vehículos). */

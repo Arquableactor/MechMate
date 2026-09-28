@@ -238,3 +238,57 @@ export interface VehicleView {
   created_at: string;
   updated_at: string;
 }
+
+// --- Órdenes de trabajo (Día 5) ---
+
+export const WORK_ORDER_STATUSES = [
+  'draft',
+  'awaiting_approval',
+  'approved',
+  'in_progress',
+  'completed',
+  'invoiced',
+  'paid',
+  'cancelled',
+] as const;
+export type WorkOrderStatus = (typeof WORK_ORDER_STATUSES)[number];
+
+/** Resumen del cliente para listas (sin pedirlo aparte). */
+export interface CustomerSummary {
+  id: string;
+  full_name: string;
+  phone: string | null;
+}
+
+/** Resumen del vehículo para listas. */
+export interface VehicleSummary {
+  id: string;
+  make: string;
+  model: string | null;
+  year: number | null;
+  plate: string | null;
+}
+
+export interface WorkOrderView {
+  id: string;
+  number: number;
+  /** Número legible por taller: `OT-0001`. */
+  code: string;
+  status: WorkOrderStatus;
+  customer: CustomerSummary;
+  vehicle: VehicleSummary;
+  /** Falla que reporta el cliente. */
+  complaint: string;
+  notes: string | null;
+  mileage_in: number | null;
+  /** shop_members.id asignado; null si no hay o ya no es miembro. */
+  assigned_member_id: string | null;
+  promised_at: string | null;
+  currency: string;
+  subtotal_cents: Cents;
+  tax_cents: Cents;
+  total_cents: Cents;
+  created_by_account_id: string;
+  created_at: string;
+  updated_at: string;
+}

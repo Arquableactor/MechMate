@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma, type Vehicle } from '@prisma/client';
-import type { DecodedVehicleView, Page, VehicleView } from '@repo/types';
+import type { DecodedVehicleView, Page, VehicleSummary, VehicleView } from '@repo/types';
 import { isUUID } from 'class-validator';
 import { CustomersService } from '../customers/customers.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -147,6 +147,27 @@ export class VehiclesService {
 
   async get(shopId: string, vehicleId: string): Promise<VehicleView> {
     return toVehicleView(await this.getOrThrow(shopId, vehicleId));
+  }
+
+  /** Resúmenes en lote (una consulta), solo de este taller. Para listas de OT. */
+  async getSummaries(shopId: string, ids: string[]): Promise<Map<string, VehicleSummary>> {
+    const rows = await this.prisma.vehicle.findMany({
+      where: { shop_id: shopId, id: { in: [...new Set(ids)] } },
+      select: { id: true, make: true, model: true, year: true, plate: true },
+    });
+    return new Map(rows.map((r) => [r.id, r]));
+  }
+
+  /**
+   * Registra el kilometraje leído (p. ej. al recibir el vehículo para una OT).
+   * Solo lo SUBE: una lectura menor (odómetro cambiado, error de tipeo) no
+   * pisa el valor guardado. Atómico: un solo UPDATE condicional.
+   */
+  async recordMileage(shopId: string, vehicleId: string, km: number): Promise<void> {
+    await this.prisma.vehicle.updateMany({
+      where: { id: vehicleId, shop_id: shopId, OR: [{ mileage_km: null }, { mileage_km: { lt: km } }] },
+      data: { mileage_km: km },
+    });
   }
 
   /**
