@@ -1,7 +1,7 @@
 import type { ConfigService } from '@nestjs/config';
 import { passportJwtSecret } from 'jwks-rsa';
 import type { AccountsService } from '../accounts/accounts.service';
-import { JwtStrategy } from './jwt.strategy';
+import { CLAIMS_NAMESPACE, JwtStrategy, toAuth0Claims } from './jwt.strategy';
 
 // Sin red: capturamos las opciones con que se arma el proveedor de llaves JWKS.
 jest.mock('jwks-rsa', () => ({ passportJwtSecret: jest.fn(() => jest.fn()) }));
@@ -58,4 +58,48 @@ describe('JwtStrategy', () => {
       expect(() => new JwtStrategy(stubConfig(rest), accounts)).toThrow(missing);
     },
   );
+});
+
+describe('toAuth0Claims', () => {
+  const ns = (k: string) => `${CLAIMS_NAMESPACE}${k}`;
+
+  it('lee los claims con prefijo que agrega la Action post-login', () => {
+    expect(
+      toAuth0Claims({
+        sub: 'auth0|1',
+        [ns('email')]: 'ana@mail.do',
+        [ns('email_verified')]: true,
+        [ns('name')]: 'Ana',
+      }),
+    ).toEqual({ sub: 'auth0|1', email: 'ana@mail.do', email_verified: true, name: 'Ana', phone_number: undefined });
+  });
+
+  it('el prefijo tiene prioridad sobre el claim estándar', () => {
+    expect(
+      toAuth0Claims({ sub: 'x', email: 'viejo@mail.do', [ns('email')]: 'nuevo@mail.do' }).email,
+    ).toBe('nuevo@mail.do');
+  });
+
+  it('cae a los claims estándar si no hay prefijo', () => {
+    expect(toAuth0Claims({ sub: 'x', email: 'a@b.do', email_verified: true })).toMatchObject({
+      email: 'a@b.do',
+      email_verified: true,
+    });
+  });
+
+  it('SEGURIDAD: email_verified solo es true si viene exactamente `true`', () => {
+    for (const v of ['true', 1, 'yes', undefined, null]) {
+      expect(toAuth0Claims({ sub: 'x', email: 'a@b.do', [ns('email_verified')]: v }).email_verified).toBe(false);
+    }
+  });
+
+  it('token de máquina (M2M, sin identidad): solo sub', () => {
+    expect(toAuth0Claims({ sub: 'abc@clients', gty: 'client-credentials' })).toEqual({
+      sub: 'abc@clients',
+      email: undefined,
+      email_verified: false,
+      name: undefined,
+      phone_number: undefined,
+    });
+  });
 });
