@@ -35,6 +35,11 @@ services:
       # Internal URL del Key Value de Render (Redis para BullMQ). Obligatorio en prod.
       - key: REDIS_URL
         sync: false
+      # Opcionales: sin RESEND_API_KEY el email queda simulado (log + tabla messages).
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
       - key: NODE_VERSION
         value: "20"
       # Activa el fail-closed de CardnetProvider: sin CARDNET_WEBHOOK_SECRET la

@@ -217,3 +217,44 @@ model OutboxEvent {
   @@index([published_at])
   @@map("outbox")
 }
+
+// --- Messaging (Día 3) ---
+
+enum MessageChannel {
+  email
+  push
+  whatsapp
+}
+
+enum MessageStatus {
+  queued
+  sent
+  failed
+}
+
+/// Registro de cada mensaje saliente (auditable). Lo escribe SOLO el módulo de
+/// mensajería. `account_id` cruza a Identity por ID, sin FK (fronteras entre
+/// módulos). `dedupe_key` hace idempotente el envío: un reintento del mismo
+/// evento no vuelve a mandar lo que ya salió.
+model Message {
+  id           String         @id @default(uuid(7)) @db.Uuid
+  account_id   String?        @db.Uuid
+  channel      MessageChannel
+  recipient    String
+  template     String
+  subject      String?
+  body         String
+  payload      Json           @default("{}") @db.JsonB
+  status       MessageStatus  @default(queued)
+  attempts     Int            @default(0)
+  last_error   String?
+  provider_ref String?
+  dedupe_key   String         @unique
+  sent_at      DateTime?      @db.Timestamptz(6)
+  created_at   DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime       @updatedAt @db.Timestamptz(6)
+
+  @@index([account_id])
+  @@index([status])
+  @@map("messages")
+}
