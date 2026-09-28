@@ -10,6 +10,10 @@ const moduleFileExtensions = ['ts', 'js', 'json'];
 
 const config: Config = {
   testTimeout: 60000,
+  // Los tests de integración comparten UN Postgres: con 1 worker por núcleo y
+  // un pool de Prisma por worker, los picos agotaban conexiones (timeouts al
+  // conectar). 4 workers × pool de 5 (setup-env) = 20 conexiones como máximo.
+  maxWorkers: 4,
   projects: [
     {
       displayName: 'unit',
