@@ -156,3 +156,35 @@ export interface ShopMemberInvitedPayload {
   status: 'invited' | 'active';
   invitedByName: string | null;
 }
+
+// --- VIN (Día 4) ---
+
+/** Datos del vehículo según su VIN. */
+export interface DecodedVehicleView {
+  make: string;
+  model: string | null;
+  year: number | null;
+  trim: string | null;
+  /** Legible: `3.0L V6`, `1.8L 4 cil.` */
+  engine: string | null;
+  fuel_type: string | null;
+  body_class: string | null;
+  drive_type: string | null;
+  transmission: string | null;
+}
+
+/** Resultado de `GET /v1/vin/:vin`. */
+export interface VinDecodeView {
+  /** VIN normalizado (mayúsculas, sin espacios ni guiones). */
+  vin: string;
+  /** Dígito verificador (posición 9). false no invalida: solo es un aviso. */
+  check_digit_valid: boolean;
+  found: boolean;
+  /** De dónde salió: `cache` o el nombre del proveedor (`nhtsa`, `tecdoc`…). null si no se encontró. */
+  source: string | null;
+  /** El proveedor no respondió: se puede reintentar o cargar el vehículo a mano. */
+  provider_unavailable: boolean;
+  vehicle: DecodedVehicleView | null;
+  /** Avisos en español para mostrar al mecánico. */
+  warnings: string[];
+}

@@ -299,3 +299,30 @@ model ShopMember {
   @@index([account_id])
   @@map("shop_members")
 }
+
+// --- VIN (Día 4) ---
+
+/// Caché GLOBAL de VINs decodificados (datos públicos del fabricante, no del
+/// taller: no es multi-tenant). Evita repetir llamadas al proveedor y la reusa
+/// Fitment del marketplace (Día 9). Solo se guardan decodificaciones exitosas.
+model VinDecode {
+  id           String   @id @default(uuid(7)) @db.Uuid
+  vin          String   @unique
+  provider     String
+  make         String
+  model        String?
+  year         Int?
+  trim         String?
+  engine       String?
+  fuel_type    String?
+  body_class   String?
+  drive_type   String?
+  transmission String?
+  /// Avisos del proveedor tal cual (auditoría).
+  provider_warnings String[] @default([])
+  raw          Json     @db.JsonB
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime @updatedAt @db.Timestamptz(6)
+
+  @@map("vin_decodes")
+}
