@@ -123,6 +123,7 @@ model Shop {
   payouts   Payout[]
   members   ShopMember[]
   customers Customer[]
+  vehicles  Vehicle[]
 
   @@map("shops")
 }
@@ -346,10 +347,55 @@ model Customer {
   created_at  DateTime @default(now()) @db.Timestamptz(6)
   updated_at  DateTime @updatedAt @db.Timestamptz(6)
 
-  shop Shop @relation(fields: [shop_id], references: [id])
+  shop     Shop      @relation(fields: [shop_id], references: [id])
+  vehicles Vehicle[]
 
+  /// Destino de la FK compuesta de vehicles: un vehículo solo puede ser de un
+  /// cliente del MISMO taller (lo garantiza la DB, no solo el código).
+  @@unique([id, shop_id])
   @@unique([shop_id, phone])
   @@unique([shop_id, document_id])
   @@index([shop_id, created_at])
   @@map("customers")
+}
+
+// --- Vehículos del taller (Día 4) ---
+
+enum VehicleDataSource {
+  vin_decode
+  manual
+}
+
+/// Vehículo de un cliente, por taller (multi-tenant). La FK compuesta
+/// (customer_id, shop_id) impide EN LA DB asignarlo a un cliente de otro
+/// taller. Se identifica por VIN, chasis (importados de Japón) o placa: al
+/// menos uno (CHECK), sin repetirse dentro del taller.
+model Vehicle {
+  id             String            @id @default(uuid(7)) @db.Uuid
+  shop_id        String            @db.Uuid
+  customer_id    String            @db.Uuid
+  vin            String?
+  chassis_number String?
+  plate          String?
+  make           String
+  model          String?
+  year           Int?
+  trim           String?
+  engine         String?
+  fuel_type      String?
+  color          String?
+  mileage_km     Int?
+  data_source    VehicleDataSource
+  notes          String?
+  created_at     DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime          @updatedAt @db.Timestamptz(6)
+
+  shop     Shop     @relation(fields: [shop_id], references: [id])
+  customer Customer @relation(fields: [customer_id, shop_id], references: [id, shop_id])
+
+  @@unique([shop_id, vin])
+  @@unique([shop_id, chassis_number])
+  @@unique([shop_id, plate])
+  @@index([shop_id, customer_id])
+  @@map("vehicles")
 }

@@ -212,3 +212,29 @@ export interface Page<T> {
   /** Pasar como `cursor` para la siguiente página; null si no hay más. */
   next_cursor: string | null;
 }
+
+// --- Vehículos del taller (Día 4) ---
+
+export interface VehicleView {
+  id: string;
+  customer_id: string;
+  /** VIN normalizado (17). */
+  vin: string | null;
+  /** Número de chasis (vehículos sin VIN, p. ej. importados de Japón). */
+  chassis_number: string | null;
+  /** Placa sin espacios ni guiones, p. ej. `A123456`. */
+  plate: string | null;
+  make: string;
+  model: string | null;
+  year: number | null;
+  trim: string | null;
+  engine: string | null;
+  fuel_type: string | null;
+  color: string | null;
+  mileage_km: number | null;
+  /** De dónde salieron los datos técnicos. */
+  data_source: 'vin_decode' | 'manual';
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}

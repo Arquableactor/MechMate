@@ -17,6 +17,7 @@ import { PayoutsModule } from './payouts/payouts.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { QueueModule } from './queue/queue.module';
 import { ShopsModule } from './shops/shops.module';
+import { VehiclesModule } from './vehicles/vehicles.module';
 import { VinModule } from './vin/vin.module';
 
 @Module({
@@ -35,6 +36,7 @@ import { VinModule } from './vin/vin.module';
     ShopsModule,
     VinModule,
     CustomersModule,
+    VehiclesModule,
     LedgerModule,
     PaymentsModule,
     PayoutsModule,
