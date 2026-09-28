@@ -49,3 +49,28 @@ export function formatMoney(cents: bigint, currency: string): string {
   const frac = (abs % 100n).toString().padStart(2, '0');
   return `${sign}${CURRENCY_SYMBOL[currency] ?? `${currency} `}${whole}.${frac}`;
 }
+
+/** Importes de una línea (OT, factura). Todo en BigInt centavos. */
+export interface LineAmounts {
+  subtotal: bigint;
+  tax: bigint;
+  total: bigint;
+}
+
+/**
+ * Importes de una línea: subtotal = round(cantidad × precio), ITBIS =
+ * round(subtotal × tasa), total = subtotal + ITBIS. Redondeo half-up por
+ * línea (el total del documento es la suma de las líneas, así cada línea
+ * cuadra al centavo en la factura). La cantidad viene en milésimas (1.5 =
+ * 1500). Es EXACTAMENTE la regla que exigen los CHECK de work_order_items.
+ */
+export function lineAmounts(quantityMilli: bigint, unitPriceCents: bigint, taxRateBps: number): LineAmounts {
+  if (quantityMilli <= 0n) throw new BadRequestException('La cantidad debe ser mayor que 0');
+  if (unitPriceCents < 0n) throw new BadRequestException('El precio no puede ser negativo');
+  if (!Number.isInteger(taxRateBps) || taxRateBps < 0 || taxRateBps > 10000) {
+    throw new BadRequestException('tax_rate_bps fuera de rango [0, 10000]');
+  }
+  const subtotal = (quantityMilli * unitPriceCents + 500n) / 1000n;
+  const tax = (subtotal * BigInt(taxRateBps) + 5000n) / 10000n;
+  return { subtotal, tax, total: subtotal + tax };
+}

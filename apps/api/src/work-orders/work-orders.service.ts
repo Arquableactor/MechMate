@@ -1,12 +1,13 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import type { Prisma, WorkOrder } from '@prisma/client';
-import type { Page, WorkOrderStatus, WorkOrderView } from '@repo/types';
+import type { Prisma, WorkOrder, WorkOrderItem } from '@prisma/client';
+import type { Page, WorkOrderDetailView, WorkOrderItemView, WorkOrderStatus, WorkOrderView } from '@repo/types';
 import { isUUID } from 'class-validator';
 import { CustomersService } from '../customers/customers.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { nextShopSequence } from '../shops/shop-sequences';
 import { ShopsService } from '../shops/shops.service';
 import { VehiclesService } from '../vehicles/vehicles.service';
+import { formatQuantity } from './quantity';
 
 export interface CreateWorkOrderInput {
   customer_id: string;
@@ -30,7 +31,12 @@ export const EDITABLE_STATUSES: readonly WorkOrderStatus[] = [
 
 const NOT_FOUND = 'Orden de trabajo no encontrada';
 const SEQUENCE = 'work_order';
-const TX_OPTIONS = { maxWait: 10_000, timeout: 20_000 };
+/**
+ * Timeouts de las tx de OT. Los cambios a un mismo taller/OT se serializan en
+ * bloqueos de fila: con carga, una tx puede esperar a las anteriores (el
+ * default de Prisma, 5 s, expiraba bajo concurrencia).
+ */
+export const TX_OPTIONS = { maxWait: 10_000, timeout: 20_000 };
 const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 50;
 
@@ -61,9 +67,6 @@ export class WorkOrdersService {
     if (!complaint) throw new BadRequestException('Describe la falla que reporta el cliente.');
     await this.assertAssignable(shopId, input.assigned_member_id);
 
-    // Las altas de un mismo taller se serializan en la fila del contador: con
-    // carga, una tx puede esperar a las anteriores. Timeouts explícitos (el
-    // default de Prisma, 5 s, expiraba bajo concurrencia).
     const created = await this.prisma.$transaction(async (tx) => {
       const number = await nextShopSequence(tx, shopId, SEQUENCE);
       return tx.workOrder.create({
@@ -89,6 +92,16 @@ export class WorkOrdersService {
 
   async get(shopId: string, workOrderId: string): Promise<WorkOrderView> {
     return (await this.toViews(shopId, [await this.getOrThrow(shopId, workOrderId)]))[0];
+  }
+
+  /** La OT con sus líneas, en el orden en que se agregaron. */
+  async getDetail(shopId: string, workOrderId: string): Promise<WorkOrderDetailView> {
+    const view = await this.get(shopId, workOrderId);
+    const items = await this.prisma.workOrderItem.findMany({
+      where: { work_order_id: view.id, shop_id: shopId },
+      orderBy: { id: 'asc' },
+    });
+    return { ...view, items: items.map(toItemView) };
   }
 
   /** Edita datos de cabecera. Una OT cerrada (completada/facturada/cancelada) no se edita. */
@@ -161,7 +174,7 @@ export class WorkOrdersService {
     return wo;
   }
 
-  assertEditable(wo: WorkOrder): void {
+  assertEditable(wo: Pick<WorkOrder, 'status' | 'number'>): void {
     if (!EDITABLE_STATUSES.includes(wo.status)) {
       throw new ConflictException(`La orden ${workOrderCode(wo.number)} está ${wo.status}: ya no se puede editar.`);
     }
@@ -202,4 +215,21 @@ export class WorkOrdersService {
       updated_at: wo.updated_at.toISOString(),
     }));
   }
+}
+
+export function toItemView(i: WorkOrderItem): WorkOrderItemView {
+  return {
+    id: i.id,
+    type: i.type,
+    description: i.description,
+    part_number: i.part_number,
+    quantity: formatQuantity(i.quantity_milli),
+    unit_price_cents: i.unit_price_cents.toString(),
+    tax_rate_bps: i.tax_rate_bps,
+    subtotal_cents: i.subtotal_cents.toString(),
+    tax_cents: i.tax_cents.toString(),
+    total_cents: i.total_cents.toString(),
+    created_at: i.created_at.toISOString(),
+    updated_at: i.updated_at.toISOString(),
+  };
 }

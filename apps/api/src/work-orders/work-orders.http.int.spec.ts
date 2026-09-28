@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { type CanActivate, type ExecutionContext, type INestApplication, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
-import type { Page, ShopView, WorkOrderView } from '@repo/types';
+import type { Page, ShopView, WorkOrderDetailView, WorkOrderView } from '@repo/types';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { PrismaModule } from '../prisma/prisma.module';
 import { PrismaService } from '../prisma/prisma.service';
@@ -95,6 +95,36 @@ describe('OT por HTTP', () => {
     const wo = await json<WorkOrderView>(await call(ownerId, 'POST', path, body));
     const patched = await json<WorkOrderView>(await call(ownerId, 'PATCH', `${path}/${wo.id}`, { customer_id: randomUUID() }));
     expect(patched.customer.id).toBe(body.customer_id);
+  });
+
+  it('líneas: agregar (201), editar, quitar; precio como número o string; validación 400', async () => {
+    const { ownerId, shopId, body } = await setup();
+    const wo = await json<WorkOrderView>(await call(ownerId, 'POST', `/shops/${shopId}/work-orders`, body));
+    const path = `/shops/${shopId}/work-orders/${wo.id}/items`;
+
+    const added = await call(ownerId, 'POST', path, { type: 'labor', description: 'Diagnóstico', quantity: 1.5, unit_price_cents: 120000 });
+    expect(added.status).toBe(201);
+    const detail = await json<WorkOrderDetailView>(added);
+    expect(detail).toMatchObject({ total_cents: '212400', items: [{ quantity: '1.5', total_cents: '212400' }] });
+
+    const edited = await json<WorkOrderDetailView>(
+      await call(ownerId, 'PATCH', `${path}/${detail.items[0].id}`, { tax_rate_bps: 0 }),
+    );
+    expect(edited.total_cents).toBe('180000');
+
+    for (const bad of [
+      { type: 'labor', description: 'x', quantity: '0', unit_price_cents: '100' },
+      { type: 'labor', description: 'x', quantity: '1', unit_price_cents: '12.50' },
+      { type: 'otro', description: 'x', quantity: '1', unit_price_cents: '100' },
+      { type: 'part', description: 'x', quantity: '1', unit_price_cents: '100', tax_rate_bps: 20000 },
+    ]) {
+      expect((await call(ownerId, 'POST', path, bad)).status).toBe(400);
+    }
+
+    const removed = await call(ownerId, 'DELETE', `${path}/${detail.items[0].id}`);
+    expect(removed.status).toBe(200);
+    expect(await json<WorkOrderDetailView>(removed)).toMatchObject({ items: [], total_cents: '0' });
+    expect((await call(ownerId, 'GET', `/shops/${shopId}/work-orders/${wo.id}`)).status).toBe(200);
   });
 
   it('otro taller: 404', async () => {

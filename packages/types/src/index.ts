@@ -292,3 +292,30 @@ export interface WorkOrderView {
   created_at: string;
   updated_at: string;
 }
+
+export const WORK_ORDER_ITEM_TYPES = ['labor', 'part'] as const;
+export type WorkOrderItemType = (typeof WORK_ORDER_ITEM_TYPES)[number];
+
+/** Línea de una OT. */
+export interface WorkOrderItemView {
+  id: string;
+  /** labor = mano de obra; part = pieza. */
+  type: WorkOrderItemType;
+  description: string;
+  part_number: string | null;
+  /** Decimal como string: `"1.5"` (horas, unidades…). */
+  quantity: string;
+  unit_price_cents: Cents;
+  /** ITBIS en basis points: 1800 = 18%, 0 = exento. */
+  tax_rate_bps: number;
+  subtotal_cents: Cents;
+  tax_cents: Cents;
+  total_cents: Cents;
+  created_at: string;
+  updated_at: string;
+}
+
+/** OT con sus líneas (detalle). */
+export interface WorkOrderDetailView extends WorkOrderView {
+  items: WorkOrderItemView[];
+}

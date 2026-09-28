@@ -467,13 +467,50 @@ model WorkOrder {
   created_at            DateTime        @default(now()) @db.Timestamptz(6)
   updated_at            DateTime        @updatedAt @db.Timestamptz(6)
 
-  shop     Shop     @relation(fields: [shop_id], references: [id])
-  customer Customer @relation(fields: [customer_id, shop_id], references: [id, shop_id])
-  vehicle  Vehicle  @relation(fields: [vehicle_id, shop_id], references: [id, shop_id])
+  shop     Shop            @relation(fields: [shop_id], references: [id])
+  customer Customer        @relation(fields: [customer_id, shop_id], references: [id, shop_id])
+  vehicle  Vehicle         @relation(fields: [vehicle_id, shop_id], references: [id, shop_id])
+  items    WorkOrderItem[]
 
+  /// Destino de la FK compuesta de work_order_items.
+  @@unique([id, shop_id])
   @@unique([shop_id, number])
   @@index([shop_id, status])
   @@index([shop_id, customer_id])
   @@index([shop_id, vehicle_id])
   @@map("work_orders")
+}
+
+enum WorkOrderItemType {
+  labor
+  part
+}
+
+/// Línea de una OT: mano de obra o pieza. La aritmética del dinero la
+/// garantiza la DB (CHECKs de la migración): subtotal = redondeo(cantidad ×
+/// precio), ITBIS = redondeo(subtotal × tasa), total = subtotal + ITBIS.
+/// Cantidad en milésimas (1.5 h = 1500): nada de floats.
+model WorkOrderItem {
+  id                        String            @id @default(uuid(7)) @db.Uuid
+  shop_id                   String            @db.Uuid
+  work_order_id             String            @db.Uuid
+  type                      WorkOrderItemType
+  description               String
+  part_number               String?
+  quantity_milli            Int
+  unit_price_cents          BigInt
+  /// Tasa de ITBIS en basis points (1800 = 18%; 0 = exento).
+  tax_rate_bps              Int               @default(1800)
+  subtotal_cents            BigInt
+  tax_cents                 BigInt
+  total_cents               BigInt
+  /// Reservado para el Día 12: compra de la pieza en el marketplace.
+  marketplace_order_item_id String?           @db.Uuid
+  created_at                DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at                DateTime          @updatedAt @db.Timestamptz(6)
+
+  work_order WorkOrder @relation(fields: [work_order_id, shop_id], references: [id, shop_id], onDelete: Cascade)
+
+  @@index([work_order_id])
+  @@map("work_order_items")
 }

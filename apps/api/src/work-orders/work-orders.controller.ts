@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiConflictResponse,
@@ -12,8 +12,16 @@ import {
   OmitType,
   PartialType,
 } from '@nestjs/swagger';
-import { type Page, WORK_ORDER_STATUSES, type WorkOrderStatus, type WorkOrderView } from '@repo/types';
-import { Type } from 'class-transformer';
+import {
+  type Page,
+  WORK_ORDER_ITEM_TYPES,
+  WORK_ORDER_STATUSES,
+  type WorkOrderDetailView,
+  type WorkOrderItemType,
+  type WorkOrderStatus,
+  type WorkOrderView,
+} from '@repo/types';
+import { Transform, Type } from 'class-transformer';
 import {
   IsIn,
   IsInt,
@@ -22,6 +30,7 @@ import {
   IsString,
   IsUUID,
   Length,
+  Matches,
   Max,
   MaxLength,
   Min,
@@ -30,6 +39,7 @@ import {
 import { type AuthenticatedAccount, CurrentUser } from '../auth/current-user.decorator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ShopAccessGuard } from '../shops/shop-access.guard';
+import { WorkOrderItemsService } from './work-order-items.service';
 import { WorkOrdersService } from './work-orders.service';
 
 export class CreateWorkOrderDto {
@@ -113,12 +123,57 @@ export class ListWorkOrdersQuery {
   cursor?: string;
 }
 
+/** Acepta número o string y lo pasa a string (los montos viajan como string). */
+const asString = Transform(({ value }) => (typeof value === 'number' ? String(value) : value));
+
+export class AddItemDto {
+  @ApiProperty({ enum: WORK_ORDER_ITEM_TYPES, example: 'labor', description: 'labor = mano de obra; part = pieza.' })
+  @IsIn(WORK_ORDER_ITEM_TYPES as readonly string[])
+  type!: WorkOrderItemType;
+
+  @ApiProperty({ example: 'Cambio de pastillas delanteras', maxLength: 300 })
+  @IsString()
+  @Length(1, 300)
+  description!: string;
+
+  @ApiPropertyOptional({ example: '04465-02220', nullable: true, maxLength: 60 })
+  @ValidateIf((_, v) => v !== null)
+  @IsOptional()
+  @IsString()
+  @MaxLength(60)
+  part_number?: string | null;
+
+  @ApiProperty({ example: '1.5', description: 'Hasta 3 decimales (horas, unidades, galones…).' })
+  @asString
+  @IsString()
+  @Matches(/^\d{1,6}(\.\d{1,3})?$/, { message: 'quantity: número > 0 con hasta 3 decimales (p. ej. 1.5).' })
+  quantity!: string;
+
+  @ApiProperty({ example: '120000', description: 'Centavos como string: "120000" = RD$1,200.00.' })
+  @asString
+  @IsString()
+  @Matches(/^\d{1,13}$/, { message: 'unit_price_cents: centavos enteros >= 0 como string.' })
+  unit_price_cents!: string;
+
+  @ApiPropertyOptional({ example: 1800, default: 1800, description: 'ITBIS en basis points (1800 = 18%, 0 = exento).' })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(10000)
+  tax_rate_bps?: number;
+}
+
+export class UpdateItemDto extends PartialType(AddItemDto) {}
+
 @ApiTags('work-orders')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, ShopAccessGuard)
 @Controller('shops/:shopId/work-orders')
 export class WorkOrdersController {
-  constructor(private readonly workOrders: WorkOrdersService) {}
+  constructor(
+    private readonly workOrders: WorkOrdersService,
+    private readonly items: WorkOrderItemsService,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Abre una orden de trabajo (queda en draft con número OT-XXXX).' })
@@ -139,10 +194,10 @@ export class WorkOrdersController {
   }
 
   @Get(':workOrderId')
-  @ApiOperation({ summary: 'Detalle de una OT.' })
+  @ApiOperation({ summary: 'Detalle de una OT con sus líneas y totales.' })
   @ApiNotFoundResponse({ description: 'No existe en este taller.' })
-  get(@Param('shopId') shopId: string, @Param('workOrderId') id: string): Promise<WorkOrderView> {
-    return this.workOrders.get(shopId, id);
+  get(@Param('shopId') shopId: string, @Param('workOrderId') id: string): Promise<WorkOrderDetailView> {
+    return this.workOrders.getDetail(shopId, id);
   }
 
   @Patch(':workOrderId')
@@ -154,5 +209,41 @@ export class WorkOrdersController {
     @Body() dto: UpdateWorkOrderDto,
   ): Promise<WorkOrderView> {
     return this.workOrders.update(shopId, id, dto);
+  }
+
+  @Post(':workOrderId/items')
+  @ApiOperation({ summary: 'Agrega una línea (mano de obra o pieza); recalcula totales con ITBIS.' })
+  @ApiCreatedResponse({ description: 'OT con sus líneas y totales actualizados.' })
+  @ApiConflictResponse({ description: 'La OT ya está cerrada.' })
+  addItem(
+    @Param('shopId') shopId: string,
+    @Param('workOrderId') id: string,
+    @Body() dto: AddItemDto,
+  ): Promise<WorkOrderDetailView> {
+    return this.items.add(shopId, id, dto);
+  }
+
+  @Patch(':workOrderId/items/:itemId')
+  @ApiOperation({ summary: 'Edita una línea; recalcula totales.' })
+  @ApiConflictResponse({ description: 'La OT ya está cerrada.' })
+  updateItem(
+    @Param('shopId') shopId: string,
+    @Param('workOrderId') id: string,
+    @Param('itemId') itemId: string,
+    @Body() dto: UpdateItemDto,
+  ): Promise<WorkOrderDetailView> {
+    return this.items.update(shopId, id, itemId, dto);
+  }
+
+  @Delete(':workOrderId/items/:itemId')
+  @ApiOperation({ summary: 'Quita una línea; recalcula totales.' })
+  @ApiOkResponse({ description: 'OT con sus líneas y totales actualizados.' })
+  @ApiConflictResponse({ description: 'La OT ya está cerrada.' })
+  removeItem(
+    @Param('shopId') shopId: string,
+    @Param('workOrderId') id: string,
+    @Param('itemId') itemId: string,
+  ): Promise<WorkOrderDetailView> {
+    return this.items.remove(shopId, id, itemId);
   }
 }
