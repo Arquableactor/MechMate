@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, Inject, Injectable } from '@nestjs/common';
 import { Prisma, type Payment, type PaymentStatus } from '@prisma/client';
-import type { PaymentView } from '@repo/types';
+import type { PaymentCapturedPayload, PaymentRefundedPayload, PaymentView } from '@repo/types';
 import { commissionCents } from '../common/money';
 import { LedgerAccountsService } from '../ledger/ledger-accounts.service';
 import { LedgerService } from '../ledger/ledger.service';
@@ -141,10 +141,13 @@ export class PaymentsService {
                 payload: {
                   paymentId: created.id,
                   amount_cents: input.totalCents.toString(),
+                  commission_cents: commission.toString(),
+                  net_cents: net.toString(),
                   currency: input.currency,
                   shopId: input.shopId,
+                  buyerAccountId: input.buyerAccountId,
                   orderId: input.orderId ?? null,
-                },
+                } satisfies PaymentCapturedPayload,
               },
               {
                 topic: 'CommissionAccrued',
@@ -225,10 +228,24 @@ export class PaymentsService {
   private async refundCapture(payment: Payment): Promise<void> {
     const original = await this.prisma.ledgerPosting.findMany({
       where: { entry: { external_ref: `payment:${payment.id}` } },
-      select: { account_id: true, amount_cents: true, currency: true },
+      select: {
+        account_id: true,
+        amount_cents: true,
+        currency: true,
+        account: { select: { owner_type: true, owner_id: true } },
+      },
     });
     if (original.length === 0) {
       throw new ConflictException('No existe asiento de captura para revertir');
+    }
+    // El pago no guarda taller ni comprador; el asiento original sí (dueños de
+    // las cuentas buyer/seller). Los necesita el evento para notificar.
+    const buyer = original.find((p) => p.account.owner_type === 'buyer');
+    const seller = original.find((p) => p.account.owner_type === 'seller');
+    const buyerAccountId = buyer?.account.owner_id;
+    const shopId = seller?.account.owner_id;
+    if (!buyerAccountId || !shopId) {
+      throw new ConflictException('Asiento de captura sin cuentas buyer/seller');
     }
 
     await this.prisma.$transaction(async (tx) => {
@@ -245,7 +262,13 @@ export class PaymentsService {
           outboxEvents: [
             {
               topic: 'PaymentRefunded',
-              payload: { paymentId: payment.id, currency: payment.currency },
+              payload: {
+                paymentId: payment.id,
+                amount_cents: payment.amount_cents.toString(),
+                currency: payment.currency,
+                shopId,
+                buyerAccountId,
+              } satisfies PaymentRefundedPayload,
             },
           ],
         },

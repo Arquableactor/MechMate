@@ -7,6 +7,7 @@ import { HealthModule } from './health/health.module';
 import { LedgerModule } from './ledger/ledger.module';
 import { MeModule } from './me/me.module';
 import { MessagingModule } from './messaging/messaging.module';
+import { NotificationsModule } from './notifications/notifications.module';
 import { OutboxModule } from './outbox/outbox.module';
 import { PaymentsModule } from './payments/payments.module';
 import { PayoutsModule } from './payouts/payouts.module';
@@ -21,6 +22,7 @@ import { QueueModule } from './queue/queue.module';
     OutboxModule,
     DomainEventsModule.forRoot(),
     MessagingModule,
+    NotificationsModule,
     AuthModule,
     AccountsModule,
     HealthModule,

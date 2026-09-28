@@ -1,5 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import { commissionCents, isBalanced, netCents, sumCents } from './money';
+import { commissionCents, formatMoney, isBalanced, netCents, sumCents } from './money';
 
 describe('money (BigInt, half-up)', () => {
   it('comisión 8% de 100000 = 8000; net = 92000', () => {
@@ -50,5 +50,18 @@ describe('money (BigInt, half-up)', () => {
     expect(sumCents([-100n, 92n, 8n])).toBe(0n);
     expect(isBalanced([-100n, 92n, 8n])).toBe(true);
     expect(isBalanced([-100n, 92n, 7n])).toBe(false);
+  });
+});
+
+describe('formatMoney', () => {
+  it.each([
+    [100000n, 'DOP', 'RD$1,000.00'],
+    [5n, 'DOP', 'RD$0.05'],
+    [123456789n, 'USD', 'US$1,234,567.89'],
+    [99n, 'EUR', 'EUR 0.99'],
+    [-150n, 'DOP', '-RD$1.50'],
+    [900719925474099300n, 'DOP', 'RD$9,007,199,254,740,993.00'],
+  ])('%s %s → %s', (cents, currency, expected) => {
+    expect(formatMoney(cents, currency)).toBe(expected);
   });
 });

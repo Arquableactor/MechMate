@@ -34,3 +34,18 @@ export function sumCents(amounts: readonly bigint[]): bigint {
 export function isBalanced(amounts: readonly bigint[]): boolean {
   return sumCents(amounts) === 0n;
 }
+
+const CURRENCY_SYMBOL: Record<string, string> = { DOP: 'RD$', USD: 'US$' };
+
+/**
+ * Formatea centavos para humanos: `100000n, 'DOP'` → `RD$1,000.00`. Todo en
+ * BigInt (sin pasar por Number), con separador de miles `,` y decimales `.`
+ * como se usa en RD.
+ */
+export function formatMoney(cents: bigint, currency: string): string {
+  const sign = cents < 0n ? '-' : '';
+  const abs = cents < 0n ? -cents : cents;
+  const whole = (abs / 100n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const frac = (abs % 100n).toString().padStart(2, '0');
+  return `${sign}${CURRENCY_SYMBOL[currency] ?? `${currency} `}${whole}.${frac}`;
+}

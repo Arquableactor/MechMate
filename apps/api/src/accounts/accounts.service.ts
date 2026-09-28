@@ -13,6 +13,26 @@ export interface Auth0Claims {
 
 type AccountWithRoles = Account & { roles: AccountRole[] };
 
+/** Contacto de una cuenta, para notificaciones. */
+export interface AccountContact {
+  accountId: string;
+  email: string | null;
+  phone: string | null;
+  fullName: string | null;
+}
+
+export interface ShopOwnerContact {
+  shopName: string;
+  owner: AccountContact;
+}
+
+const toContact = (a: Pick<Account, 'id' | 'email' | 'phone' | 'full_name'>): AccountContact => ({
+  accountId: a.id,
+  email: a.email,
+  phone: a.phone,
+  fullName: a.full_name,
+});
+
 const ACCOUNT_WITH_ROLES = { roles: true } as const;
 
 @Injectable()
@@ -71,6 +91,31 @@ export class AccountsService {
       where: { id: accountId },
       include: ACCOUNT_WITH_ROLES,
     });
+  }
+
+  /**
+   * Datos de contacto de una cuenta para notificar (email/teléfono). `null` si
+   * no existe. Es la vía de otros módulos para leer contactos: NO consultan
+   * `accounts` directamente (fronteras entre módulos).
+   */
+  async getContact(accountId: string): Promise<AccountContact | null> {
+    const account = await this.prisma.account.findUnique({
+      where: { id: accountId },
+      select: { id: true, email: true, phone: true, full_name: true },
+    });
+    return account && toContact(account);
+  }
+
+  /** Nombre del taller + contacto de su dueño. `null` si el taller no existe. */
+  async getShopOwnerContact(shopId: string): Promise<ShopOwnerContact | null> {
+    const shop = await this.prisma.shop.findUnique({
+      where: { id: shopId },
+      select: {
+        name: true,
+        owner: { select: { id: true, email: true, phone: true, full_name: true } },
+      },
+    });
+    return shop && { shopName: shop.name, owner: toContact(shop.owner) };
   }
 
   /** Mapea la entidad Prisma al contrato público `MeResponse`. */

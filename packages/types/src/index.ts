@@ -76,6 +76,27 @@ export const RESERVED_OUTBOX_TOPICS = [
   'DeliveryCompleted',
 ] as const;
 
+/** Payload de `PaymentCaptured`. Montos en centavos como string (BigInt). */
+export interface PaymentCapturedPayload {
+  paymentId: string;
+  amount_cents: Cents;
+  commission_cents: Cents;
+  net_cents: Cents;
+  currency: string;
+  shopId: string;
+  buyerAccountId: string;
+  orderId: string | null;
+}
+
+/** Payload de `PaymentRefunded` (reversa total de la captura). */
+export interface PaymentRefundedPayload {
+  paymentId: string;
+  amount_cents: Cents;
+  currency: string;
+  shopId: string;
+  buyerAccountId: string;
+}
+
 /** Tópicos de eventos de dominio escritos al outbox. */
 export type OutboxTopic =
   | (typeof ACTIVE_OUTBOX_TOPICS)[number]

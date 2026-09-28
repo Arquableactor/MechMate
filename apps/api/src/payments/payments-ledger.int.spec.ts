@@ -217,4 +217,35 @@ describe('Ledger + Payments (integración, Postgres real)', () => {
     );
     expect(BigInt(recon[0].total)).toBe(0n);
   });
+  it('(h) contrato de eventos: PaymentCaptured y PaymentRefunded traen lo necesario para notificar', async () => {
+    const { shop, buyer } = await createShop(800);
+    const view = await payments.capture(
+      captureInput({ shopId: shop.id, buyerAccountId: buyer.id, totalCents: 100000n }),
+    );
+    await payments.handleWebhook({ paymentId: view.id, status: 'refunded' });
+
+    const events = await prisma.outboxEvent.findMany({
+      where: { payload: { path: ['paymentId'], equals: view.id } },
+    });
+    const byTopic = Object.fromEntries(events.map((e) => [e.topic, e.payload]));
+
+    expect(byTopic.PaymentCaptured).toEqual({
+      paymentId: view.id,
+      amount_cents: '100000',
+      commission_cents: '8000',
+      net_cents: '92000',
+      currency: 'DOP',
+      shopId: shop.id,
+      buyerAccountId: buyer.id,
+      orderId: null,
+    });
+    // El pago no guarda taller/comprador: el refund los saca del asiento original.
+    expect(byTopic.PaymentRefunded).toEqual({
+      paymentId: view.id,
+      amount_cents: '100000',
+      currency: 'DOP',
+      shopId: shop.id,
+      buyerAccountId: buyer.id,
+    });
+  });
 });
