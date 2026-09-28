@@ -203,14 +203,16 @@ model Payout {
 }
 
 /// Outbox transaccional: el evento se escribe en la MISMA tx que el cambio de
-/// estado; un worker BullMQ lo publica (worker = PROMPT_003b). NO es inmutable
-/// (el worker setea `published_at`).
+/// estado; el OutboxRelay lo encola en BullMQ y setea `published_at`. NO es
+/// inmutable. `updated_at` lleva default en DB (no solo @updatedAt) para que la
+/// versión anterior de la API pueda seguir insertando durante un deploy.
 model OutboxEvent {
   id           String    @id @default(uuid(7)) @db.Uuid
   topic        String
   payload      Json      @db.JsonB
   published_at DateTime? @db.Timestamptz(6)
   created_at   DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
 
   @@index([published_at])
   @@map("outbox")

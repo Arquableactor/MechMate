@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { HealthModule } from './health/health.module';
 import { LedgerModule } from './ledger/ledger.module';
 import { MeModule } from './me/me.module';
+import { OutboxModule } from './outbox/outbox.module';
 import { PaymentsModule } from './payments/payments.module';
 import { PayoutsModule } from './payouts/payouts.module';
 import { PrismaModule } from './prisma/prisma.module';
@@ -15,6 +16,7 @@ import { QueueModule } from './queue/queue.module';
     ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule,
     QueueModule.forRoot(),
+    OutboxModule,
     AuthModule,
     AccountsModule,
     HealthModule,
