@@ -127,7 +127,7 @@ describe('Líneas de OT (integración, Postgres real)', () => {
   it('OT cerrada: no se agregan, editan ni quitan líneas (409)', async () => {
     const { shopId, woId } = await newWorkOrder();
     const detail = await items.add(shopId, woId, labor);
-    await prisma.workOrder.update({ where: { id: woId }, data: { status: 'completed' } });
+    await prisma.workOrder.update({ where: { id: woId }, data: { status: 'completed', completed_at: new Date() } });
 
     await expect(items.add(shopId, woId, part)).rejects.toThrow(ConflictException);
     await expect(items.update(shopId, woId, detail.items[0].id, { quantity: '3' })).rejects.toThrow(ConflictException);

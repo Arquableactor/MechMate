@@ -71,6 +71,7 @@ export const ACTIVE_OUTBOX_TOPICS = [
   'CommissionAccrued',
   'PaymentRefunded',
   'ShopMemberInvited',
+  'WorkOrderStatusChanged',
 ] as const;
 
 /** Reservados para Fase 3 (courier) — solo el contrato, sin lógica. */
@@ -288,9 +289,32 @@ export interface WorkOrderView {
   subtotal_cents: Cents;
   tax_cents: Cents;
   total_cents: Cents;
+  started_at: string | null;
+  completed_at: string | null;
+  cancelled_at: string | null;
+  cancellation_reason: string | null;
   created_by_account_id: string;
   created_at: string;
   updated_at: string;
+}
+
+/** Transiciones que se piden por `POST /work-orders/:id/transitions` (Día 5). */
+export const MANUAL_WORK_ORDER_TRANSITIONS = ['in_progress', 'completed', 'cancelled'] as const;
+export type ManualWorkOrderTransition = (typeof MANUAL_WORK_ORDER_TRANSITIONS)[number];
+
+/** Payload de `WorkOrderStatusChanged`: hechos al momento del cambio. */
+export interface WorkOrderStatusChangedPayload {
+  workOrderId: string;
+  shopId: string;
+  code: string;
+  from: WorkOrderStatus;
+  to: WorkOrderStatus;
+  customerId: string;
+  vehicleId: string;
+  total_cents: Cents;
+  currency: string;
+  changedByAccountId: string;
+  reason: string | null;
 }
 
 export const WORK_ORDER_ITEM_TYPES = ['labor', 'part'] as const;

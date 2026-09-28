@@ -163,7 +163,7 @@ describe('Órdenes de trabajo (integración, Postgres real)', () => {
       promised_at: '2026-10-02T21:00:00.000Z',
     });
 
-    await prisma.workOrder.update({ where: { id: wo.id }, data: { status: 'completed' } });
+    await prisma.workOrder.update({ where: { id: wo.id }, data: { status: 'completed', completed_at: new Date() } });
     await expect(workOrders.update(shopId, wo.id, { notes: 'tarde' })).rejects.toThrow(ConflictException);
   });
 

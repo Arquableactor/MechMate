@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import type { Prisma, WorkOrder } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 import type { WorkOrderDetailView, WorkOrderItemType } from '@repo/types';
 import { isUUID } from 'class-validator';
 import { lineAmounts } from '../common/money';
@@ -21,8 +21,6 @@ export interface ItemInput {
 
 const DEFAULT_TAX_RATE_BPS = 1800;
 const ITEM_NOT_FOUND = 'Línea no encontrada';
-
-type LockedWorkOrder = Pick<WorkOrder, 'id' | 'status' | 'number'>;
 
 function parseQuantity(input: string): bigint {
   const q = parseQuantityMilli(input);
@@ -133,14 +131,8 @@ export class WorkOrderItemsService {
     workOrderId: string,
     change: (tx: Prisma.TransactionClient) => Promise<unknown>,
   ): Promise<void> {
-    if (!isUUID(workOrderId)) throw new NotFoundException('Orden de trabajo no encontrada');
     await this.prisma.$transaction(async (tx) => {
-      const [wo] = await tx.$queryRaw<LockedWorkOrder[]>`
-        SELECT id, status::text AS status, number
-        FROM work_orders
-        WHERE id = ${workOrderId}::uuid AND shop_id = ${shopId}::uuid
-        FOR UPDATE`;
-      if (!wo) throw new NotFoundException('Orden de trabajo no encontrada');
+      const wo = await this.workOrders.lockForUpdate(tx, shopId, workOrderId);
       this.workOrders.assertEditable(wo);
 
       await change(tx);

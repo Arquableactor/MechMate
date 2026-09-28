@@ -127,6 +127,27 @@ describe('OT por HTTP', () => {
     expect((await call(ownerId, 'GET', `/shops/${shopId}/work-orders/${wo.id}`)).status).toBe(200);
   });
 
+  it('transiciones: 200 con el nuevo estado, 409 inválida, 400 destino no permitido', async () => {
+    const { ownerId, shopId, body } = await setup();
+    const wo = await json<WorkOrderView>(await call(ownerId, 'POST', `/shops/${shopId}/work-orders`, body));
+    const path = `/shops/${shopId}/work-orders/${wo.id}/transitions`;
+
+    expect((await call(ownerId, 'POST', path, { to: 'completed' })).status).toBe(409);
+    expect((await call(ownerId, 'POST', path, { to: 'paid' })).status).toBe(400);
+    expect((await call(ownerId, 'POST', path, { to: 'approved' })).status).toBe(400);
+
+    const started = await call(ownerId, 'POST', path, { to: 'in_progress' });
+    expect(started.status).toBe(200);
+    expect((await json<WorkOrderDetailView>(started)).status).toBe('in_progress');
+
+    const noLines = await call(ownerId, 'POST', path, { to: 'completed' });
+    expect(noLines.status).toBe(409);
+    expect(await json<{ message: string }>(noLines)).toMatchObject({ message: expect.stringMatching(/no tiene líneas/) });
+
+    const cancelled = await call(ownerId, 'POST', path, { to: 'cancelled', reason: 'Sin repuesto' });
+    expect(await json<WorkOrderDetailView>(cancelled)).toMatchObject({ status: 'cancelled', cancellation_reason: 'Sin repuesto' });
+  });
+
   it('otro taller: 404', async () => {
     const a = await setup();
     const b = await setup();

@@ -463,6 +463,11 @@ model WorkOrder {
   subtotal_cents        BigInt          @default(0)
   tax_cents             BigInt          @default(0)
   total_cents           BigInt          @default(0)
+  /// Momentos de cada transición (historial y métricas del taller).
+  started_at            DateTime?       @db.Timestamptz(6)
+  completed_at          DateTime?       @db.Timestamptz(6)
+  cancelled_at          DateTime?       @db.Timestamptz(6)
+  cancellation_reason   String?
   created_by_account_id String          @db.Uuid
   created_at            DateTime        @default(now()) @db.Timestamptz(6)
   updated_at            DateTime        @updatedAt @db.Timestamptz(6)

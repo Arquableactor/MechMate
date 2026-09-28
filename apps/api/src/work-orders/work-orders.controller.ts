@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiConflictResponse,
@@ -13,6 +13,8 @@ import {
   PartialType,
 } from '@nestjs/swagger';
 import {
+  MANUAL_WORK_ORDER_TRANSITIONS,
+  type ManualWorkOrderTransition,
   type Page,
   WORK_ORDER_ITEM_TYPES,
   WORK_ORDER_STATUSES,
@@ -165,6 +167,21 @@ export class AddItemDto {
 
 export class UpdateItemDto extends PartialType(AddItemDto) {}
 
+export class TransitionDto {
+  @ApiProperty({ enum: MANUAL_WORK_ORDER_TRANSITIONS, example: 'in_progress' })
+  @IsIn(MANUAL_WORK_ORDER_TRANSITIONS as readonly string[], {
+    message: 'to debe ser in_progress, completed o cancelled.',
+  })
+  to!: ManualWorkOrderTransition;
+
+  @ApiPropertyOptional({ example: 'El cliente decidió no reparar', nullable: true, maxLength: 500, description: 'Solo para cancelled.' })
+  @ValidateIf((_, v) => v !== null)
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  reason?: string | null;
+}
+
 @ApiTags('work-orders')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, ShopAccessGuard)
@@ -245,5 +262,23 @@ export class WorkOrdersController {
     @Param('itemId') itemId: string,
   ): Promise<WorkOrderDetailView> {
     return this.items.remove(shopId, id, itemId);
+  }
+
+  @Post(':workOrderId/transitions')
+  @HttpCode(200)
+  @ApiOperation({
+    summary:
+      'Cambia el estado: draft → in_progress → completed; cancelled desde cualquier estado abierto. ' +
+      'Completar exige al menos una línea. Al completar se avisa al cliente.',
+  })
+  @ApiOkResponse({ description: 'OT con el nuevo estado.' })
+  @ApiConflictResponse({ description: 'Transición no permitida desde el estado actual, u OT sin líneas.' })
+  transition(
+    @Param('shopId') shopId: string,
+    @Param('workOrderId') id: string,
+    @CurrentUser() account: AuthenticatedAccount,
+    @Body() dto: TransitionDto,
+  ): Promise<WorkOrderDetailView> {
+    return this.workOrders.transition(shopId, id, dto.to, { accountId: account.id, reason: dto.reason });
   }
 }

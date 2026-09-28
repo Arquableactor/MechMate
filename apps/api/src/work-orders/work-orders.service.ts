@@ -1,8 +1,17 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import type { Prisma, WorkOrder, WorkOrderItem } from '@prisma/client';
-import type { Page, WorkOrderDetailView, WorkOrderItemView, WorkOrderStatus, WorkOrderView } from '@repo/types';
+import type {
+  ManualWorkOrderTransition,
+  Page,
+  WorkOrderDetailView,
+  WorkOrderItemView,
+  WorkOrderStatus,
+  WorkOrderStatusChangedPayload,
+  WorkOrderView,
+} from '@repo/types';
 import { isUUID } from 'class-validator';
 import { CustomersService } from '../customers/customers.service';
+import { recordOutboxEvents } from '../outbox/outbox.writer';
 import { PrismaService } from '../prisma/prisma.service';
 import { nextShopSequence } from '../shops/shop-sequences';
 import { ShopsService } from '../shops/shops.service';
@@ -28,6 +37,29 @@ export const EDITABLE_STATUSES: readonly WorkOrderStatus[] = [
   'approved',
   'in_progress',
 ];
+
+/**
+ * Máquina de estados de la OT. Solo estas transiciones existen. Las de la DVI
+ * (awaiting_approval/approved, Día 6) y del cobro (invoiced/paid, Día 7) las
+ * dispara su propio flujo; por el endpoint manual solo in_progress,
+ * completed y cancelled (MANUAL_WORK_ORDER_TRANSITIONS).
+ */
+export const WORK_ORDER_TRANSITIONS: Record<WorkOrderStatus, readonly WorkOrderStatus[]> = {
+  draft: ['awaiting_approval', 'in_progress', 'cancelled'],
+  awaiting_approval: ['approved', 'draft', 'cancelled'],
+  approved: ['in_progress', 'cancelled'],
+  in_progress: ['completed', 'cancelled'],
+  completed: ['invoiced'],
+  invoiced: ['paid'],
+  paid: [],
+  cancelled: [],
+};
+
+/** Fila de la OT bloqueada con FOR UPDATE (lo mínimo para decidir). */
+export type LockedWorkOrder = Pick<
+  WorkOrder,
+  'id' | 'status' | 'number' | 'customer_id' | 'vehicle_id' | 'total_cents' | 'currency'
+>;
 
 const NOT_FOUND = 'Orden de trabajo no encontrada';
 const SEQUENCE = 'work_order';
@@ -166,6 +198,74 @@ export class WorkOrdersService {
     };
   }
 
+  /**
+   * Cambia el estado respetando la máquina de estados, en UNA tx con la OT
+   * bloqueada (no se puede completar mientras alguien agrega una línea) y con
+   * el evento `WorkOrderStatusChanged` en el outbox (misma tx).
+   */
+  async transition(
+    shopId: string,
+    workOrderId: string,
+    to: ManualWorkOrderTransition,
+    by: { accountId: string; reason?: string | null },
+  ): Promise<WorkOrderDetailView> {
+    await this.prisma.$transaction(async (tx) => {
+      const wo = await this.lockForUpdate(tx, shopId, workOrderId);
+      if (!WORK_ORDER_TRANSITIONS[wo.status].includes(to)) {
+        throw new ConflictException(`La orden ${workOrderCode(wo.number)} está ${wo.status}: no puede pasar a ${to}.`);
+      }
+      if (to === 'completed' && (await tx.workOrderItem.count({ where: { work_order_id: wo.id } })) === 0) {
+        throw new ConflictException('La orden no tiene líneas: agrega mano de obra o piezas antes de completarla.');
+      }
+      const reason = to === 'cancelled' ? text(by.reason) ?? null : null;
+      const now = new Date();
+
+      await tx.workOrder.update({
+        where: { id: wo.id },
+        data: {
+          status: to,
+          ...(to === 'in_progress' ? { started_at: now } : {}),
+          ...(to === 'completed' ? { completed_at: now } : {}),
+          ...(to === 'cancelled' ? { cancelled_at: now, cancellation_reason: reason } : {}),
+        },
+      });
+      await recordOutboxEvents(tx, [
+        {
+          topic: 'WorkOrderStatusChanged',
+          payload: {
+            workOrderId: wo.id,
+            shopId,
+            code: workOrderCode(wo.number),
+            from: wo.status,
+            to,
+            customerId: wo.customer_id,
+            vehicleId: wo.vehicle_id,
+            total_cents: wo.total_cents.toString(),
+            currency: wo.currency,
+            changedByAccountId: by.accountId,
+            reason,
+          } satisfies WorkOrderStatusChangedPayload,
+        },
+      ]);
+    }, TX_OPTIONS);
+    return this.getDetail(shopId, workOrderId);
+  }
+
+  /**
+   * Bloquea la OT (`SELECT … FOR UPDATE`) en la tx del llamador: serializa los
+   * cambios a una misma OT (líneas, transiciones). 404 si no es de este taller.
+   */
+  async lockForUpdate(tx: Prisma.TransactionClient, shopId: string, workOrderId: string): Promise<LockedWorkOrder> {
+    if (!isUUID(workOrderId)) throw new NotFoundException(NOT_FOUND);
+    const [wo] = await tx.$queryRaw<LockedWorkOrder[]>`
+      SELECT id, status::text AS status, number, customer_id, vehicle_id, total_cents, currency
+      FROM work_orders
+      WHERE id = ${workOrderId}::uuid AND shop_id = ${shopId}::uuid
+      FOR UPDATE`;
+    if (!wo) throw new NotFoundException(NOT_FOUND);
+    return wo;
+  }
+
   async getOrThrow(shopId: string, workOrderId: string): Promise<WorkOrder> {
     const wo = isUUID(workOrderId)
       ? await this.prisma.workOrder.findFirst({ where: { id: workOrderId, shop_id: shopId } })
@@ -210,6 +310,10 @@ export class WorkOrdersService {
       subtotal_cents: wo.subtotal_cents.toString(),
       tax_cents: wo.tax_cents.toString(),
       total_cents: wo.total_cents.toString(),
+      started_at: wo.started_at?.toISOString() ?? null,
+      completed_at: wo.completed_at?.toISOString() ?? null,
+      cancelled_at: wo.cancelled_at?.toISOString() ?? null,
+      cancellation_reason: wo.cancellation_reason,
       created_by_account_id: wo.created_by_account_id,
       created_at: wo.created_at.toISOString(),
       updated_at: wo.updated_at.toISOString(),
