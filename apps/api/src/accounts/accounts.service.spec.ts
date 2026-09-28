@@ -9,6 +9,7 @@ const baseAccount = (overrides: Partial<AccountWithRoles> = {}): AccountWithRole
   id: 'acc-1',
   auth0_sub: 'auth0|abc',
   email: 'Owner@Example.com',
+  email_verified: false,
   phone: null,
   full_name: 'Owner',
   status: 'active',
@@ -27,6 +28,48 @@ describe('AccountsService', () => {
     new AccountsService(prisma as unknown as PrismaService);
 
   describe('JIT provisioning', () => {
+    it('email_verified: solo se marca si Auth0 lo confirma al crear', async () => {
+      const create = jest.fn().mockResolvedValue(baseAccount());
+      const service = buildService({ account: { findUnique: jest.fn().mockResolvedValue(null), create } });
+
+      await service.provisionFromClaims({ sub: 'auth0|v', email: 'a@b.com', email_verified: true });
+      await service.provisionFromClaims({ sub: 'auth0|u', email: 'c@d.com' });
+
+      expect(create.mock.calls[0][0].data.email_verified).toBe(true);
+      expect(create.mock.calls[1][0].data.email_verified).toBe(false);
+    });
+
+    it('verifica después del primer login si Auth0 confirma el MISMO email', async () => {
+      const update = jest.fn().mockResolvedValue(baseAccount({ email_verified: true }));
+      const service = buildService({
+        account: { findUnique: jest.fn().mockResolvedValue(baseAccount()), update },
+      });
+
+      const result = await service.provisionFromClaims({
+        sub: 'auth0|abc',
+        email: 'owner@example.com',
+        email_verified: true,
+      });
+
+      expect(update).toHaveBeenCalledWith(expect.objectContaining({ data: { email_verified: true } }));
+      expect(result.email_verified).toBe(true);
+    });
+
+    it('NO verifica si el email confirmado es otro, ni des-verifica', async () => {
+      const update = jest.fn();
+      const other = buildService({
+        account: { findUnique: jest.fn().mockResolvedValue(baseAccount()), update },
+      });
+      await other.provisionFromClaims({ sub: 'auth0|abc', email: 'otro@x.com', email_verified: true });
+
+      const verified = buildService({
+        account: { findUnique: jest.fn().mockResolvedValue(baseAccount({ email_verified: true })), update },
+      });
+      await verified.provisionFromClaims({ sub: 'auth0|abc', email: 'owner@example.com', email_verified: false });
+
+      expect(update).not.toHaveBeenCalled();
+    });
+
     it('devuelve la cuenta existente sin crear (idempotente por sub)', async () => {
       const create = jest.fn();
       const service = buildService({

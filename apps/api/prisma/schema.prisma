@@ -81,6 +81,9 @@ model Account {
   id         String   @id @default(uuid(7)) @db.Uuid
   auth0_sub  String   @unique
   email      String?  @unique
+  /// Auth0 confirmó el email (claim email_verified). Requisito para vincular
+  /// invitaciones a talleres: un email sin verificar no prueba identidad.
+  email_verified Boolean @default(false)
   phone      String?  @unique
   full_name  String?
   status     String   @default("active")

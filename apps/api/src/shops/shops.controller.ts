@@ -46,10 +46,12 @@ export class ShopsController {
   }
 
   @Get('mine')
-  @ApiOperation({ summary: 'Talleres donde la cuenta actual es miembro activo.' })
+  @ApiOperation({
+    summary: 'Talleres donde la cuenta actual es miembro activo (reclama antes sus invitaciones).',
+  })
   @ApiOkResponse({ description: 'Lista de talleres con mi rol en cada uno.' })
   mine(@CurrentUser() account: AuthenticatedAccount): Promise<ShopView[]> {
-    return this.shops.listMine(account.id);
+    return this.shops.listMine(account);
   }
 
   @Get(':shopId')

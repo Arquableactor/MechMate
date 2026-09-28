@@ -69,8 +69,8 @@ describe('Shops (integración, Postgres real)', () => {
     const shopA = await shops.create(a.id, { name: 'Taller A', type: 'mechanic_shop' });
     const shopB = await shops.create(b.id, { name: 'Taller B', type: 'mechanic_shop' });
 
-    expect((await shops.listMine(a.id)).map((s) => s.id)).toEqual([shopA.id]);
-    expect((await shops.listMine(b.id)).map((s) => s.id)).toEqual([shopB.id]);
+    expect((await shops.listMine(a)).map((s) => s.id)).toEqual([shopA.id]);
+    expect((await shops.listMine(b)).map((s) => s.id)).toEqual([shopB.id]);
   });
 
   describe('ShopAccessGuard: aislamiento entre talleres', () => {

@@ -3,7 +3,7 @@ import { type CanActivate, type ExecutionContext, type INestApplication, Validat
 import { ConfigModule } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
 import type { Account } from '@prisma/client';
-import type { ShopView } from '@repo/types';
+import type { ShopMemberView, ShopView } from '@repo/types';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { PrismaModule } from '../prisma/prisma.module';
 import { PrismaService } from '../prisma/prisma.service';
@@ -91,6 +91,57 @@ describe('Shops por HTTP', () => {
       expect(res.status).toBe(404);
       expect(await json<{ message: string }>(res)).toMatchObject({ message: 'Taller no encontrado' });
     }
+  });
+
+  describe('miembros', () => {
+    const post = (account: Account, path: string, body: unknown) =>
+      fetch(`${base}${path}`, { method: 'POST', headers: as(account), body: JSON.stringify(body) });
+
+    it('owner invita (201); mecánico no puede (403); body inválido (400); otro taller (404)', async () => {
+      const owner = await newAccount();
+      const outsider = await newAccount();
+      const shop = await json<ShopView>(await post(owner, '/shops', { name: 'Taller M' }));
+      const mechanic = await newAccount();
+      await prisma.shopMember.create({
+        data: { shop_id: shop.id, account_id: mechanic.id, role: 'mechanic', status: 'active' },
+      });
+      const path = `/shops/${shop.id}/members`;
+
+      const invited = await post(owner, path, { email: ' Pedro@Mail.DO ', role: 'mechanic' });
+      expect(invited.status).toBe(201);
+      expect(await json<ShopMemberView>(invited)).toMatchObject({ email: 'pedro@mail.do', status: 'invited' });
+
+      expect((await post(mechanic, path, { email: 'x@mail.do', role: 'mechanic' })).status).toBe(403);
+      expect((await post(owner, path, { email: 'no-es-email', role: 'mechanic' })).status).toBe(400);
+      expect((await post(owner, path, { email: 'y@mail.do', role: 'owner' })).status).toBe(400);
+      expect((await post(outsider, path, { email: 'z@mail.do', role: 'mechanic' })).status).toBe(404);
+
+      // Cualquier miembro ve la lista; alguien de afuera no.
+      const list = await fetch(`${base}${path}`, { headers: as(mechanic) });
+      expect(list.status).toBe(200);
+      expect((await json<ShopMemberView[]>(list)).map((m) => m.role)).toEqual(['owner', 'mechanic', 'mechanic']);
+      expect((await fetch(`${base}${path}`, { headers: as(outsider) })).status).toBe(404);
+    });
+
+    it('DELETE: owner quita (204); al owner no (403); mecánico no puede quitar (403)', async () => {
+      const owner = await newAccount();
+      const shop = await json<ShopView>(await post(owner, '/shops', { name: 'Taller D' }));
+      const path = `/shops/${shop.id}/members`;
+      const invite = await json<ShopMemberView>(await post(owner, path, { email: 'q@mail.do', role: 'advisor' }));
+      const members = await json<ShopMemberView[]>(await fetch(`${base}${path}`, { headers: as(owner) }));
+      const ownerRow = members.find((m) => m.role === 'owner')!;
+      const mechanic = await newAccount();
+      await prisma.shopMember.create({
+        data: { shop_id: shop.id, account_id: mechanic.id, role: 'mechanic', status: 'active' },
+      });
+      const del = (account: Account, id: string) =>
+        fetch(`${base}${path}/${id}`, { method: 'DELETE', headers: as(account) });
+
+      expect((await del(mechanic, invite.id)).status).toBe(403);
+      expect((await del(owner, ownerRow.id)).status).toBe(403);
+      expect((await del(owner, invite.id)).status).toBe(204);
+      expect((await del(owner, invite.id)).status).toBe(404);
+    });
   });
 
   it('sin autenticación no se accede', async () => {

@@ -66,7 +66,12 @@ export interface PaymentView {
 }
 
 /** Tópicos de eventos de dominio con lógica en esta fase. */
-export const ACTIVE_OUTBOX_TOPICS = ['PaymentCaptured', 'CommissionAccrued', 'PaymentRefunded'] as const;
+export const ACTIVE_OUTBOX_TOPICS = [
+  'PaymentCaptured',
+  'CommissionAccrued',
+  'PaymentRefunded',
+  'ShopMemberInvited',
+] as const;
 
 /** Reservados para Fase 3 (courier) — solo el contrato, sin lógica. */
 export const RESERVED_OUTBOX_TOPICS = [
@@ -121,4 +126,33 @@ export interface ShopView {
   /** Rol de quien consulta en este taller. */
   my_role: ShopMemberRole;
   created_at: string;
+}
+
+/** Roles que un owner puede asignar al invitar (owner no se invita). */
+export const INVITABLE_SHOP_ROLES = ['mechanic', 'advisor'] as const;
+export type InvitableShopRole = (typeof INVITABLE_SHOP_ROLES)[number];
+
+/** Un miembro (o invitación pendiente) de un taller. */
+export interface ShopMemberView {
+  id: string;
+  role: ShopMemberRole;
+  status: 'invited' | 'active';
+  /** null mientras la invitación no se vincula a una cuenta. */
+  account_id: string | null;
+  /** Email de la cuenta, o el invitado si aún no hay cuenta. */
+  email: string | null;
+  full_name: string | null;
+  created_at: string;
+}
+
+/** Payload de `ShopMemberInvited`: hechos al momento de invitar. */
+export interface ShopMemberInvitedPayload {
+  memberId: string;
+  shopId: string;
+  shopName: string;
+  email: string;
+  role: InvitableShopRole;
+  /** 'active' si ya tenía cuenta verificada (acceso inmediato), si no 'invited'. */
+  status: 'invited' | 'active';
+  invitedByName: string | null;
 }

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AccountsModule } from '../accounts/accounts.module';
 import { ShopAccessGuard } from './shop-access.guard';
+import { ShopMembersController } from './shop-members.controller';
 import { ShopsController } from './shops.controller';
 import { ShopsService } from './shops.service';
 
@@ -10,7 +11,7 @@ import { ShopsService } from './shops.service';
  */
 @Module({
   imports: [AccountsModule],
-  controllers: [ShopsController],
+  controllers: [ShopsController, ShopMembersController],
   providers: [ShopsService, ShopAccessGuard],
   exports: [ShopsService, ShopAccessGuard],
 })

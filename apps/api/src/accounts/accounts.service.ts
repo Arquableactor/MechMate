@@ -7,6 +7,8 @@ import { PrismaService } from '../prisma/prisma.service';
 export interface Auth0Claims {
   sub: string;
   email?: string;
+  /** Auth0 confirmó el email. Sin esto, el email no prueba identidad. */
+  email_verified?: boolean;
   phone_number?: string;
   name?: string;
 }
@@ -44,13 +46,14 @@ export class AccountsService {
       where: { auth0_sub: claims.sub },
       include: ACCOUNT_WITH_ROLES,
     });
-    if (existing) return existing;
+    if (existing) return this.syncEmailVerified(existing, claims);
 
     try {
       return await this.prisma.account.create({
         data: {
           auth0_sub: claims.sub,
           email: claims.email ?? null,
+          email_verified: Boolean(claims.email && claims.email_verified === true),
           phone: claims.phone_number ?? null,
           full_name: claims.name ?? null,
         },
@@ -72,6 +75,27 @@ export class AccountsService {
   }
 
   /**
+   * El usuario puede verificar su email DESPUÉS del primer login: si Auth0 ya
+   * lo confirma para el MISMO email de la cuenta, se marca verificado. Nunca se
+   * des-verifica ni se cambia el email aquí.
+   */
+  private async syncEmailVerified(
+    account: AccountWithRoles,
+    claims: Auth0Claims,
+  ): Promise<AccountWithRoles> {
+    const confirmsSameEmail =
+      claims.email_verified === true &&
+      !!account.email &&
+      claims.email?.toLowerCase() === account.email.toLowerCase();
+    if (account.email_verified || !confirmsSameEmail) return account;
+    return this.prisma.account.update({
+      where: { id: account.id },
+      data: { email_verified: true },
+      include: ACCOUNT_WITH_ROLES,
+    });
+  }
+
+  /**
    * Añade un rol a la cuenta. Idempotente: si ya lo tiene, no duplica (upsert
    * sobre la PK compuesta `(account_id, role)`).
    */
@@ -86,6 +110,14 @@ export class AccountsService {
       where: { id: accountId },
       include: ACCOUNT_WITH_ROLES,
     });
+  }
+
+  /**
+   * Cuenta por email (comparación sin distinguir mayúsculas: `accounts.email`
+   * es citext). Para que otros módulos resuelvan un email sin leer `accounts`.
+   */
+  async findByEmail(email: string): Promise<Account | null> {
+    return this.prisma.account.findUnique({ where: { email: email.trim() } });
   }
 
   /**

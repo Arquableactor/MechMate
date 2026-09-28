@@ -3,6 +3,7 @@ import { AccountsModule } from '../accounts/accounts.module';
 import { MessagingModule } from '../messaging/messaging.module';
 import { ShopsModule } from '../shops/shops.module';
 import { PaymentNotificationsService } from './payment-notifications.service';
+import { ShopNotificationsService } from './shop-notifications.service';
 
 /**
  * Qué se avisa y a quién, a partir de eventos de dominio. `messaging` solo
@@ -11,6 +12,6 @@ import { PaymentNotificationsService } from './payment-notifications.service';
  */
 @Module({
   imports: [AccountsModule, MessagingModule, ShopsModule],
-  providers: [PaymentNotificationsService],
+  providers: [PaymentNotificationsService, ShopNotificationsService],
 })
 export class NotificationsModule {}
