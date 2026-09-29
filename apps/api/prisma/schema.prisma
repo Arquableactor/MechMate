@@ -478,6 +478,7 @@ model WorkOrder {
   items      WorkOrderItem[]
   inspection Inspection?
   approvals  WorkOrderApproval[]
+  invoice    Invoice?
 
   /// Destino de la FK compuesta de work_order_items.
   @@unique([id, shop_id])
@@ -635,4 +636,72 @@ model WorkOrderApproval {
 
   @@index([work_order_id])
   @@map("work_order_approvals")
+}
+
+// --- Facturación (Día 7) ---
+
+enum InvoiceStatus {
+  issued
+  paid
+  voided
+}
+
+/// Factura de una OT: SNAPSHOT inmutable (cliente, vehículo, taller y líneas
+/// copiados al emitirla). Triggers en la migración: solo cambian `status`
+/// (issued → paid|voided) y `ncf` (una vez); la suma de las líneas debe
+/// igualar los totales (constraint trigger diferido, como el ledger).
+/// `ncf`: comprobante fiscal de la DGII (e-CF), lo asigna un FiscalProvider.
+model Invoice {
+  id                   String        @id @default(uuid(7)) @db.Uuid
+  shop_id              String        @db.Uuid
+  work_order_id        String        @db.Uuid
+  number               Int
+  ncf                  String?
+  status               InvoiceStatus @default(issued)
+  shop_name            String
+  customer_name        String
+  customer_document_id String?
+  vehicle_description  String
+  work_order_number    Int
+  currency             String
+  subtotal_cents       BigInt
+  tax_cents            BigInt
+  total_cents          BigInt
+  issued_at            DateTime      @default(now()) @db.Timestamptz(6)
+  paid_at              DateTime?     @db.Timestamptz(6)
+  issued_by_account_id String        @db.Uuid
+  created_at           DateTime      @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime      @updatedAt @db.Timestamptz(6)
+
+  work_order WorkOrder     @relation(fields: [work_order_id, shop_id], references: [id, shop_id], onDelete: Restrict)
+  lines      InvoiceLine[]
+
+  /// Una factura por OT (la FK fija shop_id).
+  @@unique([work_order_id, shop_id])
+  @@unique([shop_id, number])
+  @@unique([id, shop_id])
+  @@map("invoices")
+}
+
+/// Línea de factura (copia de una línea APROBADA de la OT). Inmutable.
+model InvoiceLine {
+  id               String            @id @default(uuid(7)) @db.Uuid
+  shop_id          String            @db.Uuid
+  invoice_id       String            @db.Uuid
+  position         Int
+  type             WorkOrderItemType
+  description      String
+  part_number      String?
+  quantity_milli   Int
+  unit_price_cents BigInt
+  tax_rate_bps     Int
+  subtotal_cents   BigInt
+  tax_cents        BigInt
+  total_cents      BigInt
+  created_at       DateTime          @default(now()) @db.Timestamptz(6)
+
+  invoice Invoice @relation(fields: [invoice_id, shop_id], references: [id, shop_id], onDelete: Restrict)
+
+  @@unique([invoice_id, position])
+  @@map("invoice_lines")
 }

@@ -466,3 +466,42 @@ export interface PublicApprovalView {
 }
 
 export type ItemDecision = 'approved' | 'declined';
+
+// --- Facturación (Día 7) ---
+
+export interface InvoiceLineView {
+  position: number;
+  type: WorkOrderItemType;
+  description: string;
+  part_number: string | null;
+  quantity: string;
+  unit_price_cents: Cents;
+  tax_rate_bps: number;
+  subtotal_cents: Cents;
+  tax_cents: Cents;
+  total_cents: Cents;
+}
+
+/** Factura: snapshot inmutable de la OT al emitirse. */
+export interface InvoiceView {
+  id: string;
+  number: number;
+  /** Número interno por taller: `FAC-0001`. */
+  code: string;
+  /** Comprobante fiscal de la DGII (e-CF). null mientras no haya proveedor fiscal. */
+  ncf: string | null;
+  status: 'issued' | 'paid' | 'voided';
+  work_order_id: string;
+  work_order_code: string;
+  shop_name: string;
+  customer_name: string;
+  customer_document_id: string | null;
+  vehicle_description: string;
+  currency: string;
+  subtotal_cents: Cents;
+  tax_cents: Cents;
+  total_cents: Cents;
+  issued_at: string;
+  paid_at: string | null;
+  lines: InvoiceLineView[];
+}
