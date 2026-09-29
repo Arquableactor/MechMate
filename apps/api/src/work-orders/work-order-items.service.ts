@@ -1,11 +1,11 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import type { Prisma } from '@prisma/client';
 import type { WorkOrderDetailView, WorkOrderItemType } from '@repo/types';
 import { isUUID } from 'class-validator';
 import { lineAmounts } from '../common/money';
 import { PrismaService } from '../prisma/prisma.service';
 import { parseQuantityMilli } from './quantity';
-import { TX_OPTIONS, WorkOrdersService } from './work-orders.service';
+import { recalculateTotals, TX_OPTIONS, WorkOrdersService } from './work-orders.service';
 
 export interface ItemInput {
   type?: WorkOrderItemType;
@@ -17,6 +17,8 @@ export interface ItemInput {
   unit_price_cents?: string;
   /** Default 1800 (ITBIS 18%); 0 = exento. */
   tax_rate_bps?: number;
+  /** true = la línea queda `proposed` hasta que el cliente la apruebe (DVI). */
+  requires_approval?: boolean;
 }
 
 const DEFAULT_TAX_RATE_BPS = 1800;
@@ -74,6 +76,7 @@ export class WorkOrderItemsService {
           quantity_milli: Number(quantity),
           unit_price_cents: price,
           tax_rate_bps: rate,
+          approval_status: input.requires_approval ? 'proposed' : 'approved',
           subtotal_cents: amounts.subtotal,
           tax_cents: amounts.tax,
           total_cents: amounts.total,
@@ -104,6 +107,10 @@ export class WorkOrderItemsService {
         total_cents: amounts.total,
       };
       if (input.type !== undefined) data.type = input.type;
+      // Una línea ya decidida por el cliente no vuelve a "propuesta" por aquí.
+      if (input.requires_approval !== undefined && item.approval_status !== 'declined') {
+        data.approval_status = input.requires_approval ? 'proposed' : 'approved';
+      }
       if (input.part_number !== undefined) data.part_number = text(input.part_number);
       if (input.description !== undefined) {
         const description = text(input.description);
@@ -134,21 +141,15 @@ export class WorkOrderItemsService {
     await this.prisma.$transaction(async (tx) => {
       const wo = await this.workOrders.lockForUpdate(tx, shopId, workOrderId);
       this.workOrders.assertEditable(wo);
+      if (wo.status === 'awaiting_approval') {
+        throw new ConflictException(
+          'Hay una aprobación pendiente del cliente: revócala antes de cambiar las líneas (no se le cambia el precio mientras lo revisa).',
+        );
+      }
 
       await change(tx);
 
-      await tx.$executeRaw`
-        UPDATE work_orders w
-        SET subtotal_cents = s.subtotal,
-            tax_cents      = s.tax,
-            total_cents    = s.subtotal + s.tax,
-            updated_at     = now()
-        FROM (
-          SELECT COALESCE(SUM(subtotal_cents), 0) AS subtotal, COALESCE(SUM(tax_cents), 0) AS tax
-          FROM work_order_items
-          WHERE work_order_id = ${workOrderId}::uuid
-        ) s
-        WHERE w.id = ${workOrderId}::uuid`;
+      await recalculateTotals(tx, workOrderId);
     }, TX_OPTIONS);
   }
 }

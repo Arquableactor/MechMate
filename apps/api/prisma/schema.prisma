@@ -477,6 +477,7 @@ model WorkOrder {
   vehicle    Vehicle         @relation(fields: [vehicle_id, shop_id], references: [id, shop_id])
   items      WorkOrderItem[]
   inspection Inspection?
+  approvals  WorkOrderApproval[]
 
   /// Destino de la FK compuesta de work_order_items.
   @@unique([id, shop_id])
@@ -507,6 +508,10 @@ model WorkOrderItem {
   unit_price_cents          BigInt
   /// Tasa de ITBIS en basis points (1800 = 18%; 0 = exento).
   tax_rate_bps              Int               @default(1800)
+  /// approved = el taller la cobra; proposed = espera al cliente; declined = el
+  /// cliente la rechazó (no suma a los totales ni se cobra).
+  approval_status           ItemApprovalStatus @default(approved)
+  decided_at                DateTime?         @db.Timestamptz(6)
   subtotal_cents            BigInt
   tax_cents                 BigInt
   total_cents               BigInt
@@ -595,4 +600,39 @@ model InspectionPhoto {
 
   @@index([finding_id])
   @@map("inspection_photos")
+}
+
+// --- Aprobación del cliente (Día 6) ---
+
+enum ItemApprovalStatus {
+  approved
+  proposed
+  declined
+}
+
+enum ApprovalRequestStatus {
+  pending
+  completed
+  revoked
+}
+
+/// Solicitud de aprobación enviada al cliente. El enlace lleva un token que es
+/// una FIRMA HMAC del id (con un secreto del servidor): el token no se guarda
+/// en ningún lado, ni en esta tabla ni en el outbox. Vencimiento y revocación
+/// se controlan aquí.
+model WorkOrderApproval {
+  id                    String                @id @default(uuid(7)) @db.Uuid
+  shop_id               String                @db.Uuid
+  work_order_id         String                @db.Uuid
+  status                ApprovalRequestStatus @default(pending)
+  expires_at            DateTime              @db.Timestamptz(6)
+  decided_at            DateTime?             @db.Timestamptz(6)
+  created_by_account_id String                @db.Uuid
+  created_at            DateTime              @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime              @updatedAt @db.Timestamptz(6)
+
+  work_order WorkOrder @relation(fields: [work_order_id, shop_id], references: [id, shop_id], onDelete: Cascade)
+
+  @@index([work_order_id])
+  @@map("work_order_approvals")
 }

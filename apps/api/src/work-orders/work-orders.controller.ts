@@ -26,6 +26,7 @@ import {
 import { Transform, Type } from 'class-transformer';
 import {
   IsIn,
+  IsBoolean,
   IsInt,
   IsISO8601,
   IsOptional,
@@ -163,6 +164,13 @@ export class AddItemDto {
   @Min(0)
   @Max(10000)
   tax_rate_bps?: number;
+  @ApiPropertyOptional({
+    default: false,
+    description: 'true = línea propuesta: el cliente la aprueba o rechaza desde el enlace de la DVI.',
+  })
+  @IsOptional()
+  @IsBoolean()
+  requires_approval?: boolean;
 }
 
 export class UpdateItemDto extends PartialType(AddItemDto) {}

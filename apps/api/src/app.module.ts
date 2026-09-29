@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { AccountsModule } from './accounts/accounts.module';
+import { ApprovalsModule } from './approvals/approvals.module';
 import { AuthModule } from './auth/auth.module';
 import { CustomersModule } from './customers/customers.module';
 import { DomainEventsModule } from './domain-events/domain-events.module';
@@ -43,6 +44,7 @@ import { WorkOrdersModule } from './work-orders/work-orders.module';
     VehiclesModule,
     WorkOrdersModule,
     InspectionsModule,
+    ApprovalsModule,
     LedgerModule,
     PaymentsModule,
     PayoutsModule,

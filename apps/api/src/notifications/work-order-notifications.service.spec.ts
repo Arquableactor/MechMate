@@ -1,4 +1,5 @@
-import type { CustomerView, WorkOrderStatusChangedPayload } from '@repo/types';
+import type { CustomerView, WorkOrderApprovalRequestedPayload, WorkOrderStatusChangedPayload } from '@repo/types';
+import type { ApprovalsService } from '../approvals/approvals.service';
 import type { CustomersService } from '../customers/customers.service';
 import { DomainEventsRegistry } from '../domain-events/domain-events.registry';
 import type { MessagingService, SendMessageInput } from '../messaging/messaging.service';
@@ -51,16 +52,41 @@ function build(c: Partial<CustomerView> = {}, failOn?: string) {
     ),
   } as unknown as VehiclesService;
   const shops = { getOwnerContact: jest.fn().mockResolvedValue({ shopName: 'Taller Pérez' }) } as unknown as ShopsService;
+  const approvals = { linkFor: (id: string) => `https://api.mechmate.do/a/${id}.firma` } as unknown as ApprovalsService;
   const registry = new DomainEventsRegistry();
-  const service = new WorkOrderNotificationsService(registry, messaging, customers, vehicles, shops);
+  const service = new WorkOrderNotificationsService(registry, messaging, customers, vehicles, shops, approvals);
   return { service, registry, sent, messaging };
 }
 
 describe('WorkOrderNotificationsService', () => {
-  it('se suscribe a WorkOrderStatusChanged', () => {
+  it('se suscribe a WorkOrderStatusChanged y WorkOrderApprovalRequested', () => {
     const { service, registry } = build();
     service.onModuleInit();
     expect(registry.handlersFor('WorkOrderStatusChanged')).toHaveLength(1);
+    expect(registry.handlersFor('WorkOrderApprovalRequested')).toHaveLength(1);
+  });
+
+  it('pedido de aprobación: enlace RECALCULADO (el evento no trae token) por email y WhatsApp', async () => {
+    const { service, sent } = build();
+    const approvalPayload: WorkOrderApprovalRequestedPayload = {
+      approvalId: 'apr-1',
+      workOrderId: 'wo-1',
+      shopId: 'shop-1',
+      code: 'OT-0007',
+      customerId: 'cus-1',
+      vehicleId: 'veh-1',
+      expiresAt: '2026-10-06T00:00:00.000Z',
+    };
+    await service.onApprovalRequested({ ...eventOf(payload), id: 'evt-9', topic: 'WorkOrderApprovalRequested', payload: approvalPayload });
+
+    expect(sent.map((s) => s.channel)).toEqual(['email', 'whatsapp']);
+    expect(sent[0]).toMatchObject({
+      template: 'work_order_approval_requested',
+      subject: 'Aprueba el presupuesto de tu vehículo — Taller Pérez',
+      dedupeKey: 'evt-9:work_order_approval_requested:email:maria@mail.do',
+    });
+    expect(sent[0].body).toContain('https://api.mechmate.do/a/apr-1.firma');
+    expect(sent[0].body).toContain('Toyota Corolla 2019 (A482901) (orden OT-0007)');
   });
 
   it('al completar: "Tu vehículo está listo" por email y WhatsApp al cliente del taller', async () => {
@@ -97,7 +123,7 @@ describe('WorkOrderNotificationsService', () => {
 
   it('si un canal falla, intenta el otro y relanza (para reintentar)', async () => {
     const { service, sent } = build({}, 'email');
-    await expect(service.onStatusChanged(eventOf(payload))).rejects.toThrow(/1 envío\(s\) fallaron \(OT-0007/);
+    await expect(service.onStatusChanged(eventOf(payload))).rejects.toThrow(/1 envío\(s\) fallaron \(work_order_ready evt-3\): email: caído/);
     expect(sent.map((s) => s.channel)).toEqual(['whatsapp']);
   });
 });

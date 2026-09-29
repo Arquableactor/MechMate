@@ -72,6 +72,7 @@ export const ACTIVE_OUTBOX_TOPICS = [
   'PaymentRefunded',
   'ShopMemberInvited',
   'WorkOrderStatusChanged',
+  'WorkOrderApprovalRequested',
 ] as const;
 
 /** Reservados para Fase 3 (courier) — solo el contrato, sin lógica. */
@@ -313,7 +314,8 @@ export interface WorkOrderStatusChangedPayload {
   vehicleId: string;
   total_cents: Cents;
   currency: string;
-  changedByAccountId: string;
+  /** null = lo decidió el cliente desde el enlace de aprobación (sin cuenta). */
+  changedByAccountId: string | null;
   reason: string | null;
 }
 
@@ -332,6 +334,9 @@ export interface WorkOrderItemView {
   unit_price_cents: Cents;
   /** ITBIS en basis points: 1800 = 18%, 0 = exento. */
   tax_rate_bps: number;
+  /** approved = se cobra; proposed = espera al cliente; declined = rechazada (no suma). */
+  approval_status: ItemApprovalStatus;
+  decided_at: string | null;
   subtotal_cents: Cents;
   tax_cents: Cents;
   total_cents: Cents;
@@ -398,3 +403,66 @@ export interface PhotoUploadView {
     expires_at: string;
   };
 }
+
+// --- Aprobación del cliente (Día 6) ---
+
+export const ITEM_APPROVAL_STATUSES = ['approved', 'proposed', 'declined'] as const;
+export type ItemApprovalStatus = (typeof ITEM_APPROVAL_STATUSES)[number];
+
+/** Solicitud de aprobación, vista por el TALLER (incluye el enlace para compartir). */
+export interface ApprovalRequestView {
+  id: string;
+  status: 'pending' | 'completed' | 'revoked';
+  /** Enlace para el cliente. El taller puede compartirlo por su propio WhatsApp. */
+  link: string;
+  expires_at: string;
+  decided_at: string | null;
+  created_at: string;
+}
+
+/** Payload de `WorkOrderApprovalRequested`. Sin token: el notificador lo recalcula. */
+export interface WorkOrderApprovalRequestedPayload {
+  approvalId: string;
+  workOrderId: string;
+  shopId: string;
+  code: string;
+  customerId: string;
+  vehicleId: string;
+  expiresAt: string;
+}
+
+/** Línea tal como la ve el CLIENTE en la página de aprobación. */
+export interface PublicApprovalItem {
+  id: string;
+  type: WorkOrderItemType;
+  description: string;
+  quantity: string;
+  total_cents: Cents;
+  approval_status: ItemApprovalStatus;
+}
+
+/** Lo que ve el cliente al abrir el enlace (sin datos internos del taller). */
+export interface PublicApprovalView {
+  status: 'pending' | 'completed' | 'revoked' | 'expired';
+  expires_at: string;
+  shop_name: string;
+  work_order_code: string;
+  vehicle: string;
+  customer_first_name: string;
+  currency: string;
+  findings: {
+    area: string;
+    title: string;
+    severity: FindingSeverity;
+    notes: string | null;
+    /** URLs firmadas (1 h) de las fotos subidas. */
+    photo_urls: string[];
+  }[];
+  items: PublicApprovalItem[];
+  /** Totales de lo que se va a cobrar (sin las rechazadas). */
+  subtotal_cents: Cents;
+  tax_cents: Cents;
+  total_cents: Cents;
+}
+
+export type ItemDecision = 'approved' | 'declined';

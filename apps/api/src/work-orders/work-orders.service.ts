@@ -211,44 +211,61 @@ export class WorkOrdersService {
   ): Promise<WorkOrderDetailView> {
     await this.prisma.$transaction(async (tx) => {
       const wo = await this.lockForUpdate(tx, shopId, workOrderId);
-      if (!WORK_ORDER_TRANSITIONS[wo.status].includes(to)) {
-        throw new ConflictException(`La orden ${workOrderCode(wo.number)} está ${wo.status}: no puede pasar a ${to}.`);
-      }
       if (to === 'completed' && (await tx.workOrderItem.count({ where: { work_order_id: wo.id } })) === 0) {
         throw new ConflictException('La orden no tiene líneas: agrega mano de obra o piezas antes de completarla.');
       }
-      const reason = to === 'cancelled' ? text(by.reason) ?? null : null;
-      const now = new Date();
-
-      await tx.workOrder.update({
-        where: { id: wo.id },
-        data: {
-          status: to,
-          ...(to === 'in_progress' ? { started_at: now } : {}),
-          ...(to === 'completed' ? { completed_at: now } : {}),
-          ...(to === 'cancelled' ? { cancelled_at: now, cancellation_reason: reason } : {}),
-        },
-      });
-      await recordOutboxEvents(tx, [
-        {
-          topic: 'WorkOrderStatusChanged',
-          payload: {
-            workOrderId: wo.id,
-            shopId,
-            code: workOrderCode(wo.number),
-            from: wo.status,
-            to,
-            customerId: wo.customer_id,
-            vehicleId: wo.vehicle_id,
-            total_cents: wo.total_cents.toString(),
-            currency: wo.currency,
-            changedByAccountId: by.accountId,
-            reason,
-          } satisfies WorkOrderStatusChangedPayload,
-        },
-      ]);
+      await this.changeStatus(tx, shopId, wo, to, by);
     }, TX_OPTIONS);
     return this.getDetail(shopId, workOrderId);
+  }
+
+  /**
+   * ÚNICA vía para cambiar el estado de una OT (transiciones manuales,
+   * aprobación del cliente, cobro…): valida contra la máquina de estados, pone
+   * la fecha que corresponde y escribe `WorkOrderStatusChanged` en el outbox,
+   * todo en la tx del llamador, que ya tiene la OT bloqueada (lockForUpdate).
+   */
+  async changeStatus(
+    tx: Prisma.TransactionClient,
+    shopId: string,
+    wo: LockedWorkOrder,
+    to: WorkOrderStatus,
+    by: { accountId: string | null; reason?: string | null },
+  ): Promise<void> {
+    if (!WORK_ORDER_TRANSITIONS[wo.status].includes(to)) {
+      throw new ConflictException(`La orden ${workOrderCode(wo.number)} está ${wo.status}: no puede pasar a ${to}.`);
+    }
+    const reason = to === 'cancelled' ? text(by.reason) ?? null : null;
+    const now = new Date();
+
+    const updated = await tx.workOrder.update({
+      where: { id: wo.id },
+      data: {
+        status: to,
+        ...(to === 'in_progress' ? { started_at: now } : {}),
+        ...(to === 'completed' ? { completed_at: now } : {}),
+        ...(to === 'cancelled' ? { cancelled_at: now, cancellation_reason: reason } : {}),
+      },
+    });
+    await recordOutboxEvents(tx, [
+      {
+        topic: 'WorkOrderStatusChanged',
+        payload: {
+          workOrderId: wo.id,
+          shopId,
+          code: workOrderCode(wo.number),
+          from: wo.status,
+          to,
+          customerId: wo.customer_id,
+          vehicleId: wo.vehicle_id,
+          // Leído DESPUÉS del update: refleja los totales vigentes en esta tx.
+          total_cents: updated.total_cents.toString(),
+          currency: wo.currency,
+          changedByAccountId: by.accountId,
+          reason,
+        } satisfies WorkOrderStatusChangedPayload,
+      },
+    ]);
   }
 
   /**
@@ -330,10 +347,32 @@ export function toItemView(i: WorkOrderItem): WorkOrderItemView {
     quantity: formatQuantity(i.quantity_milli),
     unit_price_cents: i.unit_price_cents.toString(),
     tax_rate_bps: i.tax_rate_bps,
+    approval_status: i.approval_status,
+    decided_at: i.decided_at?.toISOString() ?? null,
     subtotal_cents: i.subtotal_cents.toString(),
     tax_cents: i.tax_cents.toString(),
     total_cents: i.total_cents.toString(),
     created_at: i.created_at.toISOString(),
     updated_at: i.updated_at.toISOString(),
   };
+}
+
+/**
+ * Recalcula los totales de la OT a partir de sus líneas, en la tx del llamador
+ * (que ya tiene la OT bloqueada). Las líneas RECHAZADAS por el cliente no
+ * suman: no se cobran.
+ */
+export async function recalculateTotals(tx: Prisma.TransactionClient, workOrderId: string): Promise<void> {
+  await tx.$executeRaw`
+    UPDATE work_orders w
+    SET subtotal_cents = s.subtotal,
+        tax_cents      = s.tax,
+        total_cents    = s.subtotal + s.tax,
+        updated_at     = now()
+    FROM (
+      SELECT COALESCE(SUM(subtotal_cents), 0) AS subtotal, COALESCE(SUM(tax_cents), 0) AS tax
+      FROM work_order_items
+      WHERE work_order_id = ${workOrderId}::uuid AND approval_status <> 'declined'
+    ) s
+    WHERE w.id = ${workOrderId}::uuid`;
 }
