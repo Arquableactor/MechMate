@@ -5,7 +5,7 @@ import './config/load-env';
 import './instrument';
 import './common/bigint-serializer';
 
-import { Logger, ValidationPipe } from '@nestjs/common';
+import { Logger, RequestMethod, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -16,7 +16,8 @@ async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, { rawBody: true });
 
   // API versionada bajo /v1 (CLAUDE.md).
-  app.setGlobalPrefix('v1');
+  // Excepción: la página del cliente vive en /a/:token (enlace corto para WhatsApp).
+  app.setGlobalPrefix('v1', { exclude: [{ path: 'a/:token', method: RequestMethod.GET }] });
 
   // Validación de DTOs (rechaza payloads inválidos con 400) + strip de extras.
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));

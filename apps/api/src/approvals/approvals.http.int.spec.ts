@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { type CanActivate, type ExecutionContext, type INestApplication, ValidationPipe } from '@nestjs/common';
+import { type CanActivate, type ExecutionContext, type INestApplication, RequestMethod, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
 import type { ApprovalRequestView, PublicApprovalView, ShopView, WorkOrderDetailView, WorkOrderView } from '@repo/types';
@@ -17,6 +17,7 @@ import { ApprovalsModule } from './approvals.module';
 let app: INestApplication;
 let prisma: PrismaService;
 let base: string;
+let root: string;
 
 const fakeJwt: CanActivate = {
   canActivate(context: ExecutionContext) {
@@ -45,10 +46,11 @@ beforeAll(async () => {
     .useValue({ provider: 'x', createDownloadUrl: async () => ({ url: 'x', expiresAt: '' }) })
     .compile();
   app = moduleRef.createNestApplication();
-  app.setGlobalPrefix('v1');
+  app.setGlobalPrefix('v1', { exclude: [{ path: 'a/:token', method: RequestMethod.GET }] }); // como en main.ts
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   await app.listen(0);
-  base = `${await app.getUrl()}/v1`.replace('[::1]', 'localhost');
+  root = (await app.getUrl()).replace('[::1]', 'localhost');
+  base = `${root}/v1`;
   prisma = app.get(PrismaService);
 });
 
@@ -85,6 +87,17 @@ describe('Aprobaciones por HTTP', () => {
     const created = await call(owner.id, 'POST', `/shops/${shop.id}/work-orders/${wo.id}/approval-requests`);
     expect(created.status).toBe(201);
     const token = (await json<ApprovalRequestView>(created)).link.split('/a/')[1];
+
+    // La página HTML (fuera de /v1), con sus encabezados de seguridad.
+    const page = await fetch(`${root}/a/${token}`);
+    expect(page.status).toBe(200);
+    expect(page.headers.get('content-type')).toContain('text/html');
+    expect(page.headers.get('referrer-policy')).toBe('no-referrer');
+    expect(page.headers.get('content-security-policy')).toMatch(/script-src 'nonce-[A-Za-z0-9+/=]+'/);
+    expect(await page.text()).toContain('Hola Ana, este es el presupuesto de tu vehículo');
+    const bad = await fetch(`${root}/a/no-es-un-token`);
+    expect(bad.status).toBe(404);
+    expect(await bad.text()).toContain('Este enlace no es válido');
 
     const view = await call(null, 'GET', `/public/approvals/${token}`);
     expect(view.status).toBe(200);
