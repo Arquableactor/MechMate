@@ -1,6 +1,12 @@
 import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
 import type { MessageChannel } from '@prisma/client';
-import type { CustomerView, WorkOrderApprovalRequestedPayload, WorkOrderStatusChangedPayload } from '@repo/types';
+import type {
+  CustomerView,
+  PaymentCapturedPayload,
+  WorkOrderApprovalRequestedPayload,
+  WorkOrderStatusChangedPayload,
+} from '@repo/types';
+import { InvoicesService } from '../invoices/invoices.service';
 import { ApprovalsService } from '../approvals/approvals.service';
 import { CustomersService } from '../customers/customers.service';
 import { DomainEventsRegistry } from '../domain-events/domain-events.registry';
@@ -8,7 +14,7 @@ import { MessagingService } from '../messaging/messaging.service';
 import type { DomainEventJob } from '../outbox/outbox-relay.service';
 import { ShopsService } from '../shops/shops.service';
 import { VehiclesService } from '../vehicles/vehicles.service';
-import { approvalRequested, workOrderReady } from './work-order-templates';
+import { approvalRequested, workOrderReady, workOrderReceipt } from './work-order-templates';
 import type { RenderedMessage } from './payment-templates';
 
 /**
@@ -29,11 +35,13 @@ export class WorkOrderNotificationsService implements OnModuleInit {
     private readonly vehicles: VehiclesService,
     private readonly shops: ShopsService,
     private readonly approvals: ApprovalsService,
+    private readonly invoices: InvoicesService,
   ) {}
 
   onModuleInit(): void {
     this.registry.on('WorkOrderStatusChanged', (e) => this.onStatusChanged(e));
     this.registry.on('WorkOrderApprovalRequested', (e) => this.onApprovalRequested(e));
+    this.registry.on('PaymentCaptured', (e) => this.onPaymentCaptured(e));
   }
 
   async onStatusChanged(event: DomainEventJob): Promise<void> {
@@ -63,6 +71,31 @@ export class WorkOrderNotificationsService implements OnModuleInit {
       link: this.approvals.linkFor(p.approvalId),
     });
     await this.deliver(event, ctx.customer, message, { workOrderId: p.workOrderId, approvalId: p.approvalId });
+  }
+
+  /**
+   * Recibo al CLIENTE del taller cuando se cobra su OT (tarjeta, efectivo o
+   * transferencia). Los pagos del marketplace (sin workOrderId) no son de aquí.
+   */
+  async onPaymentCaptured(event: DomainEventJob): Promise<void> {
+    const p = event.payload as PaymentCapturedPayload;
+    if (!p.workOrderId || !p.invoiceId || !p.customerId || !p.method) return;
+    const invoice = await this.invoices.get(p.shopId, p.invoiceId);
+    const customer = await this.customers.get(p.shopId, p.customerId);
+    const message = workOrderReceipt({
+      customerName: customer.full_name,
+      shopName: invoice.shop_name,
+      workOrderCode: invoice.work_order_code,
+      invoiceCode: invoice.code,
+      ncf: invoice.ncf,
+      // Del snapshot de la factura: lo que quedó facturado, no la ficha actual.
+      vehicle: invoice.vehicle_description,
+      totalCents: BigInt(p.amount_cents),
+      currency: p.currency,
+      method: p.method,
+      paidAt: invoice.paid_at ?? event.occurredAt,
+    });
+    await this.deliver(event, customer, message, { workOrderId: p.workOrderId, invoiceId: p.invoiceId, paymentId: p.paymentId });
   }
 
   private async context(shopId: string, customerId: string, vehicleId: string) {

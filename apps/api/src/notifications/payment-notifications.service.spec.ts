@@ -167,3 +167,27 @@ describe('plantillas de pago', () => {
     expect(paymentRefunded({ ...base, audience: 'buyer' }).body).toContain('Te reembolsamos RD$5.00');
   });
 });
+
+describe('aviso al taller según el método de pago', () => {
+  const base = {
+    ownerName: 'Ana',
+    shopName: 'Taller Ana',
+    amountCents: 212400n,
+    commissionCents: 16992n,
+    netCents: 195408n,
+    currency: 'DOP',
+    paymentId: 'pay-1',
+  };
+
+  it('tarjeta: neto a favor y cuándo se deposita', () => {
+    const m = paymentReceived({ ...base, method: 'card' });
+    expect(m.body).toContain('Neto a tu favor: RD$1,954.08 (se deposita en 2 días hábiles)');
+  });
+
+  it('efectivo/transferencia: el dinero ya lo tiene el taller; la comisión se descuenta después', () => {
+    const m = paymentReceived({ ...base, method: 'transfer' });
+    expect(m.body).toContain('Cobro registrado (transferencia): RD$2,124.00');
+    expect(m.body).toContain('Comisión MechMate: RD$169.92 — se descuenta de tu próximo pago con tarjeta.');
+    expect(m.body).not.toContain('Neto a tu favor');
+  });
+});

@@ -66,6 +66,7 @@ export class PaymentNotificationsService implements OnModuleInit {
           netCents: BigInt(p.net_cents),
           currency: p.currency,
           paymentId: p.paymentId,
+          method: p.method,
         }),
       });
     } else {

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { AccountsModule } from '../accounts/accounts.module';
 import { ApprovalsModule } from '../approvals/approvals.module';
 import { CustomersModule } from '../customers/customers.module';
+import { InvoicesModule } from '../invoices/invoices.module';
 import { MessagingModule } from '../messaging/messaging.module';
 import { ShopsModule } from '../shops/shops.module';
 import { VehiclesModule } from '../vehicles/vehicles.module';
@@ -15,7 +16,7 @@ import { WorkOrderNotificationsService } from './work-order-notifications.servic
  * DomainEventsRegistry (global) en su onModuleInit.
  */
 @Module({
-  imports: [AccountsModule, MessagingModule, ShopsModule, CustomersModule, VehiclesModule, ApprovalsModule],
+  imports: [AccountsModule, MessagingModule, ShopsModule, CustomersModule, VehiclesModule, ApprovalsModule, InvoicesModule],
   providers: [PaymentNotificationsService, ShopNotificationsService, WorkOrderNotificationsService],
 })
 export class NotificationsModule {}

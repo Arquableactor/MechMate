@@ -1,4 +1,11 @@
-import type { CustomerView, WorkOrderApprovalRequestedPayload, WorkOrderStatusChangedPayload } from '@repo/types';
+import type {
+  CustomerView,
+  InvoiceView,
+  PaymentCapturedPayload,
+  WorkOrderApprovalRequestedPayload,
+  WorkOrderStatusChangedPayload,
+} from '@repo/types';
+import type { InvoicesService } from '../invoices/invoices.service';
 import type { ApprovalsService } from '../approvals/approvals.service';
 import type { CustomersService } from '../customers/customers.service';
 import { DomainEventsRegistry } from '../domain-events/domain-events.registry';
@@ -53,8 +60,18 @@ function build(c: Partial<CustomerView> = {}, failOn?: string) {
   } as unknown as VehiclesService;
   const shops = { getOwnerContact: jest.fn().mockResolvedValue({ shopName: 'Taller Pérez' }) } as unknown as ShopsService;
   const approvals = { linkFor: (id: string) => `https://api.mechmate.do/a/${id}.firma` } as unknown as ApprovalsService;
+  const invoices = {
+    get: jest.fn().mockResolvedValue({
+      code: 'FAC-0003',
+      ncf: null,
+      shop_name: 'Taller Pérez',
+      work_order_code: 'OT-0007',
+      vehicle_description: 'Toyota Corolla 2019 (A482901)',
+      paid_at: '2026-09-29T20:30:00.000Z',
+    } as Partial<InvoiceView>),
+  } as unknown as InvoicesService;
   const registry = new DomainEventsRegistry();
-  const service = new WorkOrderNotificationsService(registry, messaging, customers, vehicles, shops, approvals);
+  const service = new WorkOrderNotificationsService(registry, messaging, customers, vehicles, shops, approvals, invoices);
   return { service, registry, sent, messaging };
 }
 
@@ -64,6 +81,51 @@ describe('WorkOrderNotificationsService', () => {
     service.onModuleInit();
     expect(registry.handlersFor('WorkOrderStatusChanged')).toHaveLength(1);
     expect(registry.handlersFor('WorkOrderApprovalRequested')).toHaveLength(1);
+    expect(registry.handlersFor('PaymentCaptured')).toHaveLength(1);
+  });
+
+  const captured: PaymentCapturedPayload = {
+    paymentId: 'pay-9',
+    amount_cents: '212400',
+    commission_cents: '16992',
+    net_cents: '195408',
+    currency: 'DOP',
+    shopId: 'shop-1',
+    buyerAccountId: null,
+    orderId: null,
+    workOrderId: 'wo-1',
+    invoiceId: 'inv-1',
+    customerId: 'cus-1',
+    method: 'cash',
+  };
+
+  it('cobro de OT: recibo al cliente con factura, NCF pendiente, método y fecha en hora de RD', async () => {
+    const { service, sent } = build();
+    await service.onPaymentCaptured({ ...eventOf(payload), id: 'evt-p', topic: 'PaymentCaptured', payload: captured });
+
+    expect(sent.map((s) => s.channel)).toEqual(['email', 'whatsapp']);
+    expect(sent[0]).toMatchObject({
+      template: 'work_order_receipt',
+      subject: 'Recibo de pago FAC-0003 — Taller Pérez',
+      dedupeKey: 'evt-p:work_order_receipt:email:maria@mail.do',
+    });
+    for (const line of [
+      'Vehículo: Toyota Corolla 2019 (A482901)',
+      'Orden: OT-0007',
+      'Factura: FAC-0003',
+      'NCF: pendiente',
+      'Pagado: RD$2,124.00 (efectivo)',
+      'Fecha: 29/9/26, 4:30',
+    ]) {
+      expect(sent[0].body).toContain(line);
+    }
+  });
+
+  it('pagos del marketplace (sin OT) no generan recibo de OT', async () => {
+    const { service, messaging } = build();
+    const marketplace = { ...captured, workOrderId: undefined, invoiceId: undefined, customerId: undefined, method: undefined };
+    await service.onPaymentCaptured({ ...eventOf(payload), id: 'evt-m', topic: 'PaymentCaptured', payload: marketplace });
+    expect(messaging.send).not.toHaveBeenCalled();
   });
 
   it('pedido de aprobación: enlace RECALCULADO (el evento no trae token) por email y WhatsApp', async () => {

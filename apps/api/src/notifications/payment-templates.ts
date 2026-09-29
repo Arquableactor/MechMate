@@ -1,3 +1,4 @@
+import type { PaymentMethod } from '@repo/types';
 import { formatMoney } from '../common/money';
 
 /** Mensaje listo para enviar, independiente del canal. */
@@ -27,21 +28,32 @@ export function paymentReceived(p: {
   netCents: bigint;
   currency: string;
   paymentId: string;
+  /** Sin método = pago del marketplace (siempre por la plataforma). */
+  method?: PaymentMethod;
 }): RenderedMessage {
   const amount = formatMoney(p.amountCents, p.currency);
+  const commission = formatMoney(p.commissionCents, p.currency);
+  const offline = p.method === 'cash' || p.method === 'transfer';
+  const detail = offline
+    ? `Cobro registrado (${METHOD_LABEL[p.method!]}): ${amount}\n` +
+      `El dinero lo recibiste tú directamente.\n` +
+      `Comisión MechMate: ${commission} — se descuenta de tu próximo pago con tarjeta.`
+    : `Monto cobrado: ${amount}\n` +
+      `Comisión MechMate: ${commission}\n` +
+      `Neto a tu favor: ${formatMoney(p.netCents, p.currency)}` +
+      (p.method === 'card' ? ' (se deposita en 2 días hábiles)' : '');
   return {
     template: 'payment_received',
     subject: `Pago recibido: ${amount}`,
-    body:
-      `${hello(p.ownerName)}\n\n` +
-      `${p.shopName} recibió un pago.\n\n` +
-      `Monto cobrado: ${amount}\n` +
-      `Comisión MechMate: ${formatMoney(p.commissionCents, p.currency)}\n` +
-      `Neto a tu favor: ${formatMoney(p.netCents, p.currency)}\n\n` +
-      `Referencia: ${p.paymentId}` +
-      SIGNATURE,
+    body: `${hello(p.ownerName)}\n\n${p.shopName} recibió un pago.\n\n${detail}\n\nReferencia: ${p.paymentId}${SIGNATURE}`,
   };
 }
+
+export const METHOD_LABEL: Record<PaymentMethod, string> = {
+  card: 'tarjeta',
+  cash: 'efectivo',
+  transfer: 'transferencia',
+};
 
 /** Al cliente: comprobante de su pago. */
 export function paymentReceipt(p: {
