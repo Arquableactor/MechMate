@@ -17,6 +17,7 @@ import { PayoutsModule } from './payouts/payouts.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { QueueModule } from './queue/queue.module';
 import { ShopsModule } from './shops/shops.module';
+import { StorageModule } from './storage/storage.module';
 import { VehiclesModule } from './vehicles/vehicles.module';
 import { VinModule } from './vin/vin.module';
 import { WorkOrdersModule } from './work-orders/work-orders.module';
@@ -26,6 +27,7 @@ import { WorkOrdersModule } from './work-orders/work-orders.module';
     ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule,
     QueueModule.forRoot(),
+    StorageModule,
     OutboxModule,
     DomainEventsModule.forRoot(),
     MessagingModule,

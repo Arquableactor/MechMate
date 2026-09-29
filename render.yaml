@@ -40,6 +40,15 @@ services:
         sync: false
       - key: EMAIL_FROM
         sync: false
+      # Cloudflare R2 (fotos de la DVI). Obligatorias en producción.
+      - key: R2_ACCOUNT_ID
+        sync: false
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: R2_BUCKET
+        sync: false
       # Opcional: sin SENTRY_DSN no se reportan errores (solo un warning al arrancar).
       - key: SENTRY_DSN
         sync: false

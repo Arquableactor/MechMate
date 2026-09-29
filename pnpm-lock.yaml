@@ -62,6 +62,9 @@ importers:
       '@sentry/nestjs':
         specifier: ^11.1.0
         version: 11.1.0(@babel/core@7.29.7)(@nestjs/common@11.1.27(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.27)(webpack@5.106.2)
+      aws4fetch:
+        specifier: ^1.0.20
+        version: 1.0.20
       bullmq:
         specifier: ^6.3.9
         version: 6.3.9(ioredis@5.11.1)(pg@8.22.0)
@@ -1457,6 +1460,9 @@ packages:
   async-exit-hook@2.0.1:
     resolution: {integrity: sha512-NW2cX8m1Q7KPA7a5M2ULQeZ2wR5qI5PAbw5L0UOMxdioVk9PMZ0h1TmyZEkPYrCvYjDlFICusOu1dlEKAAeXBw==}
     engines: {node: '>=0.12.0'}
+
+  aws4fetch@1.0.20:
+    resolution: {integrity: sha512-/djoAN709iY65ETD6LKCtyyEI04XIBP5xVvfmNxsEP0uJB5tyaGBztSryRr4HqMStr9R06PisQE7m9zDTXKu6g==}
 
   babel-jest@29.7.0:
     resolution: {integrity: sha512-BrvGY3xZSwEcCzKvKsCi2GgHqDqsYkOP4/by5xCgIwGXQxIEh+8ew3gmrE1y7XRR6LHZIj6yLYnUi/mm2KXKBg==}
@@ -4960,6 +4966,8 @@ snapshots:
   array-timsort@1.0.3: {}
 
   async-exit-hook@2.0.1: {}
+
+  aws4fetch@1.0.20: {}
 
   babel-jest@29.7.0(@babel/core@7.29.7):
     dependencies:
