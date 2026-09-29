@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AccountsModule } from './accounts/accounts.module';
 import { ApprovalsModule } from './approvals/approvals.module';
 import { AuthModule } from './auth/auth.module';
+import { BillingModule } from './billing/billing.module';
 import { CustomersModule } from './customers/customers.module';
 import { DomainEventsModule } from './domain-events/domain-events.module';
 import { HealthModule } from './health/health.module';
@@ -47,6 +48,7 @@ import { WorkOrdersModule } from './work-orders/work-orders.module';
     InspectionsModule,
     ApprovalsModule,
     InvoicesModule,
+    BillingModule,
     LedgerModule,
     PaymentsModule,
     PayoutsModule,

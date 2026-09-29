@@ -50,6 +50,14 @@ enum LedgerAccountKind {
 
 enum PaymentProvider {
   cardnet
+  /// Efectivo o transferencia: el dinero no pasa por la plataforma.
+  offline
+}
+
+enum PaymentMethod {
+  card
+  cash
+  transfer
 }
 
 enum PaymentStatus {
@@ -183,6 +191,13 @@ model LedgerPosting {
 model Payment {
   id              String          @id @default(uuid(7)) @db.Uuid
   order_id        String?         @db.Uuid
+  /// Cobro de una OT (ERP): taller, OT, factura y cliente que paga. Cruce por
+  /// ID a otros módulos (sin FK): pagos es dueño solo de su tabla.
+  shop_id           String?       @db.Uuid
+  work_order_id     String?       @db.Uuid
+  invoice_id        String?       @db.Uuid
+  payer_customer_id String?       @db.Uuid
+  method            PaymentMethod @default(card)
   provider        PaymentProvider @default(cardnet)
   provider_ref    String?
   amount_cents    BigInt
@@ -192,6 +207,7 @@ model Payment {
   created_at      DateTime        @default(now()) @db.Timestamptz(6)
   updated_at      DateTime        @updatedAt @db.Timestamptz(6)
 
+  @@index([invoice_id])
   @@map("payments")
 }
 
@@ -203,6 +219,8 @@ model Payout {
   currency     String      @default("DOP")
   status       PayoutStatus @default(scheduled)
   scheduled_for DateTime    @db.Date
+  /// Cobro con tarjeta que originó el payout (trazabilidad).
+  source_payment_id String?  @db.Uuid
   created_at   DateTime    @default(now()) @db.Timestamptz(6)
   updated_at   DateTime    @updatedAt @db.Timestamptz(6)
 

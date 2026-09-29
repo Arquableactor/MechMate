@@ -91,8 +91,15 @@ export interface PaymentCapturedPayload {
   net_cents: Cents;
   currency: string;
   shopId: string;
-  buyerAccountId: string;
+  /** Cuenta de la app que pagó (marketplace). null en cobros de OT: paga un cliente del taller. */
+  buyerAccountId: string | null;
   orderId: string | null;
+  /** Cobro de OT (ERP). Ausentes en pagos del marketplace. */
+  workOrderId?: string;
+  invoiceId?: string;
+  customerId?: string;
+  /** card = por la plataforma; cash/transfer = el taller recibió el dinero directo. */
+  method?: PaymentMethod;
 }
 
 /** Payload de `PaymentRefunded` (reversa total de la captura). */
@@ -504,4 +511,29 @@ export interface InvoiceView {
   issued_at: string;
   paid_at: string | null;
   lines: InvoiceLineView[];
+}
+
+// --- Cobro de OT (Día 7) ---
+
+export const PAYMENT_METHODS = ['card', 'cash', 'transfer'] as const;
+export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
+
+/** Resultado de cobrar una OT. */
+export interface ChargeView {
+  payment: {
+    id: string;
+    method: PaymentMethod;
+    status: PaymentStatus;
+    amount_cents: Cents;
+    /** Comisión de la plataforma. En efectivo/transferencia queda como deuda del taller. */
+    commission_cents: Cents;
+    currency: string;
+    provider_ref: string | null;
+  };
+  invoice: { id: string; code: string; status: 'issued' | 'paid' | 'voided' };
+  work_order: { id: string; code: string; status: WorkOrderStatus };
+  /** Payout programado al taller (solo tarjeta y si su saldo es positivo). */
+  payout: { id: string; amount_cents: Cents; scheduled_for: string } | null;
+  /** true = respuesta repetida por la misma Idempotency-Key (no se cobró otra vez). */
+  replayed: boolean;
 }

@@ -145,6 +145,18 @@ export class InvoicesService {
     return toInvoiceView(await this.tryAssignNcf(invoice));
   }
 
+  /** Factura emitida de la OT (entidad), o null. Para el cobro. */
+  async findIssuable(shopId: string, workOrderId: string): Promise<Invoice | null> {
+    return isUUID(workOrderId)
+      ? this.prisma.invoice.findFirst({ where: { work_order_id: workOrderId, shop_id: shopId } })
+      : null;
+  }
+
+  /** Marca la factura pagada en la tx del cobro (el trigger solo permite issued → paid). */
+  async markPaid(tx: Prisma.TransactionClient, invoiceId: string): Promise<Invoice> {
+    return tx.invoice.update({ where: { id: invoiceId }, data: { status: 'paid', paid_at: new Date() } });
+  }
+
   async getByWorkOrder(shopId: string, workOrderId: string): Promise<InvoiceView> {
     const invoice = isUUID(workOrderId)
       ? await this.prisma.invoice.findFirst({ where: { work_order_id: workOrderId, shop_id: shopId }, include: { lines: true } })

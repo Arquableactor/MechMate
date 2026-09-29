@@ -47,7 +47,9 @@ export class PaymentNotificationsService implements OnModuleInit {
     const p = event.payload as PaymentCapturedPayload;
     const [shop, buyer] = await Promise.all([
       this.shops.getOwnerContact(p.shopId),
-      this.accounts.getContact(p.buyerAccountId),
+      // Cobro de OT: paga un cliente del taller (sin cuenta); su recibo lo manda
+      // WorkOrderNotificationsService.
+      p.buyerAccountId ? this.accounts.getContact(p.buyerAccountId) : null,
     ]);
     const shopName = shop?.shopName ?? 'el taller';
     const amountCents = BigInt(p.amount_cents);
