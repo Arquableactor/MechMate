@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { CustomersModule } from './customers/customers.module';
 import { DomainEventsModule } from './domain-events/domain-events.module';
 import { HealthModule } from './health/health.module';
+import { InspectionsModule } from './inspections/inspections.module';
 import { LedgerModule } from './ledger/ledger.module';
 import { MeModule } from './me/me.module';
 import { MessagingModule } from './messaging/messaging.module';
@@ -41,6 +42,7 @@ import { WorkOrdersModule } from './work-orders/work-orders.module';
     CustomersModule,
     VehiclesModule,
     WorkOrdersModule,
+    InspectionsModule,
     LedgerModule,
     PaymentsModule,
     PayoutsModule,

@@ -472,10 +472,11 @@ model WorkOrder {
   created_at            DateTime        @default(now()) @db.Timestamptz(6)
   updated_at            DateTime        @updatedAt @db.Timestamptz(6)
 
-  shop     Shop            @relation(fields: [shop_id], references: [id])
-  customer Customer        @relation(fields: [customer_id, shop_id], references: [id, shop_id])
-  vehicle  Vehicle         @relation(fields: [vehicle_id, shop_id], references: [id, shop_id])
-  items    WorkOrderItem[]
+  shop       Shop            @relation(fields: [shop_id], references: [id])
+  customer   Customer        @relation(fields: [customer_id, shop_id], references: [id, shop_id])
+  vehicle    Vehicle         @relation(fields: [vehicle_id, shop_id], references: [id, shop_id])
+  items      WorkOrderItem[]
+  inspection Inspection?
 
   /// Destino de la FK compuesta de work_order_items.
   @@unique([id, shop_id])
@@ -518,4 +519,80 @@ model WorkOrderItem {
 
   @@index([work_order_id])
   @@map("work_order_items")
+}
+
+// --- DVI: inspección digital del vehículo (Día 6) ---
+
+/// Severidad de un hallazgo: verde (ok), amarillo (atención), rojo (urgente).
+enum FindingSeverity {
+  ok
+  attention
+  urgent
+}
+
+enum PhotoStatus {
+  pending
+  uploaded
+}
+
+/// Inspección digital de una OT (una por OT). FKs compuestas por taller en toda
+/// la cadena OT → inspección → hallazgo → foto: nada cruza de taller.
+model Inspection {
+  id                    String   @id @default(uuid(7)) @db.Uuid
+  shop_id               String   @db.Uuid
+  work_order_id         String   @db.Uuid
+  notes                 String?
+  created_by_account_id String   @db.Uuid
+  created_at            DateTime @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime @updatedAt @db.Timestamptz(6)
+
+  work_order WorkOrder           @relation(fields: [work_order_id, shop_id], references: [id, shop_id], onDelete: Cascade)
+  findings   InspectionFinding[]
+
+  /// Una inspección por OT (la FK fija shop_id al taller de la OT, así que
+  /// este UNIQUE compuesto equivale a UNIQUE(work_order_id)).
+  @@unique([work_order_id, shop_id])
+  @@unique([id, shop_id])
+  @@map("inspections")
+}
+
+/// Hallazgo de la inspección (p. ej. Frenos · "Pastillas al 20%" · urgente).
+model InspectionFinding {
+  id            String          @id @default(uuid(7)) @db.Uuid
+  shop_id       String          @db.Uuid
+  inspection_id String          @db.Uuid
+  area          String
+  title         String
+  severity      FindingSeverity
+  notes         String?
+  created_at    DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime        @updatedAt @db.Timestamptz(6)
+
+  inspection Inspection        @relation(fields: [inspection_id, shop_id], references: [id, shop_id], onDelete: Cascade)
+  photos     InspectionPhoto[]
+
+  @@unique([id, shop_id])
+  @@index([inspection_id])
+  @@map("inspection_findings")
+}
+
+/// Foto de un hallazgo. El archivo vive en R2 (`storage_key`, con prefijo del
+/// taller); aquí solo metadatos. `pending` hasta que el cliente confirma y la
+/// API verifica en R2 que existe con el tamaño/tipo declarados.
+model InspectionPhoto {
+  id           String      @id @default(uuid(7)) @db.Uuid
+  shop_id      String      @db.Uuid
+  finding_id   String      @db.Uuid
+  storage_key  String      @unique
+  content_type String
+  size_bytes   Int
+  status       PhotoStatus @default(pending)
+  uploaded_at  DateTime?   @db.Timestamptz(6)
+  created_at   DateTime    @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime    @updatedAt @db.Timestamptz(6)
+
+  finding InspectionFinding @relation(fields: [finding_id, shop_id], references: [id, shop_id], onDelete: Cascade)
+
+  @@index([finding_id])
+  @@map("inspection_photos")
 }

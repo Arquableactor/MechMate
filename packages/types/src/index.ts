@@ -343,3 +343,58 @@ export interface WorkOrderItemView {
 export interface WorkOrderDetailView extends WorkOrderView {
   items: WorkOrderItemView[];
 }
+
+// --- DVI: inspección digital del vehículo (Día 6) ---
+
+/** ok = verde, attention = amarillo, urgent = rojo. */
+export const FINDING_SEVERITIES = ['ok', 'attention', 'urgent'] as const;
+export type FindingSeverity = (typeof FINDING_SEVERITIES)[number];
+
+/** Tipos de foto aceptados (HEIC = formato por defecto del iPhone). */
+export const PHOTO_CONTENT_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic'] as const;
+export type PhotoContentType = (typeof PHOTO_CONTENT_TYPES)[number];
+export const MAX_PHOTO_BYTES = 10 * 1024 * 1024;
+export const MAX_PHOTOS_PER_FINDING = 10;
+
+export interface InspectionPhotoView {
+  id: string;
+  status: 'pending' | 'uploaded';
+  content_type: string;
+  size_bytes: number;
+  /** URL firmada para ver la foto (solo si está subida); vence en `url_expires_at`. */
+  url: string | null;
+  url_expires_at: string | null;
+  created_at: string;
+}
+
+export interface InspectionFindingView {
+  id: string;
+  /** Área del vehículo: "Frenos", "Suspensión", "Luces"… */
+  area: string;
+  title: string;
+  severity: FindingSeverity;
+  notes: string | null;
+  photos: InspectionPhotoView[];
+  created_at: string;
+}
+
+export interface InspectionView {
+  id: string;
+  work_order_id: string;
+  notes: string | null;
+  findings: InspectionFindingView[];
+  created_at: string;
+  updated_at: string;
+}
+
+/** Respuesta al pedir subir una foto: la foto (pending) + cómo subirla a R2. */
+export interface PhotoUploadView {
+  photo: InspectionPhotoView;
+  upload: {
+    url: string;
+    method: 'PUT';
+    /** Enviar EXACTAMENTE estos headers (están firmados). */
+    headers: Record<string, string>;
+    expires_at: string;
+  };
+}
