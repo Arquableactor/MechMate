@@ -15,6 +15,7 @@ import { Type } from 'class-transformer';
 import { ArrayMaxSize, ArrayMinSize, IsIn, IsString, MaxLength, ValidateNested } from 'class-validator';
 import { type AuthenticatedAccount, CurrentUser } from '../auth/current-user.decorator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ApiView } from '../openapi/api-view.decorator';
 import { ShopAccessGuard } from '../shops/shop-access.guard';
 import { ApprovalsService } from './approvals.service';
 
@@ -54,6 +55,7 @@ export class ApprovalsController {
   })
   @ApiCreatedResponse({ description: 'Solicitud con el enlace (para compartirlo también por WhatsApp propio).' })
   @ApiConflictResponse({ description: 'OT en otro estado, o sin líneas propuestas.' })
+  @ApiView('ApprovalRequestView')
   request(
     @Param('shopId') shopId: string,
     @Param('workOrderId') workOrderId: string,
@@ -64,6 +66,7 @@ export class ApprovalsController {
 
   @Get()
   @ApiOperation({ summary: 'Historial de solicitudes de aprobación de la OT.' })
+  @ApiView('ApprovalRequestView', 'array')
   list(@Param('shopId') shopId: string, @Param('workOrderId') workOrderId: string): Promise<ApprovalRequestView[]> {
     return this.approvals.list(shopId, workOrderId);
   }
@@ -71,6 +74,7 @@ export class ApprovalsController {
   @Post(':approvalId/revoke')
   @HttpCode(200)
   @ApiOperation({ summary: 'Revoca la solicitud pendiente (el enlace deja de servir) y la OT vuelve a draft.' })
+  @ApiView('ApprovalRequestView')
   revoke(
     @Param('shopId') shopId: string,
     @Param('workOrderId') workOrderId: string,
@@ -94,6 +98,7 @@ export class PublicApprovalsController {
   @ApiOperation({ summary: 'Lo que ve el cliente: hallazgos con fotos, líneas y totales.' })
   @ApiOkResponse({ description: 'Presupuesto a aprobar.' })
   @ApiNotFoundResponse({ description: 'Enlace no válido.' })
+  @ApiView('PublicApprovalView')
   view(@Param('token') token: string): Promise<PublicApprovalView> {
     return this.approvals.publicView(token);
   }
@@ -103,6 +108,7 @@ export class PublicApprovalsController {
   @ApiOperation({ summary: 'El cliente aprueba o rechaza líneas propuestas (puede hacerlo por partes).' })
   @ApiGoneResponse({ description: 'El enlace venció.' })
   @ApiConflictResponse({ description: 'La solicitud ya no admite cambios (completada o revocada).' })
+  @ApiView('PublicApprovalView')
   decide(@Param('token') token: string, @Body() dto: DecideDto): Promise<PublicApprovalView> {
     return this.approvals.decide(token, dto.decisions);
   }

@@ -15,6 +15,7 @@ import { Transform } from 'class-transformer';
 import { IsIn, IsOptional, IsString, Length } from 'class-validator';
 import { type AuthenticatedAccount, CurrentUser } from '../auth/current-user.decorator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ApiView } from '../openapi/api-view.decorator';
 import { CurrentMember, ShopAccessGuard } from './shop-access.guard';
 import { ShopsService } from './shops.service';
 
@@ -41,6 +42,7 @@ export class ShopsController {
   @Post()
   @ApiOperation({ summary: 'Crea un taller; quien lo crea queda como owner.' })
   @ApiCreatedResponse({ description: 'Taller creado (my_role = owner).' })
+  @ApiView('ShopView')
   create(@CurrentUser() account: AuthenticatedAccount, @Body() dto: CreateShopDto): Promise<ShopView> {
     return this.shops.create(account.id, { name: dto.name, type: dto.type ?? 'mechanic_shop' });
   }
@@ -50,6 +52,7 @@ export class ShopsController {
     summary: 'Talleres donde la cuenta actual es miembro activo (reclama antes sus invitaciones).',
   })
   @ApiOkResponse({ description: 'Lista de talleres con mi rol en cada uno.' })
+  @ApiView('ShopView', 'array')
   mine(@CurrentUser() account: AuthenticatedAccount): Promise<ShopView[]> {
     return this.shops.listMine(account);
   }
@@ -59,6 +62,7 @@ export class ShopsController {
   @ApiOperation({ summary: 'Detalle de un taller (solo miembros).' })
   @ApiOkResponse({ description: 'El taller con mi rol.' })
   @ApiNotFoundResponse({ description: 'No existe o no soy miembro (no se distingue).' })
+  @ApiView('ShopView')
   get(@Param('shopId') shopId: string, @CurrentMember() member: ShopMember): Promise<ShopView> {
     return this.shops.getView(shopId, member.role);
   }

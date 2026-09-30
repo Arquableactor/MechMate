@@ -5,32 +5,22 @@ import './config/load-env';
 import './instrument';
 import './common/bigint-serializer';
 
-import { Logger, RequestMethod, ValidationPipe } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { configureApp } from './configure-app';
+import { buildOpenApiDocument } from './openapi/openapi';
 
 async function bootstrap(): Promise<void> {
   // rawBody:true expone req.rawBody para verificar la firma de los webhooks.
   const app = await NestFactory.create<NestExpressApplication>(AppModule, { rawBody: true });
 
-  // API versionada bajo /v1 (CLAUDE.md).
-  // Excepción: la página del cliente vive en /a/:token (enlace corto para WhatsApp).
-  app.setGlobalPrefix('v1', { exclude: [{ path: 'a/:token', method: RequestMethod.GET }] });
+  configureApp(app);
 
-  // Validación de DTOs (rechaza payloads inválidos con 400) + strip de extras.
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-
-  // OpenAPI autogenerado — es el contrato que alimentará al cliente Flutter.
-  const config = new DocumentBuilder()
-    .setTitle('AutoMecánica API')
-    .setDescription('Backend del Ecosistema AutoMecánica (Payments + Ledger — Día 3).')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('v1/docs', app, document);
+  // OpenAPI autogenerado — es el contrato que alimenta al cliente Flutter.
+  SwaggerModule.setup('v1/docs', app, buildOpenApiDocument(app));
 
   const port = Number(process.env.PORT ?? 3000);
   await app.listen(port);

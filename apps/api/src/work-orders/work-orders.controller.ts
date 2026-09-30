@@ -41,6 +41,7 @@ import {
 } from 'class-validator';
 import { type AuthenticatedAccount, CurrentUser } from '../auth/current-user.decorator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ApiView } from '../openapi/api-view.decorator';
 import { ShopAccessGuard } from '../shops/shop-access.guard';
 import { WorkOrderItemsService } from './work-order-items.service';
 import { WorkOrdersService } from './work-orders.service';
@@ -203,6 +204,7 @@ export class WorkOrdersController {
   @Post()
   @ApiOperation({ summary: 'Abre una orden de trabajo (queda en draft con número OT-XXXX).' })
   @ApiCreatedResponse({ description: 'OT creada.' })
+  @ApiView('WorkOrderView')
   create(
     @Param('shopId') shopId: string,
     @CurrentUser() account: AuthenticatedAccount,
@@ -214,6 +216,7 @@ export class WorkOrdersController {
   @Get()
   @ApiOperation({ summary: 'Lista OT del taller (filtros: estado, cliente, vehículo; búsqueda por número).' })
   @ApiOkResponse({ description: 'Página de OT, de la más nueva a la más vieja.' })
+  @ApiView('WorkOrderView', 'page')
   list(@Param('shopId') shopId: string, @Query() q: ListWorkOrdersQuery): Promise<Page<WorkOrderView>> {
     return this.workOrders.list(shopId, { ...q, customerId: q.customer_id, vehicleId: q.vehicle_id });
   }
@@ -221,6 +224,7 @@ export class WorkOrdersController {
   @Get(':workOrderId')
   @ApiOperation({ summary: 'Detalle de una OT con sus líneas y totales.' })
   @ApiNotFoundResponse({ description: 'No existe en este taller.' })
+  @ApiView('WorkOrderDetailView')
   get(@Param('shopId') shopId: string, @Param('workOrderId') id: string): Promise<WorkOrderDetailView> {
     return this.workOrders.getDetail(shopId, id);
   }
@@ -228,6 +232,7 @@ export class WorkOrdersController {
   @Patch(':workOrderId')
   @ApiOperation({ summary: 'Edita la cabecera de una OT abierta.' })
   @ApiConflictResponse({ description: 'La OT ya está cerrada.' })
+  @ApiView('WorkOrderView')
   update(
     @Param('shopId') shopId: string,
     @Param('workOrderId') id: string,
@@ -240,6 +245,7 @@ export class WorkOrdersController {
   @ApiOperation({ summary: 'Agrega una línea (mano de obra o pieza); recalcula totales con ITBIS.' })
   @ApiCreatedResponse({ description: 'OT con sus líneas y totales actualizados.' })
   @ApiConflictResponse({ description: 'La OT ya está cerrada.' })
+  @ApiView('WorkOrderDetailView')
   addItem(
     @Param('shopId') shopId: string,
     @Param('workOrderId') id: string,
@@ -251,6 +257,7 @@ export class WorkOrdersController {
   @Patch(':workOrderId/items/:itemId')
   @ApiOperation({ summary: 'Edita una línea; recalcula totales.' })
   @ApiConflictResponse({ description: 'La OT ya está cerrada.' })
+  @ApiView('WorkOrderDetailView')
   updateItem(
     @Param('shopId') shopId: string,
     @Param('workOrderId') id: string,
@@ -264,6 +271,7 @@ export class WorkOrdersController {
   @ApiOperation({ summary: 'Quita una línea; recalcula totales.' })
   @ApiOkResponse({ description: 'OT con sus líneas y totales actualizados.' })
   @ApiConflictResponse({ description: 'La OT ya está cerrada.' })
+  @ApiView('WorkOrderDetailView')
   removeItem(
     @Param('shopId') shopId: string,
     @Param('workOrderId') id: string,
@@ -281,6 +289,7 @@ export class WorkOrdersController {
   })
   @ApiOkResponse({ description: 'OT con el nuevo estado.' })
   @ApiConflictResponse({ description: 'Transición no permitida desde el estado actual, u OT sin líneas.' })
+  @ApiView('WorkOrderDetailView')
   transition(
     @Param('shopId') shopId: string,
     @Param('workOrderId') id: string,

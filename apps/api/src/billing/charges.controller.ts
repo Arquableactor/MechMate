@@ -13,6 +13,7 @@ import { type ChargeView, PAYMENT_METHODS, type PaymentMethod } from '@repo/type
 import { IsIn } from 'class-validator';
 import { type AuthenticatedAccount, CurrentUser } from '../auth/current-user.decorator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ApiView } from '../openapi/api-view.decorator';
 import { ShopAccessGuard } from '../shops/shop-access.guard';
 import { ChargesService } from './charges.service';
 
@@ -42,6 +43,7 @@ export class ChargesController {
   @ApiOkResponse({ description: 'Cobro realizado (o su respuesta repetida: replayed=true).' })
   @ApiPaymentRequiredResponse({ description: 'La tarjeta fue rechazada.' })
   @ApiConflictResponse({ description: 'No facturada, ya pagada, cobro en curso, o key reutilizada con otro cobro.' })
+  @ApiView('ChargeView')
   charge(
     @Param('shopId') shopId: string,
     @Param('workOrderId') workOrderId: string,

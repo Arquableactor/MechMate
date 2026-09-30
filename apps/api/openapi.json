@@ -1,0 +1,4665 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/v1/shops": {
+      "post": {
+        "operationId": "ShopsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateShopDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Taller creado (my_role = owner).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShopView"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Crea un taller; quien lo crea queda como owner.",
+        "tags": [
+          "shops"
+        ]
+      }
+    },
+    "/v1/shops/mine": {
+      "get": {
+        "operationId": "ShopsController_mine",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Lista de talleres con mi rol en cada uno.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ShopView"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Talleres donde la cuenta actual es miembro activo (reclama antes sus invitaciones).",
+        "tags": [
+          "shops"
+        ]
+      }
+    },
+    "/v1/shops/{shopId}": {
+      "get": {
+        "operationId": "ShopsController_get",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "El taller con mi rol.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShopView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No existe o no soy miembro (no se distingue)."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Detalle de un taller (solo miembros).",
+        "tags": [
+          "shops"
+        ]
+      }
+    },
+    "/v1/shops/{shopId}/members": {
+      "get": {
+        "operationId": "ShopMembersController_list",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de miembros.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ShopMemberView"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Miembros e invitaciones pendientes del taller (cualquier miembro).",
+        "tags": [
+          "shops"
+        ]
+      },
+      "post": {
+        "operationId": "ShopMembersController_invite",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InviteMemberDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Miembro activo o invitación pendiente (idempotente).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShopMemberView"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Solo el owner puede invitar."
+          },
+          "409": {
+            "description": "Ya es miembro activo del taller."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Invita por email (solo owner). Con cuenta verificada entra al instante; si no, queda invitado y se le avisa por email.",
+        "tags": [
+          "shops"
+        ]
+      }
+    },
+    "/v1/shops/{shopId}/members/{memberId}": {
+      "delete": {
+        "operationId": "ShopMembersController_remove",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "memberId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Eliminado."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Quita un miembro o cancela una invitación (solo owner; al owner no).",
+        "tags": [
+          "shops"
+        ]
+      }
+    },
+    "/v1/shops/{shopId}/customers": {
+      "post": {
+        "operationId": "CustomersController_create",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Cliente creado (teléfono en E.164, cédula en 11 dígitos).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerView"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Ya existe con ese teléfono/cédula; trae existing_customer_id."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Registra un cliente del taller.",
+        "tags": [
+          "customers"
+        ]
+      },
+      "get": {
+        "operationId": "CustomersController_search",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Nombre, teléfono o cédula (parcial).",
+            "schema": {
+              "example": "809555",
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "next_cursor de la página anterior.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Página de clientes, del más nuevo al más viejo.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerViewPage"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Busca clientes por nombre, teléfono o cédula (paginado por cursor).",
+        "tags": [
+          "customers"
+        ]
+      }
+    },
+    "/v1/shops/{shopId}/customers/{customerId}": {
+      "get": {
+        "operationId": "CustomersController_get",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customerId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No existe en este taller."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Detalle de un cliente del taller.",
+        "tags": [
+          "customers"
+        ]
+      },
+      "patch": {
+        "operationId": "CustomersController_update",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customerId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCustomerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerView"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "El teléfono/cédula ya es de otro cliente del taller."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Actualiza un cliente (null borra un dato).",
+        "tags": [
+          "customers"
+        ]
+      }
+    },
+    "/v1/shops/{shopId}/vehicles": {
+      "post": {
+        "operationId": "VehiclesController_create",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateVehicleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Vehículo creado (data_source: vin_decode | manual).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleView"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "VIN/chasis/placa ya registrado en el taller; trae existing_vehicle_id."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Registra un vehículo. Con VIN se autocompleta; sin VIN, carga manual.",
+        "tags": [
+          "vehicles"
+        ]
+      },
+      "get": {
+        "operationId": "VehiclesController_search",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Placa, VIN, chasis (parciales) o marca/modelo.",
+            "schema": {
+              "example": "A123",
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "next_cursor de la página anterior.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customer_id",
+            "required": false,
+            "in": "query",
+            "description": "Solo los vehículos de este cliente.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Página de vehículos, del más nuevo al más viejo.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleViewPage"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Busca vehículos del taller (placa, VIN, chasis, marca/modelo).",
+        "tags": [
+          "vehicles"
+        ]
+      }
+    },
+    "/v1/shops/{shopId}/vehicles/{vehicleId}": {
+      "get": {
+        "operationId": "VehiclesController_get",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "vehicleId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No existe en este taller."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Detalle de un vehículo del taller.",
+        "tags": [
+          "vehicles"
+        ]
+      },
+      "patch": {
+        "operationId": "VehiclesController_update",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "vehicleId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateVehicleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleView"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Actualiza un vehículo (kilometraje, placa, dueño…). null borra un dato.",
+        "tags": [
+          "vehicles"
+        ]
+      }
+    },
+    "/v1/shops/{shopId}/customers/{customerId}/vehicles": {
+      "get": {
+        "operationId": "VehiclesController_byCustomer",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customerId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Placa, VIN, chasis (parciales) o marca/modelo.",
+            "schema": {
+              "example": "A123",
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "next_cursor de la página anterior.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleViewPage"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El cliente no existe en este taller."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Vehículos de un cliente del taller.",
+        "tags": [
+          "vehicles"
+        ]
+      }
+    },
+    "/v1/vin/{vin}": {
+      "get": {
+        "operationId": "VinController_decode",
+        "parameters": [
+          {
+            "name": "vin",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "example": "1HGCM82633A004352",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resultado de la decodificación (puede ser found=false).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VinDecodeView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Formato inválido (no son 17 caracteres válidos)."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Decodifica un VIN (marca, modelo, año, motor…) para autocompletar el vehículo. Si no se encuentra o el proveedor no responde, devuelve found=false: cargar a mano.",
+        "tags": [
+          "vin"
+        ]
+      }
+    },
+    "/v1/shops/{shopId}/work-orders/{workOrderId}/approval-requests": {
+      "post": {
+        "operationId": "ApprovalsController_request",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "workOrderId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Solicitud con el enlace (para compartirlo también por WhatsApp propio).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApprovalRequestView"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "OT en otro estado, o sin líneas propuestas."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Pide al cliente aprobar las líneas propuestas: OT → awaiting_approval y aviso con enlace (7 días). Reenviar revoca el enlace anterior.",
+        "tags": [
+          "approvals"
+        ]
+      },
+      "get": {
+        "operationId": "ApprovalsController_list",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "workOrderId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApprovalRequestView"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Historial de solicitudes de aprobación de la OT.",
+        "tags": [
+          "approvals"
+        ]
+      }
+    },
+    "/v1/shops/{shopId}/work-orders/{workOrderId}/approval-requests/{approvalId}/revoke": {
+      "post": {
+        "operationId": "ApprovalsController_revoke",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "workOrderId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "approvalId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApprovalRequestView"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Revoca la solicitud pendiente (el enlace deja de servir) y la OT vuelve a draft.",
+        "tags": [
+          "approvals"
+        ]
+      }
+    },
+    "/v1/public/approvals/{token}": {
+      "get": {
+        "operationId": "PublicApprovalsController_view",
+        "parameters": [
+          {
+            "name": "token",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Presupuesto a aprobar.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApprovalView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Enlace no válido."
+          }
+        },
+        "summary": "Lo que ve el cliente: hallazgos con fotos, líneas y totales.",
+        "tags": [
+          "public"
+        ]
+      }
+    },
+    "/v1/public/approvals/{token}/decisions": {
+      "post": {
+        "operationId": "PublicApprovalsController_decide",
+        "parameters": [
+          {
+            "name": "token",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecideDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApprovalView"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "La solicitud ya no admite cambios (completada o revocada)."
+          },
+          "410": {
+            "description": "El enlace venció."
+          }
+        },
+        "summary": "El cliente aprueba o rechaza líneas propuestas (puede hacerlo por partes).",
+        "tags": [
+          "public"
+        ]
+      }
+    },
+    "/v1/shops/{shopId}/work-orders": {
+      "post": {
+        "operationId": "WorkOrdersController_create",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWorkOrderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OT creada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrderView"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Abre una orden de trabajo (queda en draft con número OT-XXXX).",
+        "tags": [
+          "work-orders"
+        ]
+      },
+      "get": {
+        "operationId": "WorkOrdersController_list",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "draft",
+                "awaiting_approval",
+                "approved",
+                "in_progress",
+                "completed",
+                "invoiced",
+                "paid",
+                "cancelled"
+              ]
+            }
+          },
+          {
+            "name": "customer_id",
+            "required": false,
+            "in": "query",
+            "description": "Historial de un cliente.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "vehicle_id",
+            "required": false,
+            "in": "query",
+            "description": "Historial de un vehículo.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Número de OT: `12` u `OT-0012`.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Página de OT, de la más nueva a la más vieja.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrderViewPage"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Lista OT del taller (filtros: estado, cliente, vehículo; búsqueda por número).",
+        "tags": [
+          "work-orders"
+        ]
+      }
+    },
+    "/v1/shops/{shopId}/work-orders/{workOrderId}": {
+      "get": {
+        "operationId": "WorkOrdersController_get",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "workOrderId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrderDetailView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No existe en este taller."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Detalle de una OT con sus líneas y totales.",
+        "tags": [
+          "work-orders"
+        ]
+      },
+      "patch": {
+        "operationId": "WorkOrdersController_update",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "workOrderId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateWorkOrderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrderView"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "La OT ya está cerrada."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Edita la cabecera de una OT abierta.",
+        "tags": [
+          "work-orders"
+        ]
+      }
+    },
+    "/v1/shops/{shopId}/work-orders/{workOrderId}/items": {
+      "post": {
+        "operationId": "WorkOrdersController_addItem",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "workOrderId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddItemDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OT con sus líneas y totales actualizados.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrderDetailView"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "La OT ya está cerrada."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Agrega una línea (mano de obra o pieza); recalcula totales con ITBIS.",
+        "tags": [
+          "work-orders"
+        ]
+      }
+    },
+    "/v1/shops/{shopId}/work-orders/{workOrderId}/items/{itemId}": {
+      "patch": {
+        "operationId": "WorkOrdersController_updateItem",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "workOrderId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "itemId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateItemDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrderDetailView"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "La OT ya está cerrada."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Edita una línea; recalcula totales.",
+        "tags": [
+          "work-orders"
+        ]
+      },
+      "delete": {
+        "operationId": "WorkOrdersController_removeItem",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "workOrderId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "itemId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OT con sus líneas y totales actualizados.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrderDetailView"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "La OT ya está cerrada."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Quita una línea; recalcula totales.",
+        "tags": [
+          "work-orders"
+        ]
+      }
+    },
+    "/v1/shops/{shopId}/work-orders/{workOrderId}/transitions": {
+      "post": {
+        "operationId": "WorkOrdersController_transition",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "workOrderId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransitionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OT con el nuevo estado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrderDetailView"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Transición no permitida desde el estado actual, u OT sin líneas."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Cambia el estado: draft → in_progress → completed; cancelled desde cualquier estado abierto. Completar exige al menos una línea. Al completar se avisa al cliente.",
+        "tags": [
+          "work-orders"
+        ]
+      }
+    },
+    "/v1/shops/{shopId}/work-orders/{workOrderId}/inspection": {
+      "post": {
+        "operationId": "InspectionsController_open",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "workOrderId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpenInspectionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Inspección con hallazgos y fotos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspectionView"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Abre la inspección (DVI) de la OT; si ya existe, la devuelve.",
+        "tags": [
+          "inspections"
+        ]
+      },
+      "get": {
+        "operationId": "InspectionsController_get",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "workOrderId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspectionView"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Inspección con hallazgos y fotos (URLs firmadas de 1 h).",
+        "tags": [
+          "inspections"
+        ]
+      }
+    },
+    "/v1/shops/{shopId}/work-orders/{workOrderId}/inspection/findings": {
+      "post": {
+        "operationId": "InspectionsController_addFinding",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "workOrderId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddFindingDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Inspección actualizada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspectionView"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "La OT ya está cerrada."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Agrega un hallazgo (área, título, severidad verde/amarillo/rojo).",
+        "tags": [
+          "inspections"
+        ]
+      }
+    },
+    "/v1/shops/{shopId}/work-orders/{workOrderId}/inspection/findings/{findingId}": {
+      "patch": {
+        "operationId": "InspectionsController_updateFinding",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "workOrderId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "findingId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFindingDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspectionView"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Edita un hallazgo.",
+        "tags": [
+          "inspections"
+        ]
+      },
+      "delete": {
+        "operationId": "InspectionsController_removeFinding",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "workOrderId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "findingId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspectionView"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Borra un hallazgo y sus fotos (también en R2).",
+        "tags": [
+          "inspections"
+        ]
+      }
+    },
+    "/v1/shops/{shopId}/work-orders/{workOrderId}/inspection/findings/{findingId}/photos": {
+      "post": {
+        "operationId": "InspectionsController_requestPhotoUpload",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "workOrderId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "findingId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestPhotoUploadDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Foto pending + instrucciones de subida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotoUploadView"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Paso 1 de subir una foto: devuelve una URL firmada (15 min) para hacer PUT directo a R2 con los headers indicados.",
+        "tags": [
+          "inspections"
+        ]
+      }
+    },
+    "/v1/shops/{shopId}/work-orders/{workOrderId}/inspection/findings/{findingId}/photos/{photoId}/confirm": {
+      "post": {
+        "operationId": "InspectionsController_confirmPhoto",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "workOrderId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "findingId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "photoId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspectionPhotoView"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Todavía no se subió, o no coincide con lo declarado."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Paso 2: confirma la subida; la API verifica en R2 tamaño y tipo.",
+        "tags": [
+          "inspections"
+        ]
+      }
+    },
+    "/v1/shops/{shopId}/work-orders/{workOrderId}/inspection/findings/{findingId}/photos/{photoId}": {
+      "delete": {
+        "operationId": "InspectionsController_removePhoto",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "workOrderId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "findingId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "photoId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspectionView"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Borra una foto (también en R2).",
+        "tags": [
+          "inspections"
+        ]
+      }
+    },
+    "/v1/shops/{shopId}/work-orders/{workOrderId}/invoice": {
+      "post": {
+        "operationId": "InvoicesController_issue",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "workOrderId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Factura FAC-XXXX emitida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceView"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "OT no completada, ya facturada, o sin líneas aprobadas."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Factura una OT completada (snapshot inmutable de las líneas aprobadas). OT → invoiced.",
+        "tags": [
+          "invoices"
+        ]
+      },
+      "get": {
+        "operationId": "InvoicesController_byWorkOrder",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "workOrderId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "La OT no tiene factura (o no es de este taller)."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Factura de una OT.",
+        "tags": [
+          "invoices"
+        ]
+      }
+    },
+    "/v1/shops/{shopId}/invoices": {
+      "get": {
+        "operationId": "InvoicesController_list",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceViewPage"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Facturas del taller, de la más nueva a la más vieja.",
+        "tags": [
+          "invoices"
+        ]
+      }
+    },
+    "/v1/shops/{shopId}/invoices/{invoiceId}": {
+      "get": {
+        "operationId": "InvoicesController_get",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "invoiceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceView"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Detalle de una factura.",
+        "tags": [
+          "invoices"
+        ]
+      }
+    },
+    "/v1/health": {
+      "get": {
+        "operationId": "HealthController_getHealth",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Estado del servicio y conectividad a la base de datos y a Redis.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthStatus"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/v1/me": {
+      "get": {
+        "operationId": "MeController_getMe",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Cuenta provisionada con sus roles.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Perfil + roles del token actual (provisiona en la 1ª llamada).",
+        "tags": [
+          "me"
+        ]
+      }
+    },
+    "/v1/me/roles": {
+      "post": {
+        "operationId": "MeController_addRole",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddRoleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cuenta con el rol añadido (o ya existente).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Añade un rol a la cuenta actual. Idempotente; rechaza courier/admin con 400.",
+        "tags": [
+          "me"
+        ]
+      }
+    },
+    "/v1/shops/{shopId}/work-orders/{workOrderId}/charge": {
+      "post": {
+        "operationId": "ChargesController_charge",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "workOrderId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "8–100 caracteres [A-Za-z0-9_-], único por intento de cobro.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChargeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cobro realizado (o su respuesta repetida: replayed=true).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChargeView"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "La tarjeta fue rechazada."
+          },
+          "409": {
+            "description": "No facturada, ya pagada, cobro en curso, o key reutilizada con otro cobro."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Cobra la factura de la OT (tarjeta vía CardNet, efectivo o transferencia). OT → paid; con tarjeta, payout al taller a T+2 hábiles. Idempotente: reintentar con la misma Idempotency-Key no cobra de nuevo.",
+        "tags": [
+          "billing"
+        ]
+      }
+    },
+    "/v1/shops/{shopId}/vehicles/{vehicleId}/history": {
+      "get": {
+        "operationId": "HistoryController_vehicle",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "vehicleId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "next_cursor de la página anterior.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El vehículo no es de este taller."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Historial del vehículo: OT (con factura y método de pago), visitas, total gastado y última visita.",
+        "tags": [
+          "history"
+        ]
+      }
+    },
+    "/v1/shops/{shopId}/customers/{customerId}/history": {
+      "get": {
+        "operationId": "HistoryController_customer",
+        "parameters": [
+          {
+            "name": "shopId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customerId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "next_cursor de la página anterior.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El cliente no es de este taller."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Historial del cliente: OT (con factura y método de pago), visitas, total gastado y última visita.",
+        "tags": [
+          "history"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "MechMate API",
+    "description": "Backend del ecosistema MechMate (ERP de talleres + marketplace de repuestos, RD). Dinero en centavos como string (`Cents`); fechas ISO-8601.",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "CreateShopDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Taller Hermanos Pérez",
+            "minLength": 2,
+            "maxLength": 120
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "mechanic_shop",
+              "parts_seller"
+            ],
+            "default": "mechanic_shop"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "InviteMemberDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "mecanico@gmail.com"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "mechanic",
+              "advisor"
+            ],
+            "example": "mechanic"
+          }
+        },
+        "required": [
+          "email",
+          "role"
+        ]
+      },
+      "CreateCustomerDto": {
+        "type": "object",
+        "properties": {
+          "full_name": {
+            "type": "string",
+            "example": "Juan Pérez",
+            "minLength": 2,
+            "maxLength": 120
+          },
+          "phone": {
+            "type": "object",
+            "example": "809-555-1234",
+            "nullable": true,
+            "description": "Se guarda en E.164 (+18095551234)."
+          },
+          "email": {
+            "type": "object",
+            "example": "juan@mail.do",
+            "nullable": true
+          },
+          "document_id": {
+            "type": "object",
+            "example": "001-1234567-8",
+            "nullable": true,
+            "description": "Cédula; se guarda en 11 dígitos."
+          },
+          "notes": {
+            "type": "object",
+            "nullable": true,
+            "maxLength": 1000
+          }
+        },
+        "required": [
+          "full_name"
+        ]
+      },
+      "UpdateCustomerDto": {
+        "type": "object",
+        "properties": {
+          "full_name": {
+            "type": "string",
+            "example": "Juan Pérez",
+            "minLength": 2,
+            "maxLength": 120
+          },
+          "phone": {
+            "type": "object",
+            "example": "809-555-1234",
+            "nullable": true,
+            "description": "Se guarda en E.164 (+18095551234)."
+          },
+          "email": {
+            "type": "object",
+            "example": "juan@mail.do",
+            "nullable": true
+          },
+          "document_id": {
+            "type": "object",
+            "example": "001-1234567-8",
+            "nullable": true,
+            "description": "Cédula; se guarda en 11 dígitos."
+          },
+          "notes": {
+            "type": "object",
+            "nullable": true,
+            "maxLength": 1000
+          }
+        }
+      },
+      "CreateVehicleDto": {
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "description": "Cliente dueño (del mismo taller)."
+          },
+          "vin": {
+            "type": "object",
+            "example": "1HGCM82633A004352",
+            "nullable": true,
+            "description": "Si viene, autocompleta marca/modelo/año/motor."
+          },
+          "chassis_number": {
+            "type": "object",
+            "example": "NZE121-1234567",
+            "nullable": true,
+            "description": "Para vehículos sin VIN (p. ej. japoneses)."
+          },
+          "plate": {
+            "type": "object",
+            "example": "A123456",
+            "nullable": true
+          },
+          "make": {
+            "type": "string",
+            "example": "Toyota",
+            "description": "Obligatoria si no hay VIN decodificable."
+          },
+          "model": {
+            "type": "object",
+            "example": "Corolla",
+            "nullable": true
+          },
+          "year": {
+            "type": "object",
+            "example": 2019,
+            "nullable": true
+          },
+          "trim": {
+            "type": "object",
+            "nullable": true
+          },
+          "engine": {
+            "type": "object",
+            "example": "1.8L 4 cil.",
+            "nullable": true
+          },
+          "fuel_type": {
+            "type": "object",
+            "example": "Gasolina",
+            "nullable": true
+          },
+          "color": {
+            "type": "object",
+            "example": "Gris",
+            "nullable": true
+          },
+          "mileage_km": {
+            "type": "object",
+            "example": 85000,
+            "nullable": true
+          },
+          "notes": {
+            "type": "object",
+            "nullable": true,
+            "maxLength": 1000
+          }
+        },
+        "required": [
+          "customer_id"
+        ]
+      },
+      "UpdateVehicleDto": {
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "description": "Cliente dueño (del mismo taller)."
+          },
+          "vin": {
+            "type": "object",
+            "example": "1HGCM82633A004352",
+            "nullable": true,
+            "description": "Si viene, autocompleta marca/modelo/año/motor."
+          },
+          "chassis_number": {
+            "type": "object",
+            "example": "NZE121-1234567",
+            "nullable": true,
+            "description": "Para vehículos sin VIN (p. ej. japoneses)."
+          },
+          "plate": {
+            "type": "object",
+            "example": "A123456",
+            "nullable": true
+          },
+          "make": {
+            "type": "string",
+            "example": "Toyota",
+            "description": "Obligatoria si no hay VIN decodificable."
+          },
+          "model": {
+            "type": "object",
+            "example": "Corolla",
+            "nullable": true
+          },
+          "year": {
+            "type": "object",
+            "example": 2019,
+            "nullable": true
+          },
+          "trim": {
+            "type": "object",
+            "nullable": true
+          },
+          "engine": {
+            "type": "object",
+            "example": "1.8L 4 cil.",
+            "nullable": true
+          },
+          "fuel_type": {
+            "type": "object",
+            "example": "Gasolina",
+            "nullable": true
+          },
+          "color": {
+            "type": "object",
+            "example": "Gris",
+            "nullable": true
+          },
+          "mileage_km": {
+            "type": "object",
+            "example": 85000,
+            "nullable": true
+          },
+          "notes": {
+            "type": "object",
+            "nullable": true,
+            "maxLength": 1000
+          }
+        }
+      },
+      "ItemDecisionDto": {
+        "type": "object",
+        "properties": {
+          "item_id": {
+            "type": "string"
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "approved",
+              "declined"
+            ]
+          }
+        },
+        "required": [
+          "item_id",
+          "decision"
+        ]
+      },
+      "DecideDto": {
+        "type": "object",
+        "properties": {
+          "decisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ItemDecisionDto"
+            }
+          }
+        },
+        "required": [
+          "decisions"
+        ]
+      },
+      "CreateWorkOrderDto": {
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string"
+          },
+          "vehicle_id": {
+            "type": "string",
+            "description": "Debe ser un vehículo de ese cliente."
+          },
+          "complaint": {
+            "type": "string",
+            "example": "Ruido al frenar y vibración en el volante",
+            "minLength": 3,
+            "maxLength": 2000
+          },
+          "notes": {
+            "type": "object",
+            "nullable": true,
+            "maxLength": 2000
+          },
+          "mileage_in": {
+            "type": "object",
+            "example": 185000,
+            "nullable": true,
+            "description": "Odómetro al recibir el vehículo."
+          },
+          "assigned_member_id": {
+            "type": "object",
+            "nullable": true,
+            "description": "shop_members.id del mecánico asignado."
+          },
+          "promised_at": {
+            "type": "object",
+            "example": "2026-10-02T17:00:00-04:00",
+            "nullable": true
+          }
+        },
+        "required": [
+          "customer_id",
+          "vehicle_id",
+          "complaint"
+        ]
+      },
+      "UpdateWorkOrderDto": {
+        "type": "object",
+        "properties": {
+          "complaint": {
+            "type": "string",
+            "example": "Ruido al frenar y vibración en el volante",
+            "minLength": 3,
+            "maxLength": 2000
+          },
+          "notes": {
+            "type": "object",
+            "nullable": true,
+            "maxLength": 2000
+          },
+          "mileage_in": {
+            "type": "object",
+            "example": 185000,
+            "nullable": true,
+            "description": "Odómetro al recibir el vehículo."
+          },
+          "assigned_member_id": {
+            "type": "object",
+            "nullable": true,
+            "description": "shop_members.id del mecánico asignado."
+          },
+          "promised_at": {
+            "type": "object",
+            "example": "2026-10-02T17:00:00-04:00",
+            "nullable": true
+          }
+        }
+      },
+      "AddItemDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "labor",
+              "part"
+            ],
+            "example": "labor",
+            "description": "labor = mano de obra; part = pieza."
+          },
+          "description": {
+            "type": "string",
+            "example": "Cambio de pastillas delanteras",
+            "maxLength": 300
+          },
+          "part_number": {
+            "type": "object",
+            "example": "04465-02220",
+            "nullable": true,
+            "maxLength": 60
+          },
+          "quantity": {
+            "type": "string",
+            "example": "1.5",
+            "description": "Hasta 3 decimales (horas, unidades, galones…)."
+          },
+          "unit_price_cents": {
+            "type": "string",
+            "example": "120000",
+            "description": "Centavos como string: \"120000\" = RD$1,200.00."
+          },
+          "tax_rate_bps": {
+            "type": "number",
+            "example": 1800,
+            "default": 1800,
+            "description": "ITBIS en basis points (1800 = 18%, 0 = exento)."
+          },
+          "requires_approval": {
+            "type": "boolean",
+            "default": false,
+            "description": "true = línea propuesta: el cliente la aprueba o rechaza desde el enlace de la DVI."
+          }
+        },
+        "required": [
+          "type",
+          "description",
+          "quantity",
+          "unit_price_cents"
+        ]
+      },
+      "UpdateItemDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "labor",
+              "part"
+            ],
+            "example": "labor",
+            "description": "labor = mano de obra; part = pieza."
+          },
+          "description": {
+            "type": "string",
+            "example": "Cambio de pastillas delanteras",
+            "maxLength": 300
+          },
+          "part_number": {
+            "type": "object",
+            "example": "04465-02220",
+            "nullable": true,
+            "maxLength": 60
+          },
+          "quantity": {
+            "type": "string",
+            "example": "1.5",
+            "description": "Hasta 3 decimales (horas, unidades, galones…)."
+          },
+          "unit_price_cents": {
+            "type": "string",
+            "example": "120000",
+            "description": "Centavos como string: \"120000\" = RD$1,200.00."
+          },
+          "tax_rate_bps": {
+            "type": "number",
+            "example": 1800,
+            "default": 1800,
+            "description": "ITBIS en basis points (1800 = 18%, 0 = exento)."
+          },
+          "requires_approval": {
+            "type": "boolean",
+            "default": false,
+            "description": "true = línea propuesta: el cliente la aprueba o rechaza desde el enlace de la DVI."
+          }
+        }
+      },
+      "TransitionDto": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "enum": [
+              "in_progress",
+              "completed",
+              "cancelled"
+            ],
+            "example": "in_progress"
+          },
+          "reason": {
+            "type": "object",
+            "example": "El cliente decidió no reparar",
+            "nullable": true,
+            "maxLength": 500,
+            "description": "Solo para cancelled."
+          }
+        },
+        "required": [
+          "to"
+        ]
+      },
+      "OpenInspectionDto": {
+        "type": "object",
+        "properties": {
+          "notes": {
+            "type": "object",
+            "nullable": true,
+            "maxLength": 2000
+          }
+        }
+      },
+      "AddFindingDto": {
+        "type": "object",
+        "properties": {
+          "area": {
+            "type": "string",
+            "example": "Frenos",
+            "maxLength": 60
+          },
+          "title": {
+            "type": "string",
+            "example": "Pastillas delanteras al 20%",
+            "maxLength": 200
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "attention",
+              "urgent"
+            ],
+            "example": "urgent",
+            "description": "ok = verde, attention = amarillo, urgent = rojo."
+          },
+          "notes": {
+            "type": "object",
+            "nullable": true,
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "area",
+          "title",
+          "severity"
+        ]
+      },
+      "UpdateFindingDto": {
+        "type": "object",
+        "properties": {
+          "area": {
+            "type": "string",
+            "example": "Frenos",
+            "maxLength": 60
+          },
+          "title": {
+            "type": "string",
+            "example": "Pastillas delanteras al 20%",
+            "maxLength": 200
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "attention",
+              "urgent"
+            ],
+            "example": "urgent",
+            "description": "ok = verde, attention = amarillo, urgent = rojo."
+          },
+          "notes": {
+            "type": "object",
+            "nullable": true,
+            "maxLength": 2000
+          }
+        }
+      },
+      "RequestPhotoUploadDto": {
+        "type": "object",
+        "properties": {
+          "content_type": {
+            "type": "string",
+            "enum": [
+              "image/jpeg",
+              "image/png",
+              "image/webp",
+              "image/heic"
+            ],
+            "example": "image/jpeg"
+          },
+          "size_bytes": {
+            "type": "number",
+            "example": 2450000,
+            "maximum": 10485760,
+            "description": "Tamaño EXACTO del archivo en bytes (queda firmado)."
+          }
+        },
+        "required": [
+          "content_type",
+          "size_bytes"
+        ]
+      },
+      "AddRoleDto": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "mechanic",
+              "seller",
+              "customer"
+            ],
+            "description": "Rol a añadir. Solo mechanic|seller|customer (courier/admin se rechazan con 400)."
+          }
+        },
+        "required": [
+          "role"
+        ]
+      },
+      "ChargeDto": {
+        "type": "object",
+        "properties": {
+          "method": {
+            "type": "string",
+            "enum": [
+              "card",
+              "cash",
+              "transfer"
+            ],
+            "example": "card",
+            "description": "El monto sale de la factura: no se envía."
+          }
+        },
+        "required": [
+          "method"
+        ]
+      },
+      "HealthStatus": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok"
+            ]
+          },
+          "uptime": {
+            "type": "number"
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "db": {
+            "type": "string",
+            "enum": [
+              "up",
+              "down"
+            ]
+          },
+          "redis": {
+            "type": "string",
+            "enum": [
+              "up",
+              "down",
+              "disabled"
+            ]
+          }
+        },
+        "required": [
+          "status",
+          "uptime",
+          "timestamp",
+          "db",
+          "redis"
+        ],
+        "additionalProperties": false
+      },
+      "MeResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "auth0_sub": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "full_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string"
+          },
+          "kyc_status": {
+            "type": "string"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Role"
+            }
+          },
+          "created_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "auth0_sub",
+          "email",
+          "phone",
+          "full_name",
+          "status",
+          "kyc_status",
+          "roles",
+          "created_at"
+        ],
+        "additionalProperties": false
+      },
+      "Role": {
+        "type": "string",
+        "enum": [
+          "mechanic",
+          "seller",
+          "customer",
+          "courier",
+          "admin"
+        ]
+      },
+      "ShopView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/ShopType"
+          },
+          "commission_bps": {
+            "type": "number"
+          },
+          "my_role": {
+            "$ref": "#/components/schemas/ShopMemberRole"
+          },
+          "created_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "type",
+          "commission_bps",
+          "my_role",
+          "created_at"
+        ],
+        "additionalProperties": false
+      },
+      "ShopType": {
+        "type": "string",
+        "enum": [
+          "mechanic_shop",
+          "parts_seller"
+        ]
+      },
+      "ShopMemberRole": {
+        "type": "string",
+        "enum": [
+          "owner",
+          "mechanic",
+          "advisor"
+        ]
+      },
+      "ShopMemberView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "role": {
+            "$ref": "#/components/schemas/ShopMemberRole"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "invited",
+              "active"
+            ]
+          },
+          "account_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "full_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "role",
+          "status",
+          "account_id",
+          "email",
+          "full_name",
+          "created_at"
+        ],
+        "additionalProperties": false
+      },
+      "CustomerView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "full_name": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "document_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "account_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "full_name",
+          "phone",
+          "email",
+          "document_id",
+          "account_id",
+          "notes",
+          "created_at",
+          "updated_at"
+        ],
+        "additionalProperties": false
+      },
+      "VehicleView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "customer_id": {
+            "type": "string"
+          },
+          "vin": {
+            "type": "string",
+            "nullable": true
+          },
+          "chassis_number": {
+            "type": "string",
+            "nullable": true
+          },
+          "plate": {
+            "type": "string",
+            "nullable": true
+          },
+          "make": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string",
+            "nullable": true
+          },
+          "year": {
+            "type": "number",
+            "nullable": true
+          },
+          "trim": {
+            "type": "string",
+            "nullable": true
+          },
+          "engine": {
+            "type": "string",
+            "nullable": true
+          },
+          "fuel_type": {
+            "type": "string",
+            "nullable": true
+          },
+          "color": {
+            "type": "string",
+            "nullable": true
+          },
+          "mileage_km": {
+            "type": "number",
+            "nullable": true
+          },
+          "data_source": {
+            "type": "string",
+            "enum": [
+              "vin_decode",
+              "manual"
+            ]
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "customer_id",
+          "vin",
+          "chassis_number",
+          "plate",
+          "make",
+          "model",
+          "year",
+          "trim",
+          "engine",
+          "fuel_type",
+          "color",
+          "mileage_km",
+          "data_source",
+          "notes",
+          "created_at",
+          "updated_at"
+        ],
+        "additionalProperties": false
+      },
+      "VinDecodeView": {
+        "type": "object",
+        "properties": {
+          "vin": {
+            "type": "string"
+          },
+          "check_digit_valid": {
+            "type": "boolean"
+          },
+          "found": {
+            "type": "boolean"
+          },
+          "source": {
+            "type": "string",
+            "nullable": true
+          },
+          "provider_unavailable": {
+            "type": "boolean"
+          },
+          "vehicle": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DecodedVehicleView"
+              }
+            ],
+            "nullable": true
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "vin",
+          "check_digit_valid",
+          "found",
+          "source",
+          "provider_unavailable",
+          "vehicle",
+          "warnings"
+        ],
+        "additionalProperties": false
+      },
+      "DecodedVehicleView": {
+        "type": "object",
+        "properties": {
+          "make": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string",
+            "nullable": true
+          },
+          "year": {
+            "type": "number",
+            "nullable": true
+          },
+          "trim": {
+            "type": "string",
+            "nullable": true
+          },
+          "engine": {
+            "type": "string",
+            "nullable": true
+          },
+          "fuel_type": {
+            "type": "string",
+            "nullable": true
+          },
+          "body_class": {
+            "type": "string",
+            "nullable": true
+          },
+          "drive_type": {
+            "type": "string",
+            "nullable": true
+          },
+          "transmission": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "make",
+          "model",
+          "year",
+          "trim",
+          "engine",
+          "fuel_type",
+          "body_class",
+          "drive_type",
+          "transmission"
+        ],
+        "additionalProperties": false
+      },
+      "WorkOrderView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "number": {
+            "type": "number"
+          },
+          "code": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/WorkOrderStatus"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/CustomerSummary"
+          },
+          "vehicle": {
+            "$ref": "#/components/schemas/VehicleSummary"
+          },
+          "complaint": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "mileage_in": {
+            "type": "number",
+            "nullable": true
+          },
+          "assigned_member_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "promised_at": {
+            "type": "string",
+            "nullable": true
+          },
+          "currency": {
+            "type": "string"
+          },
+          "subtotal_cents": {
+            "$ref": "#/components/schemas/Cents"
+          },
+          "tax_cents": {
+            "$ref": "#/components/schemas/Cents"
+          },
+          "total_cents": {
+            "$ref": "#/components/schemas/Cents"
+          },
+          "started_at": {
+            "type": "string",
+            "nullable": true
+          },
+          "completed_at": {
+            "type": "string",
+            "nullable": true
+          },
+          "cancelled_at": {
+            "type": "string",
+            "nullable": true
+          },
+          "cancellation_reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "created_by_account_id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "code",
+          "status",
+          "customer",
+          "vehicle",
+          "complaint",
+          "notes",
+          "mileage_in",
+          "assigned_member_id",
+          "promised_at",
+          "currency",
+          "subtotal_cents",
+          "tax_cents",
+          "total_cents",
+          "started_at",
+          "completed_at",
+          "cancelled_at",
+          "cancellation_reason",
+          "created_by_account_id",
+          "created_at",
+          "updated_at"
+        ],
+        "additionalProperties": false
+      },
+      "WorkOrderStatus": {
+        "type": "string",
+        "enum": [
+          "draft",
+          "awaiting_approval",
+          "approved",
+          "in_progress",
+          "completed",
+          "invoiced",
+          "paid",
+          "cancelled"
+        ]
+      },
+      "CustomerSummary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "full_name": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "full_name",
+          "phone"
+        ],
+        "additionalProperties": false
+      },
+      "VehicleSummary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "make": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string",
+            "nullable": true
+          },
+          "year": {
+            "type": "number",
+            "nullable": true
+          },
+          "plate": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "make",
+          "model",
+          "year",
+          "plate"
+        ],
+        "additionalProperties": false
+      },
+      "Cents": {
+        "type": "string"
+      },
+      "WorkOrderDetailView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "number": {
+            "type": "number"
+          },
+          "code": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/WorkOrderStatus"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/CustomerSummary"
+          },
+          "vehicle": {
+            "$ref": "#/components/schemas/VehicleSummary"
+          },
+          "complaint": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "mileage_in": {
+            "type": "number",
+            "nullable": true
+          },
+          "assigned_member_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "promised_at": {
+            "type": "string",
+            "nullable": true
+          },
+          "currency": {
+            "type": "string"
+          },
+          "subtotal_cents": {
+            "$ref": "#/components/schemas/Cents"
+          },
+          "tax_cents": {
+            "$ref": "#/components/schemas/Cents"
+          },
+          "total_cents": {
+            "$ref": "#/components/schemas/Cents"
+          },
+          "started_at": {
+            "type": "string",
+            "nullable": true
+          },
+          "completed_at": {
+            "type": "string",
+            "nullable": true
+          },
+          "cancelled_at": {
+            "type": "string",
+            "nullable": true
+          },
+          "cancellation_reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "created_by_account_id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkOrderItemView"
+            }
+          }
+        },
+        "required": [
+          "assigned_member_id",
+          "cancellation_reason",
+          "cancelled_at",
+          "code",
+          "complaint",
+          "completed_at",
+          "created_at",
+          "created_by_account_id",
+          "currency",
+          "customer",
+          "id",
+          "items",
+          "mileage_in",
+          "notes",
+          "number",
+          "promised_at",
+          "started_at",
+          "status",
+          "subtotal_cents",
+          "tax_cents",
+          "total_cents",
+          "updated_at",
+          "vehicle"
+        ],
+        "additionalProperties": false
+      },
+      "WorkOrderItemView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/WorkOrderItemType"
+          },
+          "description": {
+            "type": "string"
+          },
+          "part_number": {
+            "type": "string",
+            "nullable": true
+          },
+          "quantity": {
+            "type": "string"
+          },
+          "unit_price_cents": {
+            "$ref": "#/components/schemas/Cents"
+          },
+          "tax_rate_bps": {
+            "type": "number"
+          },
+          "approval_status": {
+            "$ref": "#/components/schemas/ItemApprovalStatus"
+          },
+          "decided_at": {
+            "type": "string",
+            "nullable": true
+          },
+          "subtotal_cents": {
+            "$ref": "#/components/schemas/Cents"
+          },
+          "tax_cents": {
+            "$ref": "#/components/schemas/Cents"
+          },
+          "total_cents": {
+            "$ref": "#/components/schemas/Cents"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "description",
+          "part_number",
+          "quantity",
+          "unit_price_cents",
+          "tax_rate_bps",
+          "approval_status",
+          "decided_at",
+          "subtotal_cents",
+          "tax_cents",
+          "total_cents",
+          "created_at",
+          "updated_at"
+        ],
+        "additionalProperties": false
+      },
+      "WorkOrderItemType": {
+        "type": "string",
+        "enum": [
+          "labor",
+          "part"
+        ]
+      },
+      "ItemApprovalStatus": {
+        "type": "string",
+        "enum": [
+          "approved",
+          "proposed",
+          "declined"
+        ]
+      },
+      "InspectionView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "work_order_id": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "findings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InspectionFindingView"
+            }
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "work_order_id",
+          "notes",
+          "findings",
+          "created_at",
+          "updated_at"
+        ],
+        "additionalProperties": false
+      },
+      "InspectionFindingView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "area": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "severity": {
+            "$ref": "#/components/schemas/FindingSeverity"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "photos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InspectionPhotoView"
+            }
+          },
+          "created_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "area",
+          "title",
+          "severity",
+          "notes",
+          "photos",
+          "created_at"
+        ],
+        "additionalProperties": false
+      },
+      "FindingSeverity": {
+        "type": "string",
+        "enum": [
+          "ok",
+          "attention",
+          "urgent"
+        ]
+      },
+      "InspectionPhotoView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "uploaded"
+            ]
+          },
+          "content_type": {
+            "type": "string"
+          },
+          "size_bytes": {
+            "type": "number"
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          },
+          "url_expires_at": {
+            "type": "string",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "content_type",
+          "size_bytes",
+          "url",
+          "url_expires_at",
+          "created_at"
+        ],
+        "additionalProperties": false
+      },
+      "PhotoUploadView": {
+        "type": "object",
+        "properties": {
+          "photo": {
+            "$ref": "#/components/schemas/InspectionPhotoView"
+          },
+          "upload": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string"
+              },
+              "method": {
+                "type": "string",
+                "enum": [
+                  "PUT"
+                ]
+              },
+              "headers": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "expires_at": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "url",
+              "method",
+              "headers",
+              "expires_at"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "photo",
+          "upload"
+        ],
+        "additionalProperties": false
+      },
+      "ApprovalRequestView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "completed",
+              "revoked"
+            ]
+          },
+          "link": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string"
+          },
+          "decided_at": {
+            "type": "string",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "link",
+          "expires_at",
+          "decided_at",
+          "created_at"
+        ],
+        "additionalProperties": false
+      },
+      "PublicApprovalView": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "completed",
+              "revoked",
+              "expired"
+            ]
+          },
+          "expires_at": {
+            "type": "string"
+          },
+          "shop_name": {
+            "type": "string"
+          },
+          "work_order_code": {
+            "type": "string"
+          },
+          "vehicle": {
+            "type": "string"
+          },
+          "customer_first_name": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "area": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "severity": {
+                  "$ref": "#/components/schemas/FindingSeverity"
+                },
+                "notes": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "photo_urls": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "area",
+                "title",
+                "severity",
+                "notes",
+                "photo_urls"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicApprovalItem"
+            }
+          },
+          "subtotal_cents": {
+            "$ref": "#/components/schemas/Cents"
+          },
+          "tax_cents": {
+            "$ref": "#/components/schemas/Cents"
+          },
+          "total_cents": {
+            "$ref": "#/components/schemas/Cents"
+          }
+        },
+        "required": [
+          "status",
+          "expires_at",
+          "shop_name",
+          "work_order_code",
+          "vehicle",
+          "customer_first_name",
+          "currency",
+          "findings",
+          "items",
+          "subtotal_cents",
+          "tax_cents",
+          "total_cents"
+        ],
+        "additionalProperties": false
+      },
+      "PublicApprovalItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/WorkOrderItemType"
+          },
+          "description": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "string"
+          },
+          "total_cents": {
+            "$ref": "#/components/schemas/Cents"
+          },
+          "approval_status": {
+            "$ref": "#/components/schemas/ItemApprovalStatus"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "description",
+          "quantity",
+          "total_cents",
+          "approval_status"
+        ],
+        "additionalProperties": false
+      },
+      "InvoiceView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "number": {
+            "type": "number"
+          },
+          "code": {
+            "type": "string"
+          },
+          "ncf": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "issued",
+              "paid",
+              "voided"
+            ]
+          },
+          "work_order_id": {
+            "type": "string"
+          },
+          "work_order_code": {
+            "type": "string"
+          },
+          "shop_name": {
+            "type": "string"
+          },
+          "customer_name": {
+            "type": "string"
+          },
+          "customer_document_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "vehicle_description": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "subtotal_cents": {
+            "$ref": "#/components/schemas/Cents"
+          },
+          "tax_cents": {
+            "$ref": "#/components/schemas/Cents"
+          },
+          "total_cents": {
+            "$ref": "#/components/schemas/Cents"
+          },
+          "issued_at": {
+            "type": "string"
+          },
+          "paid_at": {
+            "type": "string",
+            "nullable": true
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceLineView"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "code",
+          "ncf",
+          "status",
+          "work_order_id",
+          "work_order_code",
+          "shop_name",
+          "customer_name",
+          "customer_document_id",
+          "vehicle_description",
+          "currency",
+          "subtotal_cents",
+          "tax_cents",
+          "total_cents",
+          "issued_at",
+          "paid_at",
+          "lines"
+        ],
+        "additionalProperties": false
+      },
+      "InvoiceLineView": {
+        "type": "object",
+        "properties": {
+          "position": {
+            "type": "number"
+          },
+          "type": {
+            "$ref": "#/components/schemas/WorkOrderItemType"
+          },
+          "description": {
+            "type": "string"
+          },
+          "part_number": {
+            "type": "string",
+            "nullable": true
+          },
+          "quantity": {
+            "type": "string"
+          },
+          "unit_price_cents": {
+            "$ref": "#/components/schemas/Cents"
+          },
+          "tax_rate_bps": {
+            "type": "number"
+          },
+          "subtotal_cents": {
+            "$ref": "#/components/schemas/Cents"
+          },
+          "tax_cents": {
+            "$ref": "#/components/schemas/Cents"
+          },
+          "total_cents": {
+            "$ref": "#/components/schemas/Cents"
+          }
+        },
+        "required": [
+          "position",
+          "type",
+          "description",
+          "part_number",
+          "quantity",
+          "unit_price_cents",
+          "tax_rate_bps",
+          "subtotal_cents",
+          "tax_cents",
+          "total_cents"
+        ],
+        "additionalProperties": false
+      },
+      "ChargeView": {
+        "type": "object",
+        "properties": {
+          "payment": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "method": {
+                "$ref": "#/components/schemas/PaymentMethod"
+              },
+              "status": {
+                "$ref": "#/components/schemas/PaymentStatus"
+              },
+              "amount_cents": {
+                "$ref": "#/components/schemas/Cents"
+              },
+              "commission_cents": {
+                "$ref": "#/components/schemas/Cents"
+              },
+              "currency": {
+                "type": "string"
+              },
+              "provider_ref": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "required": [
+              "id",
+              "method",
+              "status",
+              "amount_cents",
+              "commission_cents",
+              "currency",
+              "provider_ref"
+            ],
+            "additionalProperties": false
+          },
+          "invoice": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "code": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "issued",
+                  "paid",
+                  "voided"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "code",
+              "status"
+            ],
+            "additionalProperties": false
+          },
+          "work_order": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "code": {
+                "type": "string"
+              },
+              "status": {
+                "$ref": "#/components/schemas/WorkOrderStatus"
+              }
+            },
+            "required": [
+              "id",
+              "code",
+              "status"
+            ],
+            "additionalProperties": false
+          },
+          "payout": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "amount_cents": {
+                "$ref": "#/components/schemas/Cents"
+              },
+              "scheduled_for": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "amount_cents",
+              "scheduled_for"
+            ],
+            "additionalProperties": false,
+            "nullable": true
+          },
+          "replayed": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "payment",
+          "invoice",
+          "work_order",
+          "payout",
+          "replayed"
+        ],
+        "additionalProperties": false
+      },
+      "PaymentMethod": {
+        "type": "string",
+        "enum": [
+          "card",
+          "cash",
+          "transfer"
+        ]
+      },
+      "PaymentStatus": {
+        "type": "string",
+        "enum": [
+          "requires_action",
+          "captured",
+          "failed",
+          "refunded"
+        ]
+      },
+      "HistoryView": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HistoryEntry"
+            }
+          },
+          "next_cursor": {
+            "type": "string",
+            "nullable": true
+          },
+          "summary": {
+            "$ref": "#/components/schemas/HistorySummary"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor",
+          "summary"
+        ],
+        "additionalProperties": false
+      },
+      "HistoryEntry": {
+        "type": "object",
+        "properties": {
+          "work_order": {
+            "$ref": "#/components/schemas/WorkOrderView"
+          },
+          "invoice": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "code": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "issued",
+                  "paid",
+                  "voided"
+                ]
+              },
+              "ncf": {
+                "type": "string",
+                "nullable": true
+              },
+              "total_cents": {
+                "$ref": "#/components/schemas/Cents"
+              },
+              "paid_at": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "required": [
+              "id",
+              "code",
+              "status",
+              "ncf",
+              "total_cents",
+              "paid_at"
+            ],
+            "additionalProperties": false,
+            "nullable": true
+          },
+          "payment": {
+            "type": "object",
+            "properties": {
+              "method": {
+                "$ref": "#/components/schemas/PaymentMethod"
+              }
+            },
+            "required": [
+              "method"
+            ],
+            "additionalProperties": false,
+            "nullable": true
+          }
+        },
+        "required": [
+          "work_order",
+          "invoice",
+          "payment"
+        ],
+        "additionalProperties": false
+      },
+      "HistorySummary": {
+        "type": "object",
+        "properties": {
+          "visits": {
+            "type": "number"
+          },
+          "open_work_orders": {
+            "type": "number"
+          },
+          "total_spent_cents": {
+            "$ref": "#/components/schemas/Cents"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "last_visit_at": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "visits",
+          "open_work_orders",
+          "total_spent_cents",
+          "currency",
+          "last_visit_at"
+        ],
+        "additionalProperties": false
+      },
+      "CustomerViewPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomerView"
+            }
+          },
+          "next_cursor": {
+            "type": "string",
+            "nullable": true,
+            "description": "Pasar como `cursor` para la siguiente página; null si no hay más."
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ]
+      },
+      "VehicleViewPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VehicleView"
+            }
+          },
+          "next_cursor": {
+            "type": "string",
+            "nullable": true,
+            "description": "Pasar como `cursor` para la siguiente página; null si no hay más."
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ]
+      },
+      "WorkOrderViewPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkOrderView"
+            }
+          },
+          "next_cursor": {
+            "type": "string",
+            "nullable": true,
+            "description": "Pasar como `cursor` para la siguiente página; null si no hay más."
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ]
+      },
+      "InvoiceViewPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceView"
+            }
+          },
+          "next_cursor": {
+            "type": "string",
+            "nullable": true,
+            "description": "Pasar como `cursor` para la siguiente página; null si no hay más."
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ]
+      }
+    }
+  }
+}

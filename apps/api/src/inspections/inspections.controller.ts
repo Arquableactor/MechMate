@@ -22,6 +22,7 @@ import {
 import { IsIn, IsInt, IsOptional, IsString, Length, Max, MaxLength, Min, ValidateIf } from 'class-validator';
 import { type AuthenticatedAccount, CurrentUser } from '../auth/current-user.decorator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ApiView } from '../openapi/api-view.decorator';
 import { ShopAccessGuard } from '../shops/shop-access.guard';
 import { InspectionsService } from './inspections.service';
 
@@ -82,6 +83,7 @@ export class InspectionsController {
   @HttpCode(200)
   @ApiOperation({ summary: 'Abre la inspección (DVI) de la OT; si ya existe, la devuelve.' })
   @ApiOkResponse({ description: 'Inspección con hallazgos y fotos.' })
+  @ApiView('InspectionView')
   open(
     @Param('shopId') shopId: string,
     @Param('workOrderId') workOrderId: string,
@@ -93,6 +95,7 @@ export class InspectionsController {
 
   @Get()
   @ApiOperation({ summary: 'Inspección con hallazgos y fotos (URLs firmadas de 1 h).' })
+  @ApiView('InspectionView')
   get(@Param('shopId') shopId: string, @Param('workOrderId') workOrderId: string): Promise<InspectionView> {
     return this.inspections.get(shopId, workOrderId);
   }
@@ -101,6 +104,7 @@ export class InspectionsController {
   @ApiOperation({ summary: 'Agrega un hallazgo (área, título, severidad verde/amarillo/rojo).' })
   @ApiCreatedResponse({ description: 'Inspección actualizada.' })
   @ApiConflictResponse({ description: 'La OT ya está cerrada.' })
+  @ApiView('InspectionView')
   addFinding(
     @Param('shopId') shopId: string,
     @Param('workOrderId') workOrderId: string,
@@ -111,6 +115,7 @@ export class InspectionsController {
 
   @Patch('findings/:findingId')
   @ApiOperation({ summary: 'Edita un hallazgo.' })
+  @ApiView('InspectionView')
   updateFinding(
     @Param('shopId') shopId: string,
     @Param('workOrderId') workOrderId: string,
@@ -122,6 +127,7 @@ export class InspectionsController {
 
   @Delete('findings/:findingId')
   @ApiOperation({ summary: 'Borra un hallazgo y sus fotos (también en R2).' })
+  @ApiView('InspectionView')
   removeFinding(
     @Param('shopId') shopId: string,
     @Param('workOrderId') workOrderId: string,
@@ -136,6 +142,7 @@ export class InspectionsController {
       'Paso 1 de subir una foto: devuelve una URL firmada (15 min) para hacer PUT directo a R2 con los headers indicados.',
   })
   @ApiCreatedResponse({ description: 'Foto pending + instrucciones de subida.' })
+  @ApiView('PhotoUploadView')
   requestPhotoUpload(
     @Param('shopId') shopId: string,
     @Param('workOrderId') workOrderId: string,
@@ -149,6 +156,7 @@ export class InspectionsController {
   @HttpCode(200)
   @ApiOperation({ summary: 'Paso 2: confirma la subida; la API verifica en R2 tamaño y tipo.' })
   @ApiConflictResponse({ description: 'Todavía no se subió, o no coincide con lo declarado.' })
+  @ApiView('InspectionPhotoView')
   confirmPhoto(
     @Param('shopId') shopId: string,
     @Param('workOrderId') workOrderId: string,
@@ -160,6 +168,7 @@ export class InspectionsController {
 
   @Delete('findings/:findingId/photos/:photoId')
   @ApiOperation({ summary: 'Borra una foto (también en R2).' })
+  @ApiView('InspectionView')
   removePhoto(
     @Param('shopId') shopId: string,
     @Param('workOrderId') workOrderId: string,

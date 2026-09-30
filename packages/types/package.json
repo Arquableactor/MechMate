@@ -8,17 +8,21 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
-    }
+    },
+    "./api-schemas.json": "./dist/api-schemas.json"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && node scripts/gen-api-schemas.cjs",
     "lint": "eslint .",
     "test": "echo \"no tests in @repo/types\" && exit 0"
   },
   "devDependencies": {
     "@repo/config": "workspace:*",
     "eslint": "^9.18.0",
+    "ts-json-schema-generator": "^2.9.0",
     "typescript": "^5.7.3"
   }
 }

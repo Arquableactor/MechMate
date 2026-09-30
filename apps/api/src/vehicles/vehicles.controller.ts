@@ -15,6 +15,7 @@ import type { Page, VehicleView } from '@repo/types';
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsString, IsUUID, Length, Max, MaxLength, Min, ValidateIf } from 'class-validator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ApiView } from '../openapi/api-view.decorator';
 import { ShopAccessGuard } from '../shops/shop-access.guard';
 import { VehiclesService } from './vehicles.service';
 
@@ -129,6 +130,7 @@ export class VehiclesController {
   @ApiOperation({ summary: 'Registra un vehículo. Con VIN se autocompleta; sin VIN, carga manual.' })
   @ApiCreatedResponse({ description: 'Vehículo creado (data_source: vin_decode | manual).' })
   @ApiConflictResponse({ description: 'VIN/chasis/placa ya registrado en el taller; trae existing_vehicle_id.' })
+  @ApiView('VehicleView')
   create(@Param('shopId') shopId: string, @Body() dto: CreateVehicleDto): Promise<VehicleView> {
     return this.vehicles.create(shopId, dto);
   }
@@ -136,6 +138,7 @@ export class VehiclesController {
   @Get('vehicles')
   @ApiOperation({ summary: 'Busca vehículos del taller (placa, VIN, chasis, marca/modelo).' })
   @ApiOkResponse({ description: 'Página de vehículos, del más nuevo al más viejo.' })
+  @ApiView('VehicleView', 'page')
   search(@Param('shopId') shopId: string, @Query() query: SearchAllVehiclesQuery): Promise<Page<VehicleView>> {
     return this.vehicles.search(shopId, { ...query, customerId: query.customer_id });
   }
@@ -143,12 +146,14 @@ export class VehiclesController {
   @Get('vehicles/:vehicleId')
   @ApiOperation({ summary: 'Detalle de un vehículo del taller.' })
   @ApiNotFoundResponse({ description: 'No existe en este taller.' })
+  @ApiView('VehicleView')
   get(@Param('shopId') shopId: string, @Param('vehicleId') vehicleId: string): Promise<VehicleView> {
     return this.vehicles.get(shopId, vehicleId);
   }
 
   @Patch('vehicles/:vehicleId')
   @ApiOperation({ summary: 'Actualiza un vehículo (kilometraje, placa, dueño…). null borra un dato.' })
+  @ApiView('VehicleView')
   update(
     @Param('shopId') shopId: string,
     @Param('vehicleId') vehicleId: string,
@@ -160,6 +165,7 @@ export class VehiclesController {
   @Get('customers/:customerId/vehicles')
   @ApiOperation({ summary: 'Vehículos de un cliente del taller.' })
   @ApiNotFoundResponse({ description: 'El cliente no existe en este taller.' })
+  @ApiView('VehicleView', 'page')
   byCustomer(
     @Param('shopId') shopId: string,
     @Param('customerId') customerId: string,

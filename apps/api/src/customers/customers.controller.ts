@@ -15,6 +15,7 @@ import type { CustomerView, Page } from '@repo/types';
 import { Type } from 'class-transformer';
 import { IsEmail, IsInt, IsOptional, IsString, IsUUID, Length, Max, MaxLength, Min, ValidateIf } from 'class-validator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ApiView } from '../openapi/api-view.decorator';
 import { ShopAccessGuard } from '../shops/shop-access.guard';
 import { CustomersService } from './customers.service';
 
@@ -87,6 +88,7 @@ export class CustomersController {
   @ApiOperation({ summary: 'Registra un cliente del taller.' })
   @ApiCreatedResponse({ description: 'Cliente creado (teléfono en E.164, cédula en 11 dígitos).' })
   @ApiConflictResponse({ description: 'Ya existe con ese teléfono/cédula; trae existing_customer_id.' })
+  @ApiView('CustomerView')
   create(@Param('shopId') shopId: string, @Body() dto: CreateCustomerDto): Promise<CustomerView> {
     return this.customers.create(shopId, dto);
   }
@@ -94,6 +96,7 @@ export class CustomersController {
   @Get()
   @ApiOperation({ summary: 'Busca clientes por nombre, teléfono o cédula (paginado por cursor).' })
   @ApiOkResponse({ description: 'Página de clientes, del más nuevo al más viejo.' })
+  @ApiView('CustomerView', 'page')
   search(@Param('shopId') shopId: string, @Query() query: SearchCustomersQuery): Promise<Page<CustomerView>> {
     return this.customers.search(shopId, query);
   }
@@ -101,6 +104,7 @@ export class CustomersController {
   @Get(':customerId')
   @ApiOperation({ summary: 'Detalle de un cliente del taller.' })
   @ApiNotFoundResponse({ description: 'No existe en este taller.' })
+  @ApiView('CustomerView')
   get(@Param('shopId') shopId: string, @Param('customerId') customerId: string): Promise<CustomerView> {
     return this.customers.get(shopId, customerId);
   }
@@ -108,6 +112,7 @@ export class CustomersController {
   @Patch(':customerId')
   @ApiOperation({ summary: 'Actualiza un cliente (null borra un dato).' })
   @ApiConflictResponse({ description: 'El teléfono/cédula ya es de otro cliente del taller.' })
+  @ApiView('CustomerView')
   update(
     @Param('shopId') shopId: string,
     @Param('customerId') customerId: string,

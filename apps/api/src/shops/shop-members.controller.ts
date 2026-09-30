@@ -15,6 +15,7 @@ import { Transform } from 'class-transformer';
 import { IsEmail, IsIn } from 'class-validator';
 import { type AuthenticatedAccount, CurrentUser } from '../auth/current-user.decorator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ApiView } from '../openapi/api-view.decorator';
 import { ShopAccessGuard, ShopRoles } from './shop-access.guard';
 import { ShopsService } from './shops.service';
 
@@ -39,6 +40,7 @@ export class ShopMembersController {
   @Get()
   @ApiOperation({ summary: 'Miembros e invitaciones pendientes del taller (cualquier miembro).' })
   @ApiOkResponse({ description: 'Lista de miembros.' })
+  @ApiView('ShopMemberView', 'array')
   list(@Param('shopId') shopId: string): Promise<ShopMemberView[]> {
     return this.shops.listMembers(shopId);
   }
@@ -52,6 +54,7 @@ export class ShopMembersController {
   @ApiCreatedResponse({ description: 'Miembro activo o invitación pendiente (idempotente).' })
   @ApiConflictResponse({ description: 'Ya es miembro activo del taller.' })
   @ApiForbiddenResponse({ description: 'Solo el owner puede invitar.' })
+  @ApiView('ShopMemberView')
   invite(
     @Param('shopId') shopId: string,
     @CurrentUser() account: AuthenticatedAccount,

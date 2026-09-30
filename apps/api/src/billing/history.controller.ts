@@ -4,6 +4,7 @@ import type { HistoryView } from '@repo/types';
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsUUID, Max, Min } from 'class-validator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ApiView } from '../openapi/api-view.decorator';
 import { ShopAccessGuard } from '../shops/shop-access.guard';
 import { HistoryService } from './history.service';
 
@@ -34,6 +35,7 @@ export class HistoryController {
     summary: 'Historial del vehículo: OT (con factura y método de pago), visitas, total gastado y última visita.',
   })
   @ApiNotFoundResponse({ description: 'El vehículo no es de este taller.' })
+  @ApiView('HistoryView')
   vehicle(
     @Param('shopId') shopId: string,
     @Param('vehicleId') vehicleId: string,
@@ -47,6 +49,7 @@ export class HistoryController {
     summary: 'Historial del cliente: OT (con factura y método de pago), visitas, total gastado y última visita.',
   })
   @ApiNotFoundResponse({ description: 'El cliente no es de este taller.' })
+  @ApiView('HistoryView')
   customer(
     @Param('shopId') shopId: string,
     @Param('customerId') customerId: string,

@@ -11,7 +11,7 @@ import {
   Req,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiExcludeEndpoint, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { Request } from 'express';
 import { PaymentsService, type WebhookEvent, type WebhookResult } from './payments.service';
 import { PAYMENT_PROVIDER, type PaymentProvider } from './providers/payment-provider.interface';
@@ -31,6 +31,9 @@ export class PaymentsController {
    * firma sobre el cuerpo **crudo** (`req.rawBody`) antes de confiar en el payload.
    */
   @Post('webhook/:provider')
+  // Lo llama el procesador (CardNet), no los clientes de la API: fuera del contrato
+  // OpenAPI (del que se genera el cliente Dart del móvil).
+  @ApiExcludeEndpoint()
   @HttpCode(200)
   @ApiOperation({ summary: 'Webhook de pagos (CardNet). Verificación de firma sobre el raw body.' })
   @ApiOkResponse({ description: 'Evento recibido (y aplicado si corresponde).' })

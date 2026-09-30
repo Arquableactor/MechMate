@@ -563,3 +563,32 @@ export interface HistorySummary {
 export interface HistoryView extends Page<HistoryEntry> {
   summary: HistorySummary;
 }
+
+// --- Contrato OpenAPI (Día 8) ---
+
+/**
+ * Registro de los tipos que la API DEVUELVE. De aquí se generan los schemas de
+ * respuesta del OpenAPI (y de ahí, los modelos Dart del móvil): una sola fuente
+ * de verdad. En la API, `@ApiView('X')` exige que el endpoint devuelva `ApiSchemas['X']`.
+ */
+export interface ApiSchemas {
+  HealthStatus: HealthStatus;
+  MeResponse: MeResponse;
+  ShopView: ShopView;
+  ShopMemberView: ShopMemberView;
+  CustomerView: CustomerView;
+  VehicleView: VehicleView;
+  VinDecodeView: VinDecodeView;
+  WorkOrderView: WorkOrderView;
+  WorkOrderDetailView: WorkOrderDetailView;
+  InspectionView: InspectionView;
+  InspectionPhotoView: InspectionPhotoView;
+  PhotoUploadView: PhotoUploadView;
+  ApprovalRequestView: ApprovalRequestView;
+  PublicApprovalView: PublicApprovalView;
+  InvoiceView: InvoiceView;
+  ChargeView: ChargeView;
+  HistoryView: HistoryView;
+}
+
+export type ApiSchemaName = keyof ApiSchemas;

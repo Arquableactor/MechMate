@@ -13,7 +13,8 @@
     "test:unit": "jest --selectProjects unit",
     "test:int": "jest --selectProjects integration",
     "test:watch": "jest --watch",
-    "prisma": "prisma"
+    "prisma": "prisma",
+    "openapi:export": "nest build && node dist/openapi/export-openapi.js"
   },
   "dependencies": {
     "@nestjs/bullmq": "^11.0.5",
