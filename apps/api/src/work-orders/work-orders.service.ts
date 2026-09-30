@@ -199,6 +199,32 @@ export class WorkOrdersService {
   }
 
   /**
+   * Resumen para el historial de un vehículo o cliente (sin paginar): visitas
+   * (OT no canceladas), OT en curso, última visita y las OT pagadas (sus
+   * facturas dan el total gastado). Una consulta liviana (solo columnas).
+   */
+  async historyStats(
+    shopId: string,
+    filter: { customerId: string } | { vehicleId: string },
+  ): Promise<{ visits: number; open: number; lastVisitAt: Date | null; paidIds: string[] }> {
+    const rows = await this.prisma.workOrder.findMany({
+      where: {
+        shop_id: shopId,
+        status: { not: 'cancelled' },
+        ...('customerId' in filter ? { customer_id: filter.customerId } : { vehicle_id: filter.vehicleId }),
+      },
+      select: { id: true, status: true, created_at: true },
+    });
+    const done: readonly WorkOrderStatus[] = ['completed', 'invoiced', 'paid'];
+    return {
+      visits: rows.length,
+      open: rows.filter((r) => !done.includes(r.status)).length,
+      lastVisitAt: rows.reduce<Date | null>((max, r) => (!max || r.created_at > max ? r.created_at : max), null),
+      paidIds: rows.filter((r) => r.status === 'paid').map((r) => r.id),
+    };
+  }
+
+  /**
    * Cambia el estado respetando la máquina de estados, en UNA tx con la OT
    * bloqueada (no se puede completar mientras alguien agrega una línea) y con
    * el evento `WorkOrderStatusChanged` en el outbox (misma tx).

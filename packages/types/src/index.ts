@@ -537,3 +537,29 @@ export interface ChargeView {
   /** true = respuesta repetida por la misma Idempotency-Key (no se cobró otra vez). */
   replayed: boolean;
 }
+
+// --- Historial por vehículo / cliente (Día 7) ---
+
+/** Una visita: la OT con su factura (si tiene) y cómo se pagó (si se pagó). */
+export interface HistoryEntry {
+  work_order: WorkOrderView;
+  invoice: { id: string; code: string; status: InvoiceView['status']; ncf: string | null; total_cents: Cents; paid_at: string | null } | null;
+  payment: { method: PaymentMethod } | null;
+}
+
+export interface HistorySummary {
+  /** OT no canceladas. */
+  visits: number;
+  /** OT en curso (ni completadas ni canceladas). */
+  open_work_orders: number;
+  /** Suma de las facturas PAGADAS. */
+  total_spent_cents: Cents;
+  currency: string;
+  /** Fecha de entrada de la última OT no cancelada. */
+  last_visit_at: string | null;
+}
+
+/** `GET …/vehicles/:id/history` y `GET …/customers/:id/history`. */
+export interface HistoryView extends Page<HistoryEntry> {
+  summary: HistorySummary;
+}

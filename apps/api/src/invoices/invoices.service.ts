@@ -173,6 +173,22 @@ export class InvoicesService {
     return toInvoiceView(invoice);
   }
 
+  /** Facturas (sin líneas) de varias OT de este taller. Para el historial. */
+  async findByWorkOrders(shopId: string, workOrderIds: string[]): Promise<Invoice[]> {
+    if (workOrderIds.length === 0) return [];
+    return this.prisma.invoice.findMany({ where: { shop_id: shopId, work_order_id: { in: workOrderIds } } });
+  }
+
+  /** Suma de las facturas PAGADAS de esas OT, en una moneda. */
+  async sumPaid(shopId: string, workOrderIds: string[], currency: string): Promise<bigint> {
+    if (workOrderIds.length === 0) return 0n;
+    const { _sum } = await this.prisma.invoice.aggregate({
+      where: { shop_id: shopId, work_order_id: { in: workOrderIds }, status: 'paid', currency },
+      _sum: { total_cents: true },
+    });
+    return _sum.total_cents ?? 0n;
+  }
+
   /** Facturas del taller, de la más nueva a la más vieja. */
   async list(shopId: string, opts: { limit?: number; cursor?: string }): Promise<Page<InvoiceView>> {
     const limit = Math.min(Math.max(opts.limit ?? DEFAULT_LIMIT, 1), MAX_LIMIT);

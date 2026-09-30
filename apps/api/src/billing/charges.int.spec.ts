@@ -40,7 +40,7 @@ function chargesWith(provider: PaymentProvider) {
     prisma,
     workOrders,
     invoices,
-    new InvoicePaymentsService(ledger, ledgerAccounts, provider),
+    new InvoicePaymentsService(prisma, ledger, ledgerAccounts, provider),
     new PayoutsService(prisma, ledger, ledgerAccounts, shops),
     shops,
   );

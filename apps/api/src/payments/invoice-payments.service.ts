@@ -4,6 +4,7 @@ import type { PaymentCapturedPayload, PaymentMethod } from '@repo/types';
 import { commissionCents } from '../common/money';
 import { LedgerAccountsService } from '../ledger/ledger-accounts.service';
 import { LedgerService } from '../ledger/ledger.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { recordOutboxEvents } from '../outbox/outbox.writer';
 import { PAYMENT_PROVIDER, type PaymentProvider } from './providers/payment-provider.interface';
 
@@ -37,6 +38,7 @@ export class InvoicePaymentsService {
   private readonly logger = new Logger(InvoicePaymentsService.name);
 
   constructor(
+    private readonly prisma: PrismaService,
     private readonly ledger: LedgerService,
     private readonly ledgerAccounts: LedgerAccountsService,
     @Inject(PAYMENT_PROVIDER) private readonly provider: PaymentProvider,
@@ -123,6 +125,16 @@ export class InvoicePaymentsService {
       select: { amount_cents: true },
     });
     return posting?.amount_cents ?? 0n;
+  }
+
+  /** Método del cobro capturado de cada factura (a lo sumo uno por factura). Para el historial. */
+  async capturedMethods(shopId: string, invoiceIds: string[]): Promise<Map<string, PaymentMethod>> {
+    if (invoiceIds.length === 0) return new Map();
+    const rows = await this.prisma.payment.findMany({
+      where: { shop_id: shopId, invoice_id: { in: invoiceIds }, status: 'captured' },
+      select: { invoice_id: true, method: true },
+    });
+    return new Map(rows.map((r) => [r.invoice_id!, r.method]));
   }
 
   async markFailed(tx: Prisma.TransactionClient, paymentId: string, providerRef: string | null): Promise<Payment> {
