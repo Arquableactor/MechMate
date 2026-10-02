@@ -1,0 +1,92 @@
+//
+// AUTO-GENERATED FILE, DO NOT MODIFY!
+//
+
+export 'package:mechmate_api/src/api.dart';
+export 'package:mechmate_api/src/auth/api_key_auth.dart';
+export 'package:mechmate_api/src/auth/basic_auth.dart';
+export 'package:mechmate_api/src/auth/bearer_auth.dart';
+export 'package:mechmate_api/src/auth/oauth.dart';
+
+
+export 'package:mechmate_api/src/api/approvals_api.dart';
+export 'package:mechmate_api/src/api/billing_api.dart';
+export 'package:mechmate_api/src/api/customers_api.dart';
+export 'package:mechmate_api/src/api/health_api.dart';
+export 'package:mechmate_api/src/api/history_api.dart';
+export 'package:mechmate_api/src/api/inspections_api.dart';
+export 'package:mechmate_api/src/api/invoices_api.dart';
+export 'package:mechmate_api/src/api/me_api.dart';
+export 'package:mechmate_api/src/api/public_api.dart';
+export 'package:mechmate_api/src/api/shops_api.dart';
+export 'package:mechmate_api/src/api/vehicles_api.dart';
+export 'package:mechmate_api/src/api/vin_api.dart';
+export 'package:mechmate_api/src/api/work_orders_api.dart';
+
+export 'package:mechmate_api/src/model/add_finding_dto.dart';
+export 'package:mechmate_api/src/model/add_item_dto.dart';
+export 'package:mechmate_api/src/model/add_role_dto.dart';
+export 'package:mechmate_api/src/model/approval_request_view.dart';
+export 'package:mechmate_api/src/model/charge_dto.dart';
+export 'package:mechmate_api/src/model/charge_view.dart';
+export 'package:mechmate_api/src/model/charge_view_invoice.dart';
+export 'package:mechmate_api/src/model/charge_view_payment.dart';
+export 'package:mechmate_api/src/model/charge_view_payout.dart';
+export 'package:mechmate_api/src/model/charge_view_work_order.dart';
+export 'package:mechmate_api/src/model/create_customer_dto.dart';
+export 'package:mechmate_api/src/model/create_shop_dto.dart';
+export 'package:mechmate_api/src/model/create_vehicle_dto.dart';
+export 'package:mechmate_api/src/model/create_work_order_dto.dart';
+export 'package:mechmate_api/src/model/customer_summary.dart';
+export 'package:mechmate_api/src/model/customer_view.dart';
+export 'package:mechmate_api/src/model/customer_view_page.dart';
+export 'package:mechmate_api/src/model/decide_dto.dart';
+export 'package:mechmate_api/src/model/decoded_vehicle_view.dart';
+export 'package:mechmate_api/src/model/finding_severity.dart';
+export 'package:mechmate_api/src/model/health_status.dart';
+export 'package:mechmate_api/src/model/history_entry.dart';
+export 'package:mechmate_api/src/model/history_entry_invoice.dart';
+export 'package:mechmate_api/src/model/history_entry_payment.dart';
+export 'package:mechmate_api/src/model/history_summary.dart';
+export 'package:mechmate_api/src/model/history_view.dart';
+export 'package:mechmate_api/src/model/inspection_finding_view.dart';
+export 'package:mechmate_api/src/model/inspection_photo_view.dart';
+export 'package:mechmate_api/src/model/inspection_view.dart';
+export 'package:mechmate_api/src/model/invite_member_dto.dart';
+export 'package:mechmate_api/src/model/invoice_line_view.dart';
+export 'package:mechmate_api/src/model/invoice_view.dart';
+export 'package:mechmate_api/src/model/invoice_view_page.dart';
+export 'package:mechmate_api/src/model/item_approval_status.dart';
+export 'package:mechmate_api/src/model/item_decision_dto.dart';
+export 'package:mechmate_api/src/model/me_response.dart';
+export 'package:mechmate_api/src/model/open_inspection_dto.dart';
+export 'package:mechmate_api/src/model/payment_method.dart';
+export 'package:mechmate_api/src/model/payment_status.dart';
+export 'package:mechmate_api/src/model/photo_upload_view.dart';
+export 'package:mechmate_api/src/model/photo_upload_view_upload.dart';
+export 'package:mechmate_api/src/model/public_approval_item.dart';
+export 'package:mechmate_api/src/model/public_approval_view.dart';
+export 'package:mechmate_api/src/model/public_approval_view_findings_inner.dart';
+export 'package:mechmate_api/src/model/request_photo_upload_dto.dart';
+export 'package:mechmate_api/src/model/role.dart';
+export 'package:mechmate_api/src/model/shop_member_role.dart';
+export 'package:mechmate_api/src/model/shop_member_view.dart';
+export 'package:mechmate_api/src/model/shop_type.dart';
+export 'package:mechmate_api/src/model/shop_view.dart';
+export 'package:mechmate_api/src/model/transition_dto.dart';
+export 'package:mechmate_api/src/model/update_customer_dto.dart';
+export 'package:mechmate_api/src/model/update_finding_dto.dart';
+export 'package:mechmate_api/src/model/update_item_dto.dart';
+export 'package:mechmate_api/src/model/update_vehicle_dto.dart';
+export 'package:mechmate_api/src/model/update_work_order_dto.dart';
+export 'package:mechmate_api/src/model/vehicle_summary.dart';
+export 'package:mechmate_api/src/model/vehicle_view.dart';
+export 'package:mechmate_api/src/model/vehicle_view_page.dart';
+export 'package:mechmate_api/src/model/vin_decode_view.dart';
+export 'package:mechmate_api/src/model/work_order_detail_view.dart';
+export 'package:mechmate_api/src/model/work_order_item_type.dart';
+export 'package:mechmate_api/src/model/work_order_item_view.dart';
+export 'package:mechmate_api/src/model/work_order_status.dart';
+export 'package:mechmate_api/src/model/work_order_view.dart';
+export 'package:mechmate_api/src/model/work_order_view_page.dart';
+

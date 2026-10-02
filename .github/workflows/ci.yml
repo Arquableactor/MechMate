@@ -66,3 +66,45 @@ jobs:
 
       - name: Build
         run: pnpm build
+
+  # App móvil (Flutter). Fuera del workspace pnpm: toolchain propio.
+  mobile:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - uses: actions/checkout@v4
+
+      # openapi-generator (Java) vía npx (Node) para verificar el cliente generado.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.41.2
+          channel: stable
+          cache: true
+
+      - name: Cliente Dart al día con apps/api/openapi.json
+        run: |
+          ./tool/gen_api.sh
+          if [ -n "$(git status --porcelain -- packages/mechmate_api)" ]; then
+            git status --porcelain -- packages/mechmate_api
+            echo "::error::El cliente Dart no coincide con openapi.json. Corre apps/mobile/tool/gen_api.sh y commitea."
+            exit 1
+          fi
+
+      - name: Dependencias
+        run: flutter pub get --enforce-lockfile
+
+      - name: Análisis estático
+        run: flutter analyze
+
+      - name: Tests
+        run: flutter test

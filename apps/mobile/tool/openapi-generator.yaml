@@ -1,0 +1,9 @@
+# Cliente Dart del contrato de la API (apps/api/openapi.json). NO se edita a mano:
+# se regenera con tool/gen_api.sh.
+pubName: mechmate_api
+pubDescription: "Cliente de la API de MechMate (generado desde el OpenAPI)."
+pubVersion: 1.0.0
+pubAuthor: MechMate
+serializationLibrary: json_serializable
+dateLibrary: core
+equalityCheckMethod: default
