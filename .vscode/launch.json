@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // Puerto fijo: Auth0 solo acepta http://localhost:5000 (Callback/Logout/Web Origins).
+      "name": "MechMate app (Chrome, puerto 5000)",
+      "type": "dart",
+      "request": "launch",
+      "cwd": "apps/mobile",
+      "program": "lib/main.dart",
+      "deviceId": "chrome",
+      "args": ["--web-port", "5000"]
+    }
+  ]
+}
