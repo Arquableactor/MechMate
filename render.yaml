@@ -54,6 +54,9 @@ services:
         sync: false
       - key: PUBLIC_BASE_URL
         sync: false
+      # Opcional: orígenes web extra (además de localhost) que pueden llamar a la API.
+      - key: CORS_ORIGINS
+        sync: false
       # Opcional: sin SENTRY_DSN no se reportan errores (solo un warning al arrancar).
       - key: SENTRY_DSN
         sync: false
