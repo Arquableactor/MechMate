@@ -52,6 +52,13 @@ export interface MeResponse {
  */
 export type Cents = string;
 
+/**
+ * Número entero (en el contrato OpenAPI: `integer` → `int` en Dart). En TS es
+ * `number`; el alias solo le dice al generador de schemas que no lleva decimales.
+ * @asType integer
+ */
+export type Int = number;
+
 export type PaymentStatus = 'requires_action' | 'captured' | 'failed' | 'refunded';
 
 /** Vista pública de un pago (montos como string). */
@@ -131,7 +138,7 @@ export interface ShopView {
   name: string;
   type: ShopType;
   /** Comisión de la plataforma en basis points (800 = 8%). */
-  commission_bps: number;
+  commission_bps: Int;
   /** Rol de quien consulta en este taller. */
   my_role: ShopMemberRole;
   created_at: string;
@@ -172,7 +179,7 @@ export interface ShopMemberInvitedPayload {
 export interface DecodedVehicleView {
   make: string;
   model: string | null;
-  year: number | null;
+  year: Int | null;
   trim: string | null;
   /** Legible: `3.0L V6`, `1.8L 4 cil.` */
   engine: string | null;
@@ -235,12 +242,12 @@ export interface VehicleView {
   plate: string | null;
   make: string;
   model: string | null;
-  year: number | null;
+  year: Int | null;
   trim: string | null;
   engine: string | null;
   fuel_type: string | null;
   color: string | null;
-  mileage_km: number | null;
+  mileage_km: Int | null;
   /** De dónde salieron los datos técnicos. */
   data_source: 'vin_decode' | 'manual';
   notes: string | null;
@@ -274,13 +281,13 @@ export interface VehicleSummary {
   id: string;
   make: string;
   model: string | null;
-  year: number | null;
+  year: Int | null;
   plate: string | null;
 }
 
 export interface WorkOrderView {
   id: string;
-  number: number;
+  number: Int;
   /** Número legible por taller: `OT-0001`. */
   code: string;
   status: WorkOrderStatus;
@@ -289,7 +296,7 @@ export interface WorkOrderView {
   /** Falla que reporta el cliente. */
   complaint: string;
   notes: string | null;
-  mileage_in: number | null;
+  mileage_in: Int | null;
   /** shop_members.id asignado; null si no hay o ya no es miembro. */
   assigned_member_id: string | null;
   promised_at: string | null;
@@ -340,7 +347,7 @@ export interface WorkOrderItemView {
   quantity: string;
   unit_price_cents: Cents;
   /** ITBIS en basis points: 1800 = 18%, 0 = exento. */
-  tax_rate_bps: number;
+  tax_rate_bps: Int;
   /** approved = se cobra; proposed = espera al cliente; declined = rechazada (no suma). */
   approval_status: ItemApprovalStatus;
   decided_at: string | null;
@@ -372,7 +379,7 @@ export interface InspectionPhotoView {
   id: string;
   status: 'pending' | 'uploaded';
   content_type: string;
-  size_bytes: number;
+  size_bytes: Int;
   /** URL firmada para ver la foto (solo si está subida); vence en `url_expires_at`. */
   url: string | null;
   url_expires_at: string | null;
@@ -477,13 +484,13 @@ export type ItemDecision = 'approved' | 'declined';
 // --- Facturación (Día 7) ---
 
 export interface InvoiceLineView {
-  position: number;
+  position: Int;
   type: WorkOrderItemType;
   description: string;
   part_number: string | null;
   quantity: string;
   unit_price_cents: Cents;
-  tax_rate_bps: number;
+  tax_rate_bps: Int;
   subtotal_cents: Cents;
   tax_cents: Cents;
   total_cents: Cents;
@@ -492,7 +499,7 @@ export interface InvoiceLineView {
 /** Factura: snapshot inmutable de la OT al emitirse. */
 export interface InvoiceView {
   id: string;
-  number: number;
+  number: Int;
   /** Número interno por taller: `FAC-0001`. */
   code: string;
   /** Comprobante fiscal de la DGII (e-CF). null mientras no haya proveedor fiscal. */
@@ -549,9 +556,9 @@ export interface HistoryEntry {
 
 export interface HistorySummary {
   /** OT no canceladas. */
-  visits: number;
+  visits: Int;
   /** OT en curso (ni completadas ni canceladas). */
-  open_work_orders: number;
+  open_work_orders: Int;
   /** Suma de las facturas PAGADAS. */
   total_spent_cents: Cents;
   currency: string;

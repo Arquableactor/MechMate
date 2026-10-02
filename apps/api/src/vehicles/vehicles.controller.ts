@@ -29,15 +29,15 @@ export class CreateVehicleDto {
   @IsUUID()
   customer_id!: string;
 
-  @ApiPropertyOptional({ example: '1HGCM82633A004352', nullable: true, description: 'Si viene, autocompleta marca/modelo/año/motor.' })
+  @ApiPropertyOptional({ type: String, example: '1HGCM82633A004352', nullable: true, description: 'Si viene, autocompleta marca/modelo/año/motor.' })
   @apply(nullableText(25))
   vin?: string | null;
 
-  @ApiPropertyOptional({ example: 'NZE121-1234567', nullable: true, description: 'Para vehículos sin VIN (p. ej. japoneses).' })
+  @ApiPropertyOptional({ type: String, example: 'NZE121-1234567', nullable: true, description: 'Para vehículos sin VIN (p. ej. japoneses).' })
   @apply(nullableText(30))
   chassis_number?: string | null;
 
-  @ApiPropertyOptional({ example: 'A123456', nullable: true })
+  @ApiPropertyOptional({ type: String, example: 'A123456', nullable: true })
   @apply(nullableText(15))
   plate?: string | null;
 
@@ -47,11 +47,11 @@ export class CreateVehicleDto {
   @Length(1, 60)
   make?: string;
 
-  @ApiPropertyOptional({ example: 'Corolla', nullable: true })
+  @ApiPropertyOptional({ type: String, example: 'Corolla', nullable: true })
   @apply(nullableText(60))
   model?: string | null;
 
-  @ApiPropertyOptional({ example: 2019, nullable: true })
+  @ApiPropertyOptional({ type: 'integer', example: 2019, nullable: true })
   @ValidateIf((_, v) => v !== null)
   @IsOptional()
   @IsInt()
@@ -59,23 +59,23 @@ export class CreateVehicleDto {
   @Max(2100)
   year?: number | null;
 
-  @ApiPropertyOptional({ nullable: true })
+  @ApiPropertyOptional({ type: String, nullable: true })
   @apply(nullableText(60))
   trim?: string | null;
 
-  @ApiPropertyOptional({ example: '1.8L 4 cil.', nullable: true })
+  @ApiPropertyOptional({ type: String, example: '1.8L 4 cil.', nullable: true })
   @apply(nullableText(60))
   engine?: string | null;
 
-  @ApiPropertyOptional({ example: 'Gasolina', nullable: true })
+  @ApiPropertyOptional({ type: String, example: 'Gasolina', nullable: true })
   @apply(nullableText(40))
   fuel_type?: string | null;
 
-  @ApiPropertyOptional({ example: 'Gris', nullable: true })
+  @ApiPropertyOptional({ type: String, example: 'Gris', nullable: true })
   @apply(nullableText(40))
   color?: string | null;
 
-  @ApiPropertyOptional({ example: 85000, nullable: true })
+  @ApiPropertyOptional({ type: 'integer', example: 85000, nullable: true })
   @ValidateIf((_, v) => v !== null)
   @IsOptional()
   @IsInt()
@@ -83,7 +83,7 @@ export class CreateVehicleDto {
   @Max(3_000_000)
   mileage_km?: number | null;
 
-  @ApiPropertyOptional({ nullable: true, maxLength: 1000 })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 1000 })
   @apply(nullableText(1000))
   notes?: string | null;
 }

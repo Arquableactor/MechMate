@@ -26,7 +26,7 @@ export class CreateShopDto {
   @Length(2, 120)
   name!: string;
 
-  @ApiPropertyOptional({ enum: SHOP_TYPES, default: 'mechanic_shop' })
+  @ApiPropertyOptional({ enum: SHOP_TYPES, description: 'Si no se envía: mechanic_shop.' })
   @IsOptional()
   @IsIn(SHOP_TYPES as readonly string[])
   type?: ShopType;

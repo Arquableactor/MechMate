@@ -3,7 +3,7 @@
   "paths": {
     "/v1/shops": {
       "post": {
-        "operationId": "ShopsController_create",
+        "operationId": "shopsCreate",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -40,7 +40,7 @@
     },
     "/v1/shops/mine": {
       "get": {
-        "operationId": "ShopsController_mine",
+        "operationId": "shopsMine",
         "parameters": [],
         "responses": {
           "200": {
@@ -70,7 +70,7 @@
     },
     "/v1/shops/{shopId}": {
       "get": {
-        "operationId": "ShopsController_get",
+        "operationId": "shopsGet",
         "parameters": [
           {
             "name": "shopId",
@@ -109,7 +109,7 @@
     },
     "/v1/shops/{shopId}/members": {
       "get": {
-        "operationId": "ShopMembersController_list",
+        "operationId": "shopMembersList",
         "parameters": [
           {
             "name": "shopId",
@@ -146,7 +146,7 @@
         ]
       },
       "post": {
-        "operationId": "ShopMembersController_invite",
+        "operationId": "shopMembersInvite",
         "parameters": [
           {
             "name": "shopId",
@@ -198,7 +198,7 @@
     },
     "/v1/shops/{shopId}/members/{memberId}": {
       "delete": {
-        "operationId": "ShopMembersController_remove",
+        "operationId": "shopMembersRemove",
         "parameters": [
           {
             "name": "shopId",
@@ -235,7 +235,7 @@
     },
     "/v1/shops/{shopId}/customers": {
       "post": {
-        "operationId": "CustomersController_create",
+        "operationId": "customersCreate",
         "parameters": [
           {
             "name": "shopId",
@@ -282,7 +282,7 @@
         ]
       },
       "get": {
-        "operationId": "CustomersController_search",
+        "operationId": "customersSearch",
         "parameters": [
           {
             "name": "shopId",
@@ -348,7 +348,7 @@
     },
     "/v1/shops/{shopId}/customers/{customerId}": {
       "get": {
-        "operationId": "CustomersController_get",
+        "operationId": "customersGet",
         "parameters": [
           {
             "name": "shopId",
@@ -393,7 +393,7 @@
         ]
       },
       "patch": {
-        "operationId": "CustomersController_update",
+        "operationId": "customersUpdate",
         "parameters": [
           {
             "name": "shopId",
@@ -450,7 +450,7 @@
     },
     "/v1/shops/{shopId}/vehicles": {
       "post": {
-        "operationId": "VehiclesController_create",
+        "operationId": "vehiclesCreate",
         "parameters": [
           {
             "name": "shopId",
@@ -497,7 +497,7 @@
         ]
       },
       "get": {
-        "operationId": "VehiclesController_search",
+        "operationId": "vehiclesSearch",
         "parameters": [
           {
             "name": "shopId",
@@ -572,7 +572,7 @@
     },
     "/v1/shops/{shopId}/vehicles/{vehicleId}": {
       "get": {
-        "operationId": "VehiclesController_get",
+        "operationId": "vehiclesGet",
         "parameters": [
           {
             "name": "shopId",
@@ -617,7 +617,7 @@
         ]
       },
       "patch": {
-        "operationId": "VehiclesController_update",
+        "operationId": "vehiclesUpdate",
         "parameters": [
           {
             "name": "shopId",
@@ -671,7 +671,7 @@
     },
     "/v1/shops/{shopId}/customers/{customerId}/vehicles": {
       "get": {
-        "operationId": "VehiclesController_byCustomer",
+        "operationId": "vehiclesByCustomer",
         "parameters": [
           {
             "name": "shopId",
@@ -748,7 +748,7 @@
     },
     "/v1/vin/{vin}": {
       "get": {
-        "operationId": "VinController_decode",
+        "operationId": "vinDecode",
         "parameters": [
           {
             "name": "vin",
@@ -788,7 +788,7 @@
     },
     "/v1/shops/{shopId}/work-orders/{workOrderId}/approval-requests": {
       "post": {
-        "operationId": "ApprovalsController_request",
+        "operationId": "approvalsRequest",
         "parameters": [
           {
             "name": "shopId",
@@ -833,7 +833,7 @@
         ]
       },
       "get": {
-        "operationId": "ApprovalsController_list",
+        "operationId": "approvalsList",
         "parameters": [
           {
             "name": "shopId",
@@ -880,7 +880,7 @@
     },
     "/v1/shops/{shopId}/work-orders/{workOrderId}/approval-requests/{approvalId}/revoke": {
       "post": {
-        "operationId": "ApprovalsController_revoke",
+        "operationId": "approvalsRevoke",
         "parameters": [
           {
             "name": "shopId",
@@ -932,7 +932,7 @@
     },
     "/v1/public/approvals/{token}": {
       "get": {
-        "operationId": "PublicApprovalsController_view",
+        "operationId": "publicApprovalsView",
         "parameters": [
           {
             "name": "token",
@@ -966,7 +966,7 @@
     },
     "/v1/public/approvals/{token}/decisions": {
       "post": {
-        "operationId": "PublicApprovalsController_decide",
+        "operationId": "publicApprovalsDecide",
         "parameters": [
           {
             "name": "token",
@@ -1013,7 +1013,7 @@
     },
     "/v1/shops/{shopId}/work-orders": {
       "post": {
-        "operationId": "WorkOrdersController_create",
+        "operationId": "workOrdersCreate",
         "parameters": [
           {
             "name": "shopId",
@@ -1057,7 +1057,7 @@
         ]
       },
       "get": {
-        "operationId": "WorkOrdersController_list",
+        "operationId": "workOrdersList",
         "parameters": [
           {
             "name": "shopId",
@@ -1157,7 +1157,7 @@
     },
     "/v1/shops/{shopId}/work-orders/{workOrderId}": {
       "get": {
-        "operationId": "WorkOrdersController_get",
+        "operationId": "workOrdersGet",
         "parameters": [
           {
             "name": "shopId",
@@ -1202,7 +1202,7 @@
         ]
       },
       "patch": {
-        "operationId": "WorkOrdersController_update",
+        "operationId": "workOrdersUpdate",
         "parameters": [
           {
             "name": "shopId",
@@ -1259,7 +1259,7 @@
     },
     "/v1/shops/{shopId}/work-orders/{workOrderId}/items": {
       "post": {
-        "operationId": "WorkOrdersController_addItem",
+        "operationId": "workOrdersAddItem",
         "parameters": [
           {
             "name": "shopId",
@@ -1316,7 +1316,7 @@
     },
     "/v1/shops/{shopId}/work-orders/{workOrderId}/items/{itemId}": {
       "patch": {
-        "operationId": "WorkOrdersController_updateItem",
+        "operationId": "workOrdersUpdateItem",
         "parameters": [
           {
             "name": "shopId",
@@ -1379,7 +1379,7 @@
         ]
       },
       "delete": {
-        "operationId": "WorkOrdersController_removeItem",
+        "operationId": "workOrdersRemoveItem",
         "parameters": [
           {
             "name": "shopId",
@@ -1434,7 +1434,7 @@
     },
     "/v1/shops/{shopId}/work-orders/{workOrderId}/transitions": {
       "post": {
-        "operationId": "WorkOrdersController_transition",
+        "operationId": "workOrdersTransition",
         "parameters": [
           {
             "name": "shopId",
@@ -1491,7 +1491,7 @@
     },
     "/v1/shops/{shopId}/work-orders/{workOrderId}/inspection": {
       "post": {
-        "operationId": "InspectionsController_open",
+        "operationId": "inspectionsOpen",
         "parameters": [
           {
             "name": "shopId",
@@ -1543,7 +1543,7 @@
         ]
       },
       "get": {
-        "operationId": "InspectionsController_get",
+        "operationId": "inspectionsGet",
         "parameters": [
           {
             "name": "shopId",
@@ -1587,7 +1587,7 @@
     },
     "/v1/shops/{shopId}/work-orders/{workOrderId}/inspection/findings": {
       "post": {
-        "operationId": "InspectionsController_addFinding",
+        "operationId": "inspectionsAddFinding",
         "parameters": [
           {
             "name": "shopId",
@@ -1644,7 +1644,7 @@
     },
     "/v1/shops/{shopId}/work-orders/{workOrderId}/inspection/findings/{findingId}": {
       "patch": {
-        "operationId": "InspectionsController_updateFinding",
+        "operationId": "inspectionsUpdateFinding",
         "parameters": [
           {
             "name": "shopId",
@@ -1704,7 +1704,7 @@
         ]
       },
       "delete": {
-        "operationId": "InspectionsController_removeFinding",
+        "operationId": "inspectionsRemoveFinding",
         "parameters": [
           {
             "name": "shopId",
@@ -1756,7 +1756,7 @@
     },
     "/v1/shops/{shopId}/work-orders/{workOrderId}/inspection/findings/{findingId}/photos": {
       "post": {
-        "operationId": "InspectionsController_requestPhotoUpload",
+        "operationId": "inspectionsRequestPhotoUpload",
         "parameters": [
           {
             "name": "shopId",
@@ -1818,7 +1818,7 @@
     },
     "/v1/shops/{shopId}/work-orders/{workOrderId}/inspection/findings/{findingId}/photos/{photoId}/confirm": {
       "post": {
-        "operationId": "InspectionsController_confirmPhoto",
+        "operationId": "inspectionsConfirmPhoto",
         "parameters": [
           {
             "name": "shopId",
@@ -1881,7 +1881,7 @@
     },
     "/v1/shops/{shopId}/work-orders/{workOrderId}/inspection/findings/{findingId}/photos/{photoId}": {
       "delete": {
-        "operationId": "InspectionsController_removePhoto",
+        "operationId": "inspectionsRemovePhoto",
         "parameters": [
           {
             "name": "shopId",
@@ -1941,7 +1941,7 @@
     },
     "/v1/shops/{shopId}/work-orders/{workOrderId}/invoice": {
       "post": {
-        "operationId": "InvoicesController_issue",
+        "operationId": "invoicesIssue",
         "parameters": [
           {
             "name": "shopId",
@@ -1986,7 +1986,7 @@
         ]
       },
       "get": {
-        "operationId": "InvoicesController_byWorkOrder",
+        "operationId": "invoicesByWorkOrder",
         "parameters": [
           {
             "name": "shopId",
@@ -2033,7 +2033,7 @@
     },
     "/v1/shops/{shopId}/invoices": {
       "get": {
-        "operationId": "InvoicesController_list",
+        "operationId": "invoicesList",
         "parameters": [
           {
             "name": "shopId",
@@ -2088,7 +2088,7 @@
     },
     "/v1/shops/{shopId}/invoices/{invoiceId}": {
       "get": {
-        "operationId": "InvoicesController_get",
+        "operationId": "invoicesGet",
         "parameters": [
           {
             "name": "shopId",
@@ -2132,7 +2132,7 @@
     },
     "/v1/health": {
       "get": {
-        "operationId": "HealthController_getHealth",
+        "operationId": "healthGetHealth",
         "parameters": [],
         "responses": {
           "200": {
@@ -2153,7 +2153,7 @@
     },
     "/v1/me": {
       "get": {
-        "operationId": "MeController_getMe",
+        "operationId": "meGetMe",
         "parameters": [],
         "responses": {
           "200": {
@@ -2180,7 +2180,7 @@
     },
     "/v1/me/roles": {
       "post": {
-        "operationId": "MeController_addRole",
+        "operationId": "meAddRole",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -2217,7 +2217,7 @@
     },
     "/v1/shops/{shopId}/work-orders/{workOrderId}/charge": {
       "post": {
-        "operationId": "ChargesController_charge",
+        "operationId": "chargesCharge",
         "parameters": [
           {
             "name": "shopId",
@@ -2286,7 +2286,7 @@
     },
     "/v1/shops/{shopId}/vehicles/{vehicleId}/history": {
       "get": {
-        "operationId": "HistoryController_vehicle",
+        "operationId": "historyVehicle",
         "parameters": [
           {
             "name": "shopId",
@@ -2353,7 +2353,7 @@
     },
     "/v1/shops/{shopId}/customers/{customerId}/history": {
       "get": {
-        "operationId": "HistoryController_customer",
+        "operationId": "historyCustomer",
         "parameters": [
           {
             "name": "shopId",
@@ -2451,7 +2451,7 @@
               "mechanic_shop",
               "parts_seller"
             ],
-            "default": "mechanic_shop"
+            "description": "Si no se envía: mechanic_shop."
           }
         },
         "required": [
@@ -2489,24 +2489,24 @@
             "maxLength": 120
           },
           "phone": {
-            "type": "object",
+            "type": "string",
             "example": "809-555-1234",
             "nullable": true,
             "description": "Se guarda en E.164 (+18095551234)."
           },
           "email": {
-            "type": "object",
+            "type": "string",
             "example": "juan@mail.do",
             "nullable": true
           },
           "document_id": {
-            "type": "object",
+            "type": "string",
             "example": "001-1234567-8",
             "nullable": true,
             "description": "Cédula; se guarda en 11 dígitos."
           },
           "notes": {
-            "type": "object",
+            "type": "string",
             "nullable": true,
             "maxLength": 1000
           }
@@ -2525,24 +2525,24 @@
             "maxLength": 120
           },
           "phone": {
-            "type": "object",
+            "type": "string",
             "example": "809-555-1234",
             "nullable": true,
             "description": "Se guarda en E.164 (+18095551234)."
           },
           "email": {
-            "type": "object",
+            "type": "string",
             "example": "juan@mail.do",
             "nullable": true
           },
           "document_id": {
-            "type": "object",
+            "type": "string",
             "example": "001-1234567-8",
             "nullable": true,
             "description": "Cédula; se guarda en 11 dígitos."
           },
           "notes": {
-            "type": "object",
+            "type": "string",
             "nullable": true,
             "maxLength": 1000
           }
@@ -2556,19 +2556,19 @@
             "description": "Cliente dueño (del mismo taller)."
           },
           "vin": {
-            "type": "object",
+            "type": "string",
             "example": "1HGCM82633A004352",
             "nullable": true,
             "description": "Si viene, autocompleta marca/modelo/año/motor."
           },
           "chassis_number": {
-            "type": "object",
+            "type": "string",
             "example": "NZE121-1234567",
             "nullable": true,
             "description": "Para vehículos sin VIN (p. ej. japoneses)."
           },
           "plate": {
-            "type": "object",
+            "type": "string",
             "example": "A123456",
             "nullable": true
           },
@@ -2578,41 +2578,41 @@
             "description": "Obligatoria si no hay VIN decodificable."
           },
           "model": {
-            "type": "object",
+            "type": "string",
             "example": "Corolla",
             "nullable": true
           },
           "year": {
-            "type": "object",
+            "type": "integer",
             "example": 2019,
             "nullable": true
           },
           "trim": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "engine": {
-            "type": "object",
+            "type": "string",
             "example": "1.8L 4 cil.",
             "nullable": true
           },
           "fuel_type": {
-            "type": "object",
+            "type": "string",
             "example": "Gasolina",
             "nullable": true
           },
           "color": {
-            "type": "object",
+            "type": "string",
             "example": "Gris",
             "nullable": true
           },
           "mileage_km": {
-            "type": "object",
+            "type": "integer",
             "example": 85000,
             "nullable": true
           },
           "notes": {
-            "type": "object",
+            "type": "string",
             "nullable": true,
             "maxLength": 1000
           }
@@ -2629,19 +2629,19 @@
             "description": "Cliente dueño (del mismo taller)."
           },
           "vin": {
-            "type": "object",
+            "type": "string",
             "example": "1HGCM82633A004352",
             "nullable": true,
             "description": "Si viene, autocompleta marca/modelo/año/motor."
           },
           "chassis_number": {
-            "type": "object",
+            "type": "string",
             "example": "NZE121-1234567",
             "nullable": true,
             "description": "Para vehículos sin VIN (p. ej. japoneses)."
           },
           "plate": {
-            "type": "object",
+            "type": "string",
             "example": "A123456",
             "nullable": true
           },
@@ -2651,41 +2651,41 @@
             "description": "Obligatoria si no hay VIN decodificable."
           },
           "model": {
-            "type": "object",
+            "type": "string",
             "example": "Corolla",
             "nullable": true
           },
           "year": {
-            "type": "object",
+            "type": "integer",
             "example": 2019,
             "nullable": true
           },
           "trim": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "engine": {
-            "type": "object",
+            "type": "string",
             "example": "1.8L 4 cil.",
             "nullable": true
           },
           "fuel_type": {
-            "type": "object",
+            "type": "string",
             "example": "Gasolina",
             "nullable": true
           },
           "color": {
-            "type": "object",
+            "type": "string",
             "example": "Gris",
             "nullable": true
           },
           "mileage_km": {
-            "type": "object",
+            "type": "integer",
             "example": 85000,
             "nullable": true
           },
           "notes": {
-            "type": "object",
+            "type": "string",
             "nullable": true,
             "maxLength": 1000
           }
@@ -2741,23 +2741,23 @@
             "maxLength": 2000
           },
           "notes": {
-            "type": "object",
+            "type": "string",
             "nullable": true,
             "maxLength": 2000
           },
           "mileage_in": {
-            "type": "object",
+            "type": "integer",
             "example": 185000,
             "nullable": true,
             "description": "Odómetro al recibir el vehículo."
           },
           "assigned_member_id": {
-            "type": "object",
+            "type": "string",
             "nullable": true,
             "description": "shop_members.id del mecánico asignado."
           },
           "promised_at": {
-            "type": "object",
+            "type": "string",
             "example": "2026-10-02T17:00:00-04:00",
             "nullable": true
           }
@@ -2778,23 +2778,23 @@
             "maxLength": 2000
           },
           "notes": {
-            "type": "object",
+            "type": "string",
             "nullable": true,
             "maxLength": 2000
           },
           "mileage_in": {
-            "type": "object",
+            "type": "integer",
             "example": 185000,
             "nullable": true,
             "description": "Odómetro al recibir el vehículo."
           },
           "assigned_member_id": {
-            "type": "object",
+            "type": "string",
             "nullable": true,
             "description": "shop_members.id del mecánico asignado."
           },
           "promised_at": {
-            "type": "object",
+            "type": "string",
             "example": "2026-10-02T17:00:00-04:00",
             "nullable": true
           }
@@ -2818,7 +2818,7 @@
             "maxLength": 300
           },
           "part_number": {
-            "type": "object",
+            "type": "string",
             "example": "04465-02220",
             "nullable": true,
             "maxLength": 60
@@ -2834,15 +2834,13 @@
             "description": "Centavos como string: \"120000\" = RD$1,200.00."
           },
           "tax_rate_bps": {
-            "type": "number",
+            "type": "integer",
             "example": 1800,
-            "default": 1800,
-            "description": "ITBIS en basis points (1800 = 18%, 0 = exento)."
+            "description": "ITBIS en basis points (1800 = 18%, 0 = exento). Si no se envía al crear: 1800."
           },
           "requires_approval": {
             "type": "boolean",
-            "default": false,
-            "description": "true = línea propuesta: el cliente la aprueba o rechaza desde el enlace de la DVI."
+            "description": "true = línea propuesta: el cliente la aprueba o rechaza desde el enlace de la DVI. Si no se envía al crear: false."
           }
         },
         "required": [
@@ -2870,7 +2868,7 @@
             "maxLength": 300
           },
           "part_number": {
-            "type": "object",
+            "type": "string",
             "example": "04465-02220",
             "nullable": true,
             "maxLength": 60
@@ -2886,15 +2884,13 @@
             "description": "Centavos como string: \"120000\" = RD$1,200.00."
           },
           "tax_rate_bps": {
-            "type": "number",
+            "type": "integer",
             "example": 1800,
-            "default": 1800,
-            "description": "ITBIS en basis points (1800 = 18%, 0 = exento)."
+            "description": "ITBIS en basis points (1800 = 18%, 0 = exento). Si no se envía al crear: 1800."
           },
           "requires_approval": {
             "type": "boolean",
-            "default": false,
-            "description": "true = línea propuesta: el cliente la aprueba o rechaza desde el enlace de la DVI."
+            "description": "true = línea propuesta: el cliente la aprueba o rechaza desde el enlace de la DVI. Si no se envía al crear: false."
           }
         }
       },
@@ -2911,7 +2907,7 @@
             "example": "in_progress"
           },
           "reason": {
-            "type": "object",
+            "type": "string",
             "example": "El cliente decidió no reparar",
             "nullable": true,
             "maxLength": 500,
@@ -2926,7 +2922,7 @@
         "type": "object",
         "properties": {
           "notes": {
-            "type": "object",
+            "type": "string",
             "nullable": true,
             "maxLength": 2000
           }
@@ -2956,7 +2952,7 @@
             "description": "ok = verde, attention = amarillo, urgent = rojo."
           },
           "notes": {
-            "type": "object",
+            "type": "string",
             "nullable": true,
             "maxLength": 2000
           }
@@ -2991,7 +2987,7 @@
             "description": "ok = verde, attention = amarillo, urgent = rojo."
           },
           "notes": {
-            "type": "object",
+            "type": "string",
             "nullable": true,
             "maxLength": 2000
           }
@@ -3064,20 +3060,24 @@
             "type": "string",
             "enum": [
               "ok"
-            ]
+            ],
+            "description": "Siempre 'ok' mientras el proceso responde (la DB se reporta aparte en `db`)."
           },
           "uptime": {
-            "type": "number"
+            "type": "number",
+            "description": "Segundos que lleva el proceso vivo (`process.uptime()`)."
           },
           "timestamp": {
-            "type": "string"
+            "type": "string",
+            "description": "Instante de la respuesta en ISO-8601."
           },
           "db": {
             "type": "string",
             "enum": [
               "up",
               "down"
-            ]
+            ],
+            "description": "Resultado del `SELECT 1` contra Postgres."
           },
           "redis": {
             "type": "string",
@@ -3085,7 +3085,8 @@
               "up",
               "down",
               "disabled"
-            ]
+            ],
+            "description": "Ping a Redis (colas BullMQ). 'disabled' = sin REDIS_URL (solo dev/test)."
           }
         },
         "required": [
@@ -3095,7 +3096,8 @@
           "db",
           "redis"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Estado del servicio devuelto por `GET /v1/health`."
       },
       "MeResponse": {
         "type": "object",
@@ -3145,7 +3147,8 @@
           "roles",
           "created_at"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Perfil + roles devuelto por `GET /v1/me`."
       },
       "Role": {
         "type": "string",
@@ -3155,7 +3158,8 @@
           "customer",
           "courier",
           "admin"
-        ]
+        ],
+        "description": "Conjunto canónico de roles de dominio (viven en la DB, no en Auth0)."
       },
       "ShopView": {
         "type": "object",
@@ -3170,10 +3174,12 @@
             "$ref": "#/components/schemas/ShopType"
           },
           "commission_bps": {
-            "type": "number"
+            "type": "integer",
+            "description": "Comisión de la plataforma en basis points (800 = 8%)."
           },
           "my_role": {
-            "$ref": "#/components/schemas/ShopMemberRole"
+            "$ref": "#/components/schemas/ShopMemberRole",
+            "description": "Rol de quien consulta en este taller."
           },
           "created_at": {
             "type": "string"
@@ -3187,7 +3193,8 @@
           "my_role",
           "created_at"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Un taller visto por uno de sus miembros."
       },
       "ShopType": {
         "type": "string",
@@ -3222,10 +3229,12 @@
           },
           "account_id": {
             "type": "string",
+            "description": "null mientras la invitación no se vincula a una cuenta.",
             "nullable": true
           },
           "email": {
             "type": "string",
+            "description": "Email de la cuenta, o el invitado si aún no hay cuenta.",
             "nullable": true
           },
           "full_name": {
@@ -3245,7 +3254,8 @@
           "full_name",
           "created_at"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Un miembro (o invitación pendiente) de un taller."
       },
       "CustomerView": {
         "type": "object",
@@ -3258,6 +3268,7 @@
           },
           "phone": {
             "type": "string",
+            "description": "E.164, p. ej. `+18095551234`.",
             "nullable": true
           },
           "email": {
@@ -3266,10 +3277,12 @@
           },
           "document_id": {
             "type": "string",
+            "description": "Cédula: 11 dígitos sin guiones.",
             "nullable": true
           },
           "account_id": {
             "type": "string",
+            "description": "Cuenta de la app vinculada, si el cliente se registró.",
             "nullable": true
           },
           "notes": {
@@ -3307,14 +3320,17 @@
           },
           "vin": {
             "type": "string",
+            "description": "VIN normalizado (17).",
             "nullable": true
           },
           "chassis_number": {
             "type": "string",
+            "description": "Número de chasis (vehículos sin VIN, p. ej. importados de Japón).",
             "nullable": true
           },
           "plate": {
             "type": "string",
+            "description": "Placa sin espacios ni guiones, p. ej. `A123456`.",
             "nullable": true
           },
           "make": {
@@ -3325,7 +3341,7 @@
             "nullable": true
           },
           "year": {
-            "type": "number",
+            "type": "integer",
             "nullable": true
           },
           "trim": {
@@ -3345,7 +3361,7 @@
             "nullable": true
           },
           "mileage_km": {
-            "type": "number",
+            "type": "integer",
             "nullable": true
           },
           "data_source": {
@@ -3353,7 +3369,8 @@
             "enum": [
               "vin_decode",
               "manual"
-            ]
+            ],
+            "description": "De dónde salieron los datos técnicos."
           },
           "notes": {
             "type": "string",
@@ -3391,20 +3408,24 @@
         "type": "object",
         "properties": {
           "vin": {
-            "type": "string"
+            "type": "string",
+            "description": "VIN normalizado (mayúsculas, sin espacios ni guiones)."
           },
           "check_digit_valid": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Dígito verificador (posición 9). false no invalida: solo es un aviso."
           },
           "found": {
             "type": "boolean"
           },
           "source": {
             "type": "string",
+            "description": "De dónde salió: `cache` o el nombre del proveedor (`nhtsa`, `tecdoc`…). null si no se encontró.",
             "nullable": true
           },
           "provider_unavailable": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "El proveedor no respondió: se puede reintentar o cargar el vehículo a mano."
           },
           "vehicle": {
             "allOf": [
@@ -3418,7 +3439,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "description": "Avisos en español para mostrar al mecánico."
           }
         },
         "required": [
@@ -3430,7 +3452,8 @@
           "vehicle",
           "warnings"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Resultado de `GET /v1/vin/:vin`."
       },
       "DecodedVehicleView": {
         "type": "object",
@@ -3443,7 +3466,7 @@
             "nullable": true
           },
           "year": {
-            "type": "number",
+            "type": "integer",
             "nullable": true
           },
           "trim": {
@@ -3452,6 +3475,7 @@
           },
           "engine": {
             "type": "string",
+            "description": "Legible: `3.0L V6`, `1.8L 4 cil.`",
             "nullable": true
           },
           "fuel_type": {
@@ -3482,7 +3506,8 @@
           "drive_type",
           "transmission"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Datos del vehículo según su VIN."
       },
       "WorkOrderView": {
         "type": "object",
@@ -3491,10 +3516,11 @@
             "type": "string"
           },
           "number": {
-            "type": "number"
+            "type": "integer"
           },
           "code": {
-            "type": "string"
+            "type": "string",
+            "description": "Número legible por taller: `OT-0001`."
           },
           "status": {
             "$ref": "#/components/schemas/WorkOrderStatus"
@@ -3506,18 +3532,20 @@
             "$ref": "#/components/schemas/VehicleSummary"
           },
           "complaint": {
-            "type": "string"
+            "type": "string",
+            "description": "Falla que reporta el cliente."
           },
           "notes": {
             "type": "string",
             "nullable": true
           },
           "mileage_in": {
-            "type": "number",
+            "type": "integer",
             "nullable": true
           },
           "assigned_member_id": {
             "type": "string",
+            "description": "shop_members.id asignado; null si no hay o ya no es miembro.",
             "nullable": true
           },
           "promised_at": {
@@ -3528,13 +3556,13 @@
             "type": "string"
           },
           "subtotal_cents": {
-            "$ref": "#/components/schemas/Cents"
+            "type": "string"
           },
           "tax_cents": {
-            "$ref": "#/components/schemas/Cents"
+            "type": "string"
           },
           "total_cents": {
-            "$ref": "#/components/schemas/Cents"
+            "type": "string"
           },
           "started_at": {
             "type": "string",
@@ -3620,7 +3648,8 @@
           "full_name",
           "phone"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Resumen del cliente para listas (sin pedirlo aparte)."
       },
       "VehicleSummary": {
         "type": "object",
@@ -3636,7 +3665,7 @@
             "nullable": true
           },
           "year": {
-            "type": "number",
+            "type": "integer",
             "nullable": true
           },
           "plate": {
@@ -3651,10 +3680,8 @@
           "year",
           "plate"
         ],
-        "additionalProperties": false
-      },
-      "Cents": {
-        "type": "string"
+        "additionalProperties": false,
+        "description": "Resumen del vehículo para listas."
       },
       "WorkOrderDetailView": {
         "type": "object",
@@ -3663,10 +3690,11 @@
             "type": "string"
           },
           "number": {
-            "type": "number"
+            "type": "integer"
           },
           "code": {
-            "type": "string"
+            "type": "string",
+            "description": "Número legible por taller: `OT-0001`."
           },
           "status": {
             "$ref": "#/components/schemas/WorkOrderStatus"
@@ -3678,18 +3706,20 @@
             "$ref": "#/components/schemas/VehicleSummary"
           },
           "complaint": {
-            "type": "string"
+            "type": "string",
+            "description": "Falla que reporta el cliente."
           },
           "notes": {
             "type": "string",
             "nullable": true
           },
           "mileage_in": {
-            "type": "number",
+            "type": "integer",
             "nullable": true
           },
           "assigned_member_id": {
             "type": "string",
+            "description": "shop_members.id asignado; null si no hay o ya no es miembro.",
             "nullable": true
           },
           "promised_at": {
@@ -3700,13 +3730,13 @@
             "type": "string"
           },
           "subtotal_cents": {
-            "$ref": "#/components/schemas/Cents"
+            "type": "string"
           },
           "tax_cents": {
-            "$ref": "#/components/schemas/Cents"
+            "type": "string"
           },
           "total_cents": {
-            "$ref": "#/components/schemas/Cents"
+            "type": "string"
           },
           "started_at": {
             "type": "string",
@@ -3765,7 +3795,8 @@
           "updated_at",
           "vehicle"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "OT con sus líneas (detalle)."
       },
       "WorkOrderItemView": {
         "type": "object",
@@ -3774,7 +3805,8 @@
             "type": "string"
           },
           "type": {
-            "$ref": "#/components/schemas/WorkOrderItemType"
+            "$ref": "#/components/schemas/WorkOrderItemType",
+            "description": "labor = mano de obra; part = pieza."
           },
           "description": {
             "type": "string"
@@ -3784,29 +3816,32 @@
             "nullable": true
           },
           "quantity": {
-            "type": "string"
+            "type": "string",
+            "description": "Decimal como string: `\"1.5\"` (horas, unidades…)."
           },
           "unit_price_cents": {
-            "$ref": "#/components/schemas/Cents"
+            "type": "string"
           },
           "tax_rate_bps": {
-            "type": "number"
+            "type": "integer",
+            "description": "ITBIS en basis points: 1800 = 18%, 0 = exento."
           },
           "approval_status": {
-            "$ref": "#/components/schemas/ItemApprovalStatus"
+            "$ref": "#/components/schemas/ItemApprovalStatus",
+            "description": "approved = se cobra; proposed = espera al cliente; declined = rechazada (no suma)."
           },
           "decided_at": {
             "type": "string",
             "nullable": true
           },
           "subtotal_cents": {
-            "$ref": "#/components/schemas/Cents"
+            "type": "string"
           },
           "tax_cents": {
-            "$ref": "#/components/schemas/Cents"
+            "type": "string"
           },
           "total_cents": {
-            "$ref": "#/components/schemas/Cents"
+            "type": "string"
           },
           "created_at": {
             "type": "string"
@@ -3831,7 +3866,8 @@
           "created_at",
           "updated_at"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Línea de una OT."
       },
       "WorkOrderItemType": {
         "type": "string",
@@ -3891,7 +3927,8 @@
             "type": "string"
           },
           "area": {
-            "type": "string"
+            "type": "string",
+            "description": "Área del vehículo: \"Frenos\", \"Suspensión\", \"Luces\"…"
           },
           "title": {
             "type": "string"
@@ -3949,10 +3986,11 @@
             "type": "string"
           },
           "size_bytes": {
-            "type": "number"
+            "type": "integer"
           },
           "url": {
             "type": "string",
+            "description": "URL firmada para ver la foto (solo si está subida); vence en `url_expires_at`.",
             "nullable": true
           },
           "url_expires_at": {
@@ -3996,7 +4034,8 @@
                 "type": "object",
                 "additionalProperties": {
                   "type": "string"
-                }
+                },
+                "description": "Enviar EXACTAMENTE estos headers (están firmados)."
               },
               "expires_at": {
                 "type": "string"
@@ -4015,7 +4054,8 @@
           "photo",
           "upload"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Respuesta al pedir subir una foto: la foto (pending) + cómo subirla a R2."
       },
       "ApprovalRequestView": {
         "type": "object",
@@ -4032,7 +4072,8 @@
             ]
           },
           "link": {
-            "type": "string"
+            "type": "string",
+            "description": "Enlace para el cliente. El taller puede compartirlo por su propio WhatsApp."
           },
           "expires_at": {
             "type": "string"
@@ -4053,7 +4094,8 @@
           "decided_at",
           "created_at"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Solicitud de aprobación, vista por el TALLER (incluye el enlace para compartir)."
       },
       "PublicApprovalView": {
         "type": "object",
@@ -4107,7 +4149,8 @@
                   "type": "array",
                   "items": {
                     "type": "string"
-                  }
+                  },
+                  "description": "URLs firmadas (1 h) de las fotos subidas."
                 }
               },
               "required": [
@@ -4127,13 +4170,14 @@
             }
           },
           "subtotal_cents": {
-            "$ref": "#/components/schemas/Cents"
+            "type": "string",
+            "description": "Totales de lo que se va a cobrar (sin las rechazadas)."
           },
           "tax_cents": {
-            "$ref": "#/components/schemas/Cents"
+            "type": "string"
           },
           "total_cents": {
-            "$ref": "#/components/schemas/Cents"
+            "type": "string"
           }
         },
         "required": [
@@ -4150,7 +4194,8 @@
           "tax_cents",
           "total_cents"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Lo que ve el cliente al abrir el enlace (sin datos internos del taller)."
       },
       "PublicApprovalItem": {
         "type": "object",
@@ -4168,7 +4213,7 @@
             "type": "string"
           },
           "total_cents": {
-            "$ref": "#/components/schemas/Cents"
+            "type": "string"
           },
           "approval_status": {
             "$ref": "#/components/schemas/ItemApprovalStatus"
@@ -4182,7 +4227,8 @@
           "total_cents",
           "approval_status"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Línea tal como la ve el CLIENTE en la página de aprobación."
       },
       "InvoiceView": {
         "type": "object",
@@ -4191,13 +4237,15 @@
             "type": "string"
           },
           "number": {
-            "type": "number"
+            "type": "integer"
           },
           "code": {
-            "type": "string"
+            "type": "string",
+            "description": "Número interno por taller: `FAC-0001`."
           },
           "ncf": {
             "type": "string",
+            "description": "Comprobante fiscal de la DGII (e-CF). null mientras no haya proveedor fiscal.",
             "nullable": true
           },
           "status": {
@@ -4231,13 +4279,13 @@
             "type": "string"
           },
           "subtotal_cents": {
-            "$ref": "#/components/schemas/Cents"
+            "type": "string"
           },
           "tax_cents": {
-            "$ref": "#/components/schemas/Cents"
+            "type": "string"
           },
           "total_cents": {
-            "$ref": "#/components/schemas/Cents"
+            "type": "string"
           },
           "issued_at": {
             "type": "string"
@@ -4273,13 +4321,14 @@
           "paid_at",
           "lines"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Factura: snapshot inmutable de la OT al emitirse."
       },
       "InvoiceLineView": {
         "type": "object",
         "properties": {
           "position": {
-            "type": "number"
+            "type": "integer"
           },
           "type": {
             "$ref": "#/components/schemas/WorkOrderItemType"
@@ -4295,19 +4344,19 @@
             "type": "string"
           },
           "unit_price_cents": {
-            "$ref": "#/components/schemas/Cents"
+            "type": "string"
           },
           "tax_rate_bps": {
-            "type": "number"
+            "type": "integer"
           },
           "subtotal_cents": {
-            "$ref": "#/components/schemas/Cents"
+            "type": "string"
           },
           "tax_cents": {
-            "$ref": "#/components/schemas/Cents"
+            "type": "string"
           },
           "total_cents": {
-            "$ref": "#/components/schemas/Cents"
+            "type": "string"
           }
         },
         "required": [
@@ -4340,10 +4389,11 @@
                 "$ref": "#/components/schemas/PaymentStatus"
               },
               "amount_cents": {
-                "$ref": "#/components/schemas/Cents"
+                "type": "string"
               },
               "commission_cents": {
-                "$ref": "#/components/schemas/Cents"
+                "type": "string",
+                "description": "Comisión de la plataforma. En efectivo/transferencia queda como deuda del taller."
               },
               "currency": {
                 "type": "string"
@@ -4410,13 +4460,14 @@
             "additionalProperties": false
           },
           "payout": {
+            "description": "Payout programado al taller (solo tarjeta y si su saldo es positivo).",
             "type": "object",
             "properties": {
               "id": {
                 "type": "string"
               },
               "amount_cents": {
-                "$ref": "#/components/schemas/Cents"
+                "type": "string"
               },
               "scheduled_for": {
                 "type": "string"
@@ -4431,7 +4482,8 @@
             "nullable": true
           },
           "replayed": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "true = respuesta repetida por la misma Idempotency-Key (no se cobró otra vez)."
           }
         },
         "required": [
@@ -4441,7 +4493,8 @@
           "payout",
           "replayed"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Resultado de cobrar una OT."
       },
       "PaymentMethod": {
         "type": "string",
@@ -4471,6 +4524,7 @@
           },
           "next_cursor": {
             "type": "string",
+            "description": "Pasar como `cursor` para la siguiente página; null si no hay más.",
             "nullable": true
           },
           "summary": {
@@ -4482,7 +4536,8 @@
           "next_cursor",
           "summary"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "`GET …/vehicles/:id/history` y `GET …/customers/:id/history`."
       },
       "HistoryEntry": {
         "type": "object",
@@ -4512,7 +4567,7 @@
                 "nullable": true
               },
               "total_cents": {
-                "$ref": "#/components/schemas/Cents"
+                "type": "string"
               },
               "paid_at": {
                 "type": "string",
@@ -4549,25 +4604,30 @@
           "invoice",
           "payment"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Una visita: la OT con su factura (si tiene) y cómo se pagó (si se pagó)."
       },
       "HistorySummary": {
         "type": "object",
         "properties": {
           "visits": {
-            "type": "number"
+            "type": "integer",
+            "description": "OT no canceladas."
           },
           "open_work_orders": {
-            "type": "number"
+            "type": "integer",
+            "description": "OT en curso (ni completadas ni canceladas)."
           },
           "total_spent_cents": {
-            "$ref": "#/components/schemas/Cents"
+            "type": "string",
+            "description": "Suma de las facturas PAGADAS."
           },
           "currency": {
             "type": "string"
           },
           "last_visit_at": {
             "type": "string",
+            "description": "Fecha de entrada de la última OT no cancelada.",
             "nullable": true
           }
         },

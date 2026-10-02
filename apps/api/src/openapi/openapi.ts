@@ -17,8 +17,16 @@ export function loadApiSchemas(): ApiSchemasFile {
 }
 
 /**
- * `@HttpCode` de cada handler, por operationId (`Controlador_método`, el que
- * pone @nestjs/swagger). Hace falta porque con un `@ApiXxxResponse` de error
+ * operationId = nombre del método en los clientes generados (Dart):
+ * `WorkOrdersController.addItem` → `workOrdersAddItem`. Único en todo el contrato.
+ */
+export function operationId(controllerKey: string, methodKey: string): string {
+  const base = controllerKey.replace(/Controller$/, '');
+  return `${base.charAt(0).toLowerCase()}${base.slice(1)}${methodKey.charAt(0).toUpperCase()}${methodKey.slice(1)}`;
+}
+
+/**
+ * `@HttpCode` de cada handler, por operationId. Hace falta porque con un `@ApiXxxResponse` de error
  * Swagger deja de agregar la respuesta de éxito por defecto.
  */
 function httpCodes(app: INestApplication): Map<string, number> {
@@ -30,7 +38,7 @@ function httpCodes(app: INestApplication): Map<string, number> {
       for (const method of Object.getOwnPropertyNames(proto)) {
         const handler = proto[method];
         const code = typeof handler === 'function' ? (Reflect.getMetadata(HTTP_CODE_METADATA, handler) as number | undefined) : undefined;
-        if (code) codes.set(`${metatype.name}_${method}`, code);
+        if (code) codes.set(operationId(metatype.name, method), code);
       }
     }
   }
@@ -54,7 +62,7 @@ export function buildOpenApiDocument(app: INestApplication): OpenAPIObject {
     .setVersion('1.0')
     .addBearerAuth()
     .build();
-  const document = SwaggerModule.createDocument(app, config);
+  const document = SwaggerModule.createDocument(app, config, { operationIdFactory: operationId });
 
   const schemas: Record<string, JsonSchema> = {
     ...(document.components?.schemas as Record<string, JsonSchema> | undefined),

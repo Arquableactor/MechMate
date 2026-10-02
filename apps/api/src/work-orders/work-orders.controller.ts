@@ -60,14 +60,14 @@ export class CreateWorkOrderDto {
   @Length(3, 2000)
   complaint!: string;
 
-  @ApiPropertyOptional({ nullable: true, maxLength: 2000 })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 2000 })
   @ValidateIf((_, v) => v !== null)
   @IsOptional()
   @IsString()
   @MaxLength(2000)
   notes?: string | null;
 
-  @ApiPropertyOptional({ example: 185000, nullable: true, description: 'Odómetro al recibir el vehículo.' })
+  @ApiPropertyOptional({ type: 'integer', example: 185000, nullable: true, description: 'Odómetro al recibir el vehículo.' })
   @ValidateIf((_, v) => v !== null)
   @IsOptional()
   @IsInt()
@@ -75,13 +75,13 @@ export class CreateWorkOrderDto {
   @Max(3_000_000)
   mileage_in?: number | null;
 
-  @ApiPropertyOptional({ nullable: true, description: 'shop_members.id del mecánico asignado.' })
+  @ApiPropertyOptional({ type: String, nullable: true, description: 'shop_members.id del mecánico asignado.' })
   @ValidateIf((_, v) => v !== null)
   @IsOptional()
   @IsUUID()
   assigned_member_id?: string | null;
 
-  @ApiPropertyOptional({ example: '2026-10-02T17:00:00-04:00', nullable: true })
+  @ApiPropertyOptional({ type: String, example: '2026-10-02T17:00:00-04:00', nullable: true })
   @ValidateIf((_, v) => v !== null)
   @IsOptional()
   @IsISO8601()
@@ -140,7 +140,7 @@ export class AddItemDto {
   @Length(1, 300)
   description!: string;
 
-  @ApiPropertyOptional({ example: '04465-02220', nullable: true, maxLength: 60 })
+  @ApiPropertyOptional({ type: String, example: '04465-02220', nullable: true, maxLength: 60 })
   @ValidateIf((_, v) => v !== null)
   @IsOptional()
   @IsString()
@@ -159,15 +159,14 @@ export class AddItemDto {
   @Matches(/^\d{1,13}$/, { message: 'unit_price_cents: centavos enteros >= 0 como string.' })
   unit_price_cents!: string;
 
-  @ApiPropertyOptional({ example: 1800, default: 1800, description: 'ITBIS en basis points (1800 = 18%, 0 = exento).' })
+  @ApiPropertyOptional({ type: 'integer', example: 1800, description: 'ITBIS en basis points (1800 = 18%, 0 = exento). Si no se envía al crear: 1800.' })
   @IsOptional()
   @IsInt()
   @Min(0)
   @Max(10000)
   tax_rate_bps?: number;
   @ApiPropertyOptional({
-    default: false,
-    description: 'true = línea propuesta: el cliente la aprueba o rechaza desde el enlace de la DVI.',
+    description: 'true = línea propuesta: el cliente la aprueba o rechaza desde el enlace de la DVI. Si no se envía al crear: false.',
   })
   @IsOptional()
   @IsBoolean()
@@ -183,7 +182,7 @@ export class TransitionDto {
   })
   to!: ManualWorkOrderTransition;
 
-  @ApiPropertyOptional({ example: 'El cliente decidió no reparar', nullable: true, maxLength: 500, description: 'Solo para cancelled.' })
+  @ApiPropertyOptional({ type: String, example: 'El cliente decidió no reparar', nullable: true, maxLength: 500, description: 'Solo para cancelled.' })
   @ValidateIf((_, v) => v !== null)
   @IsOptional()
   @IsString()

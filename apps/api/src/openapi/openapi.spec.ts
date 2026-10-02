@@ -55,9 +55,38 @@ describe('Contrato OpenAPI', () => {
 
   it('nullables y páginas llegan bien al contrato', () => {
     const s = document.components!.schemas as Record<string, { properties: Record<string, unknown> }>;
-    expect(s.InvoiceView.properties.ncf).toEqual({ type: 'string', nullable: true });
+    expect(s.InvoiceView.properties.ncf).toMatchObject({ type: 'string', nullable: true });
+    // Enteros (alias `Int`) → integer; dinero (alias `Cents`) → string, incrustados.
+    expect(s.VehicleView.properties.year).toMatchObject({ type: 'integer', nullable: true });
+    expect(s.InvoiceView.properties.total_cents).toMatchObject({ type: 'string' });
+    expect(s.Cents ?? s.Int).toBeUndefined();
     expect(s.VinDecodeView.properties.vehicle).toEqual({ allOf: [{ $ref: '#/components/schemas/DecodedVehicleView' }], nullable: true });
     expect(s.InvoiceViewPage.properties.items).toEqual({ type: 'array', items: { $ref: '#/components/schemas/InvoiceView' } });
+  });
+
+  it('ningún campo queda como `object` sin forma (p. ej. un `string | null` sin `type` en @ApiProperty)', () => {
+    const vague = Object.entries(document.components!.schemas as Record<string, { properties?: Record<string, Record<string, unknown>> }>)
+      .flatMap(([name, s]) => Object.entries(s.properties ?? {}).map(([prop, v]) => ({ at: `${name}.${prop}`, v })))
+      .filter(({ v }) => v.type === 'object' && !v.properties && !v.additionalProperties)
+      .map(({ at }) => at);
+    expect(vague).toEqual([]);
+  });
+
+  it('sin `default` en los schemas: los clientes generados lo "envían" (un update pisaría datos con el default)', () => {
+    const withDefault: string[] = [];
+    const walk = (node: unknown, at: string): void => {
+      if (!node || typeof node !== 'object') return;
+      if ('default' in node) withDefault.push(at);
+      for (const [k, v] of Object.entries(node)) walk(v, `${at}/${k}`);
+    };
+    walk(document.components?.schemas, '#/components/schemas');
+    expect(withDefault).toEqual([]);
+  });
+
+  it('operationIds legibles y únicos (son los nombres de método del cliente Dart)', () => {
+    const ids = operations().map(({ op }) => op.operationId);
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(ids).toEqual(expect.arrayContaining(['workOrdersAddItem', 'chargesCharge', 'historyVehicle', 'invoicesList']));
   });
 
   it('fuera del contrato: el webhook del PSP y la página HTML de aprobación', () => {

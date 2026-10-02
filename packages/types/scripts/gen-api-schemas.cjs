@@ -13,7 +13,7 @@ const schema = createGenerator({
   tsconfig: join(root, 'tsconfig.json'),
   type: 'ApiSchemas',
   expose: 'export',
-  jsDoc: 'basic',
+  jsDoc: 'extended',
   sortProps: true,
 }).createSchema('ApiSchemas');
 

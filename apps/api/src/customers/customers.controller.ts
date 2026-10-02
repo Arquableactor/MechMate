@@ -25,27 +25,27 @@ export class CreateCustomerDto {
   @Length(2, 120)
   full_name!: string;
 
-  @ApiPropertyOptional({ example: '809-555-1234', nullable: true, description: 'Se guarda en E.164 (+18095551234).' })
+  @ApiPropertyOptional({ type: String, example: '809-555-1234', nullable: true, description: 'Se guarda en E.164 (+18095551234).' })
   @ValidateIf((_, v) => v !== null)
   @IsOptional()
   @IsString()
   @MaxLength(30)
   phone?: string | null;
 
-  @ApiPropertyOptional({ example: 'juan@mail.do', nullable: true })
+  @ApiPropertyOptional({ type: String, example: 'juan@mail.do', nullable: true })
   @ValidateIf((_, v) => v !== null)
   @IsOptional()
   @IsEmail({}, { message: 'email no es válido.' })
   email?: string | null;
 
-  @ApiPropertyOptional({ example: '001-1234567-8', nullable: true, description: 'Cédula; se guarda en 11 dígitos.' })
+  @ApiPropertyOptional({ type: String, example: '001-1234567-8', nullable: true, description: 'Cédula; se guarda en 11 dígitos.' })
   @ValidateIf((_, v) => v !== null)
   @IsOptional()
   @IsString()
   @MaxLength(20)
   document_id?: string | null;
 
-  @ApiPropertyOptional({ nullable: true, maxLength: 1000 })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 1000 })
   @ValidateIf((_, v) => v !== null)
   @IsOptional()
   @IsString()

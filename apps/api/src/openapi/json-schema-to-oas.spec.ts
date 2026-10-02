@@ -1,5 +1,6 @@
 import { definitionsToOas, jsonSchemaToOas } from './json-schema-to-oas';
 
+
 describe('jsonSchemaToOas', () => {
   it('tipo nullable: ["string","null"] → type + nullable', () => {
     expect(jsonSchemaToOas({ type: ['string', 'null'] })).toEqual({ type: 'string', nullable: true });
@@ -52,5 +53,27 @@ describe('jsonSchemaToOas', () => {
     );
     expect(() => jsonSchemaToOas({ type: ['string', 'number'] })).toThrow(/Unión de tipos no soportada/);
     expect(() => jsonSchemaToOas({ $ref: 'otro.json#/X' })).toThrow(/\$ref no soportado/);
+  });
+
+  it('alias primitivos (Cents, Int) se incrustan en cada campo, también nullables; los enums quedan con nombre', () => {
+    const out = definitionsToOas({
+      Cents: { type: 'string', description: 'Dinero en centavos' },
+      Int: { type: 'integer' },
+      PaymentMethod: { type: 'string', enum: ['card', 'cash'] },
+      Line: {
+        type: 'object',
+        properties: {
+          total_cents: { $ref: '#/definitions/Cents', description: 'Total de la línea' },
+          year: { anyOf: [{ $ref: '#/definitions/Int' }, { type: 'null' }] },
+          method: { $ref: '#/definitions/PaymentMethod' },
+        },
+      },
+    });
+    expect(Object.keys(out)).toEqual(['PaymentMethod', 'Line']);
+    expect(out.Line.properties).toEqual({
+      total_cents: { type: 'string', description: 'Total de la línea' },
+      year: { type: 'integer', nullable: true },
+      method: { $ref: '#/components/schemas/PaymentMethod' },
+    });
   });
 });

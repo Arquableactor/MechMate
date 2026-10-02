@@ -27,7 +27,7 @@ import { ShopAccessGuard } from '../shops/shop-access.guard';
 import { InspectionsService } from './inspections.service';
 
 export class OpenInspectionDto {
-  @ApiPropertyOptional({ nullable: true, maxLength: 2000 })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 2000 })
   @ValidateIf((_, v) => v !== null)
   @IsOptional()
   @IsString()
@@ -50,7 +50,7 @@ export class AddFindingDto {
   @IsIn(FINDING_SEVERITIES as readonly string[])
   severity!: FindingSeverity;
 
-  @ApiPropertyOptional({ nullable: true, maxLength: 2000 })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 2000 })
   @ValidateIf((_, v) => v !== null)
   @IsOptional()
   @IsString()

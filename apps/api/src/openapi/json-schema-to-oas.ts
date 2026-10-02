@@ -85,7 +85,40 @@ export function jsonSchemaToOas(schema: JsonSchema, path = '#'): JsonSchema {
   return out;
 }
 
-/** Todas las definiciones → `components.schemas`. */
+const PRIMITIVES = new Set(['string', 'integer', 'number', 'boolean']);
+const isPrimitiveAlias = (s: JsonSchema) =>
+  typeof s.type === 'string' && PRIMITIVES.has(s.type) && Object.keys(s).every((k) => k === 'type' || k === 'description');
+
+/**
+ * Alias primitivos (`Cents = string`, `Int = number` + `@asType integer`) se
+ * incrustan en cada campo: el cliente generado ve `String`/`int`, no un
+ * modelo-envoltorio. Los enums y objetos siguen siendo schemas con nombre.
+ */
+export function inlinePrimitiveAliases(definitions: Record<string, JsonSchema>): Record<string, JsonSchema> {
+  const aliases = new Map(
+    Object.entries(definitions)
+      .filter(([, s]) => isPrimitiveAlias(s))
+      .map(([name, s]) => [`#/definitions/${name}`, { type: s.type }]),
+  );
+  const inline = (node: unknown): unknown => {
+    if (Array.isArray(node)) return node.map(inline);
+    if (!node || typeof node !== 'object') return node;
+    const { $ref, ...rest } = node as JsonSchema;
+    const alias = typeof $ref === 'string' ? aliases.get($ref) : undefined;
+    const children = Object.fromEntries(Object.entries(rest).map(([k, v]) => [k, inline(v)]));
+    if (alias) return { ...alias, ...children };
+    return $ref === undefined ? children : { $ref, ...children };
+  };
+  return Object.fromEntries(
+    Object.entries(definitions)
+      .filter(([, s]) => !isPrimitiveAlias(s))
+      .map(([name, s]) => [name, inline(s) as JsonSchema]),
+  );
+}
+
+/** Todas las definiciones → `components.schemas` (con los alias primitivos incrustados). */
 export function definitionsToOas(definitions: Record<string, JsonSchema>): Record<string, JsonSchema> {
-  return Object.fromEntries(Object.entries(definitions).map(([name, s]) => [name, jsonSchemaToOas(s, `#/components/schemas/${name}`)]));
+  return Object.fromEntries(
+    Object.entries(inlinePrimitiveAliases(definitions)).map(([name, s]) => [name, jsonSchemaToOas(s, `#/components/schemas/${name}`)]),
+  );
 }
