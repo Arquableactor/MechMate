@@ -304,7 +304,7 @@ _responseData = rawData == null ? null : deserialize<WorkOrderDetailView, WorkOr
     );
   }
 
-  /// Lista OT del taller (filtros: estado, cliente, vehículo; búsqueda por número).
+  /// Lista OT del taller (filtros: estado, cliente, vehículo, \&quot;mis órdenes\&quot;; búsqueda por número). Un mecánico solo ve las asignadas a él.
   /// 
   ///
   /// Parameters:
@@ -312,6 +312,7 @@ _responseData = rawData == null ? null : deserialize<WorkOrderDetailView, WorkOr
   /// * [status] 
   /// * [customerId] - Historial de un cliente.
   /// * [vehicleId] - Historial de un vehículo.
+  /// * [mine] - true = solo las OT asignadas a quien consulta (\"Mis órdenes\"). Para un mecánico siempre es así.
   /// * [q] - Número de OT: `12` u `OT-0012`.
   /// * [limit] 
   /// * [cursor] 
@@ -329,6 +330,7 @@ _responseData = rawData == null ? null : deserialize<WorkOrderDetailView, WorkOr
     String? status,
     String? customerId,
     String? vehicleId,
+    bool? mine,
     String? q,
     num? limit = 20,
     String? cursor,
@@ -362,6 +364,7 @@ _responseData = rawData == null ? null : deserialize<WorkOrderDetailView, WorkOr
       if (status != null) r'status': status,
       if (customerId != null) r'customer_id': customerId,
       if (vehicleId != null) r'vehicle_id': vehicleId,
+      if (mine != null) r'mine': mine,
       if (q != null) r'q': q,
       if (limit != null) r'limit': limit,
       if (cursor != null) r'cursor': cursor,

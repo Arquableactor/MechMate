@@ -14,7 +14,7 @@ import { IsInt, IsOptional, IsUUID, Max, Min } from 'class-validator';
 import { type AuthenticatedAccount, CurrentUser } from '../auth/current-user.decorator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ApiView } from '../openapi/api-view.decorator';
-import { ShopAccessGuard } from '../shops/shop-access.guard';
+import { FrontDeskOnly, ShopAccessGuard } from '../shops/shop-access.guard';
 import { InvoicesService } from './invoices.service';
 
 class ListInvoicesQuery {
@@ -34,6 +34,7 @@ class ListInvoicesQuery {
 
 @ApiTags('invoices')
 @ApiBearerAuth()
+@FrontDeskOnly()
 @UseGuards(JwtAuthGuard, ShopAccessGuard)
 @Controller('shops/:shopId')
 export class InvoicesController {

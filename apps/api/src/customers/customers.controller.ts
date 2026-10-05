@@ -16,7 +16,7 @@ import { Type } from 'class-transformer';
 import { IsEmail, IsInt, IsOptional, IsString, IsUUID, Length, Max, MaxLength, Min, ValidateIf } from 'class-validator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ApiView } from '../openapi/api-view.decorator';
-import { ShopAccessGuard } from '../shops/shop-access.guard';
+import { FrontDeskOnly, ShopAccessGuard } from '../shops/shop-access.guard';
 import { CustomersService } from './customers.service';
 
 export class CreateCustomerDto {
@@ -85,6 +85,7 @@ export class CustomersController {
   constructor(private readonly customers: CustomersService) {}
 
   @Post()
+  @FrontDeskOnly()
   @ApiOperation({ summary: 'Registra un cliente del taller.' })
   @ApiCreatedResponse({ description: 'Cliente creado (teléfono en E.164, cédula en 11 dígitos).' })
   @ApiConflictResponse({ description: 'Ya existe con ese teléfono/cédula; trae existing_customer_id.' })
@@ -110,6 +111,7 @@ export class CustomersController {
   }
 
   @Patch(':customerId')
+  @FrontDeskOnly()
   @ApiOperation({ summary: 'Actualiza un cliente (null borra un dato).' })
   @ApiConflictResponse({ description: 'El teléfono/cédula ya es de otro cliente del taller.' })
   @ApiView('CustomerView')

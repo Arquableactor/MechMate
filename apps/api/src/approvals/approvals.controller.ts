@@ -16,7 +16,7 @@ import { ArrayMaxSize, ArrayMinSize, IsIn, IsString, MaxLength, ValidateNested }
 import { type AuthenticatedAccount, CurrentUser } from '../auth/current-user.decorator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ApiView } from '../openapi/api-view.decorator';
-import { ShopAccessGuard } from '../shops/shop-access.guard';
+import { FrontDeskOnly, ShopAccessGuard } from '../shops/shop-access.guard';
 import { ApprovalsService } from './approvals.service';
 
 class ItemDecisionDto {
@@ -42,6 +42,7 @@ export class DecideDto {
 /** Lado del TALLER: pedir, listar y revocar aprobaciones de una OT. */
 @ApiTags('approvals')
 @ApiBearerAuth()
+@FrontDeskOnly()
 @UseGuards(JwtAuthGuard, ShopAccessGuard)
 @Controller('shops/:shopId/work-orders/:workOrderId/approval-requests')
 export class ApprovalsController {

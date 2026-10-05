@@ -16,7 +16,7 @@ import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsString, IsUUID, Length, Max, MaxLength, Min, ValidateIf } from 'class-validator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ApiView } from '../openapi/api-view.decorator';
-import { ShopAccessGuard } from '../shops/shop-access.guard';
+import { FrontDeskOnly, ShopAccessGuard } from '../shops/shop-access.guard';
 import { VehiclesService } from './vehicles.service';
 
 /** Texto opcional que acepta `null` para borrar. */
@@ -127,6 +127,7 @@ export class VehiclesController {
   constructor(private readonly vehicles: VehiclesService) {}
 
   @Post('vehicles')
+  @FrontDeskOnly()
   @ApiOperation({ summary: 'Registra un vehículo. Con VIN se autocompleta; sin VIN, carga manual.' })
   @ApiCreatedResponse({ description: 'Vehículo creado (data_source: vin_decode | manual).' })
   @ApiConflictResponse({ description: 'VIN/chasis/placa ya registrado en el taller; trae existing_vehicle_id.' })
@@ -152,6 +153,7 @@ export class VehiclesController {
   }
 
   @Patch('vehicles/:vehicleId')
+  @FrontDeskOnly()
   @ApiOperation({ summary: 'Actualiza un vehículo (kilometraje, placa, dueño…). null borra un dato.' })
   @ApiView('VehicleView')
   update(

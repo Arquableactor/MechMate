@@ -1,8 +1,21 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  ForbiddenException,
+  Get,
+  HttpCode,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiConflictResponse,
   ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -23,6 +36,7 @@ import {
   type WorkOrderStatus,
   type WorkOrderView,
 } from '@repo/types';
+import type { ShopMember } from '@prisma/client';
 import { Transform, Type } from 'class-transformer';
 import {
   IsIn,
@@ -42,7 +56,8 @@ import {
 import { type AuthenticatedAccount, CurrentUser } from '../auth/current-user.decorator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ApiView } from '../openapi/api-view.decorator';
-import { ShopAccessGuard } from '../shops/shop-access.guard';
+import { CurrentMember, FrontDeskOnly, ShopAccessGuard } from '../shops/shop-access.guard';
+import { AssignedWorkOrderGuard } from './assigned-work-order.guard';
 import { WorkOrderItemsService } from './work-order-items.service';
 import { WorkOrdersService } from './work-orders.service';
 
@@ -106,6 +121,14 @@ export class ListWorkOrdersQuery {
   @IsOptional()
   @IsUUID()
   vehicle_id?: string;
+
+  @ApiPropertyOptional({
+    description: 'true = solo las OT asignadas a quien consulta ("Mis órdenes"). Para un mecánico siempre es así.',
+  })
+  @IsOptional()
+  @Transform(({ value }) => value === true || value === 'true')
+  @IsBoolean()
+  mine?: boolean;
 
   @ApiPropertyOptional({ description: 'Número de OT: `12` u `OT-0012`.' })
   @IsOptional()
@@ -192,7 +215,8 @@ export class TransitionDto {
 
 @ApiTags('work-orders')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard, ShopAccessGuard)
+// El mecánico solo ve y trabaja sus OT asignadas (AssignedWorkOrderGuard + filtro en list).
+@UseGuards(JwtAuthGuard, ShopAccessGuard, AssignedWorkOrderGuard)
 @Controller('shops/:shopId/work-orders')
 export class WorkOrdersController {
   constructor(
@@ -201,6 +225,7 @@ export class WorkOrdersController {
   ) {}
 
   @Post()
+  @FrontDeskOnly()
   @ApiOperation({ summary: 'Abre una orden de trabajo (queda en draft con número OT-XXXX).' })
   @ApiCreatedResponse({ description: 'OT creada.' })
   @ApiView('WorkOrderView')
@@ -213,11 +238,25 @@ export class WorkOrdersController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Lista OT del taller (filtros: estado, cliente, vehículo; búsqueda por número).' })
+  @ApiOperation({
+    summary:
+      'Lista OT del taller (filtros: estado, cliente, vehículo, "mis órdenes"; búsqueda por número). ' +
+      'Un mecánico solo ve las asignadas a él.',
+  })
   @ApiOkResponse({ description: 'Página de OT, de la más nueva a la más vieja.' })
   @ApiView('WorkOrderView', 'page')
-  list(@Param('shopId') shopId: string, @Query() q: ListWorkOrdersQuery): Promise<Page<WorkOrderView>> {
-    return this.workOrders.list(shopId, { ...q, customerId: q.customer_id, vehicleId: q.vehicle_id });
+  list(
+    @Param('shopId') shopId: string,
+    @CurrentMember() member: ShopMember,
+    @Query() q: ListWorkOrdersQuery,
+  ): Promise<Page<WorkOrderView>> {
+    const onlyMine = member.role === 'mechanic' || q.mine === true;
+    return this.workOrders.list(shopId, {
+      ...q,
+      customerId: q.customer_id,
+      vehicleId: q.vehicle_id,
+      assignedMemberId: onlyMine ? member.id : undefined,
+    });
   }
 
   @Get(':workOrderId')
@@ -229,6 +268,7 @@ export class WorkOrdersController {
   }
 
   @Patch(':workOrderId')
+  @FrontDeskOnly()
   @ApiOperation({ summary: 'Edita la cabecera de una OT abierta.' })
   @ApiConflictResponse({ description: 'La OT ya está cerrada.' })
   @ApiView('WorkOrderView')
@@ -288,13 +328,18 @@ export class WorkOrdersController {
   })
   @ApiOkResponse({ description: 'OT con el nuevo estado.' })
   @ApiConflictResponse({ description: 'Transición no permitida desde el estado actual, u OT sin líneas.' })
+  @ApiForbiddenResponse({ description: 'Un mecánico no puede cancelar órdenes.' })
   @ApiView('WorkOrderDetailView')
   transition(
     @Param('shopId') shopId: string,
     @Param('workOrderId') id: string,
     @CurrentUser() account: AuthenticatedAccount,
+    @CurrentMember() member: ShopMember,
     @Body() dto: TransitionDto,
   ): Promise<WorkOrderDetailView> {
+    if (dto.to === 'cancelled' && member.role === 'mechanic') {
+      throw new ForbiddenException('Solo el dueño o el asesor pueden cancelar una orden.');
+    }
     return this.workOrders.transition(shopId, id, dto.to, { accountId: account.id, reason: dto.reason });
   }
 }

@@ -14,7 +14,7 @@ import { IsIn } from 'class-validator';
 import { type AuthenticatedAccount, CurrentUser } from '../auth/current-user.decorator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ApiView } from '../openapi/api-view.decorator';
-import { ShopAccessGuard } from '../shops/shop-access.guard';
+import { FrontDeskOnly, ShopAccessGuard } from '../shops/shop-access.guard';
 import { ChargesService } from './charges.service';
 
 export class ChargeDto {
@@ -27,6 +27,7 @@ const IDEMPOTENCY_KEY = /^[A-Za-z0-9_-]{8,100}$/;
 
 @ApiTags('billing')
 @ApiBearerAuth()
+@FrontDeskOnly()
 @UseGuards(JwtAuthGuard, ShopAccessGuard)
 @Controller('shops/:shopId/work-orders/:workOrderId/charge')
 export class ChargesController {

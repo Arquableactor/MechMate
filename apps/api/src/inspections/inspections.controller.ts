@@ -24,6 +24,7 @@ import { type AuthenticatedAccount, CurrentUser } from '../auth/current-user.dec
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ApiView } from '../openapi/api-view.decorator';
 import { ShopAccessGuard } from '../shops/shop-access.guard';
+import { AssignedWorkOrderGuard } from '../work-orders/assigned-work-order.guard';
 import { InspectionsService } from './inspections.service';
 
 export class OpenInspectionDto {
@@ -74,7 +75,8 @@ export class RequestPhotoUploadDto {
 
 @ApiTags('inspections')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard, ShopAccessGuard)
+// Mecánico: solo en sus OT asignadas; asesor también (fotos al recibir el vehículo).
+@UseGuards(JwtAuthGuard, ShopAccessGuard, AssignedWorkOrderGuard)
 @Controller('shops/:shopId/work-orders/:workOrderId/inspection')
 export class InspectionsController {
   constructor(private readonly inspections: InspectionsService) {}

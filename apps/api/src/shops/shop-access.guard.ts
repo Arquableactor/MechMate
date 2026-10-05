@@ -1,4 +1,5 @@
 import {
+  applyDecorators,
   type CanActivate,
   createParamDecorator,
   type ExecutionContext,
@@ -8,6 +9,7 @@ import {
   SetMetadata,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { ApiForbiddenResponse } from '@nestjs/swagger';
 import type { ShopMember } from '@prisma/client';
 import type { ShopMemberRole } from '@repo/types';
 import { ShopsService } from './shops.service';
@@ -16,6 +18,17 @@ const SHOP_ROLES_KEY = 'shopRoles';
 
 /** Restringe un endpoint de taller a ciertos roles DENTRO del taller. */
 export const ShopRoles = (...roles: ShopMemberRole[]) => SetMetadata(SHOP_ROLES_KEY, roles);
+
+/**
+ * Mostrador: solo dueño y asesor (secretaria/recepción). El mecánico trabaja
+ * en sus órdenes asignadas, pero no registra clientes, no crea ni cancela
+ * órdenes, no envía enlaces de aprobación, no factura ni cobra.
+ */
+export const FrontDeskOnly = () =>
+  applyDecorators(
+    ShopRoles('owner', 'advisor'),
+    ApiForbiddenResponse({ description: 'Solo el dueño o el asesor del taller.' }),
+  );
 
 interface ShopRequest {
   user?: { id: string };

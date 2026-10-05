@@ -267,6 +267,9 @@
               }
             }
           },
+          "403": {
+            "description": "Solo el dueño o el asesor del taller."
+          },
           "409": {
             "description": "Ya existe con ese teléfono/cédula; trae existing_customer_id."
           }
@@ -433,6 +436,9 @@
               }
             }
           },
+          "403": {
+            "description": "Solo el dueño o el asesor del taller."
+          },
           "409": {
             "description": "El teléfono/cédula ya es de otro cliente del taller."
           }
@@ -481,6 +487,9 @@
                 }
               }
             }
+          },
+          "403": {
+            "description": "Solo el dueño o el asesor del taller."
           },
           "409": {
             "description": "VIN/chasis/placa ya registrado en el taller; trae existing_vehicle_id."
@@ -656,6 +665,9 @@
                 }
               }
             }
+          },
+          "403": {
+            "description": "Solo el dueño o el asesor del taller."
           }
         },
         "security": [
@@ -818,6 +830,9 @@
               }
             }
           },
+          "403": {
+            "description": "Solo el dueño o el asesor del taller."
+          },
           "409": {
             "description": "OT en otro estado, o sin líneas propuestas."
           }
@@ -865,6 +880,9 @@
                 }
               }
             }
+          },
+          "403": {
+            "description": "Solo el dueño o el asesor del taller."
           }
         },
         "security": [
@@ -917,6 +935,9 @@
                 }
               }
             }
+          },
+          "403": {
+            "description": "Solo el dueño o el asesor del taller."
           }
         },
         "security": [
@@ -1044,6 +1065,9 @@
                 }
               }
             }
+          },
+          "403": {
+            "description": "Solo el dueño o el asesor del taller."
           }
         },
         "security": [
@@ -1104,6 +1128,15 @@
             }
           },
           {
+            "name": "mine",
+            "required": false,
+            "in": "query",
+            "description": "true = solo las OT asignadas a quien consulta (\"Mis órdenes\"). Para un mecánico siempre es así.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
             "name": "q",
             "required": false,
             "in": "query",
@@ -1149,7 +1182,7 @@
             "bearer": []
           }
         ],
-        "summary": "Lista OT del taller (filtros: estado, cliente, vehículo; búsqueda por número).",
+        "summary": "Lista OT del taller (filtros: estado, cliente, vehículo, \"mis órdenes\"; búsqueda por número). Un mecánico solo ve las asignadas a él.",
         "tags": [
           "work-orders"
         ]
@@ -1241,6 +1274,9 @@
                 }
               }
             }
+          },
+          "403": {
+            "description": "Solo el dueño o el asesor del taller."
           },
           "409": {
             "description": "La OT ya está cerrada."
@@ -1473,6 +1509,9 @@
                 }
               }
             }
+          },
+          "403": {
+            "description": "Un mecánico no puede cancelar órdenes."
           },
           "409": {
             "description": "Transición no permitida desde el estado actual, u OT sin líneas."
@@ -1971,6 +2010,9 @@
               }
             }
           },
+          "403": {
+            "description": "Solo el dueño o el asesor del taller."
+          },
           "409": {
             "description": "OT no completada, ya facturada, o sin líneas aprobadas."
           }
@@ -2015,6 +2057,9 @@
                 }
               }
             }
+          },
+          "403": {
+            "description": "Solo el dueño o el asesor del taller."
           },
           "404": {
             "description": "La OT no tiene factura (o no es de este taller)."
@@ -2073,6 +2118,9 @@
                 }
               }
             }
+          },
+          "403": {
+            "description": "Solo el dueño o el asesor del taller."
           }
         },
         "security": [
@@ -2117,6 +2165,9 @@
                 }
               }
             }
+          },
+          "403": {
+            "description": "Solo el dueño o el asesor del taller."
           }
         },
         "security": [
@@ -2268,6 +2319,9 @@
           },
           "402": {
             "description": "La tarjeta fue rechazada."
+          },
+          "403": {
+            "description": "Solo el dueño o el asesor del taller."
           },
           "409": {
             "description": "No facturada, ya pagada, cobro en curso, o key reutilizada con otro cobro."

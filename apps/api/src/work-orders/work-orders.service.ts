@@ -170,6 +170,8 @@ export class WorkOrdersService {
       status?: WorkOrderStatus;
       customerId?: string;
       vehicleId?: string;
+      /** Solo las OT asignadas a este miembro (shop_members.id): "Mis órdenes". */
+      assignedMemberId?: string;
       q?: string;
       limit?: number;
       cursor?: string;
@@ -185,6 +187,7 @@ export class WorkOrdersService {
         ...(opts.status ? { status: opts.status } : {}),
         ...(opts.customerId ? { customer_id: opts.customerId } : {}),
         ...(opts.vehicleId ? { vehicle_id: opts.vehicleId } : {}),
+        ...(opts.assignedMemberId ? { assigned_member_id: opts.assignedMemberId } : {}),
         ...(opts.q ? { number } : {}),
       },
       orderBy: { id: 'desc' },
@@ -196,6 +199,15 @@ export class WorkOrdersService {
       items: await this.toViews(shopId, items),
       next_cursor: rows.length > limit ? items[items.length - 1].id : null,
     };
+  }
+
+  /** ¿La OT es de este taller y está asignada a este miembro? (permisos del mecánico) */
+  async isAssignedTo(shopId: string, workOrderId: string, memberId: string): Promise<boolean> {
+    if (!isUUID(workOrderId)) return false;
+    const count = await this.prisma.workOrder.count({
+      where: { id: workOrderId, shop_id: shopId, assigned_member_id: memberId },
+    });
+    return count > 0;
   }
 
   /**
