@@ -55,11 +55,15 @@ class MmErrorState extends StatelessWidget {
     this.title = 'No pudimos conectar',
     this.message = 'Revisa tu conexión a internet e inténtalo de nuevo.',
     required this.onRetry,
+    this.detail,
   });
 
   final String title;
   final String message;
   final VoidCallback onRetry;
+
+  /// Detalle técnico (solo en desarrollo): debajo del botón, para no taparlo.
+  final String? detail;
 
   @override
   Widget build(BuildContext context) {
@@ -81,6 +85,16 @@ class MmErrorState extends StatelessWidget {
         ),
         const SizedBox(height: MmSpace.xxl),
         MmButton(label: 'Reintentar', icon: CupertinoIcons.arrow_clockwise, onPressed: onRetry, expand: false),
+        if (detail != null) ...[
+          const SizedBox(height: MmSpace.l),
+          Text(
+            detail!,
+            maxLines: 4,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: MmType.caption.copyWith(color: MmColors.inkTertiary),
+          ),
+        ],
       ],
     );
   }

@@ -26,6 +26,20 @@ void main() {
       expect(me.headers['Authorization'], 'Bearer token-de-prueba');
     });
 
+    testWidgets('Auth0 devuelve un error al volver → bienvenida con el motivo (no "sin conexión")', (tester) async {
+      await pumpMechMate(
+        tester,
+        auth: FakeAuthService(restoreError: 'Client is not authorized to access resource server'),
+      );
+
+      expect(
+        find.text('No se pudo iniciar sesión: Client is not authorized to access resource server'),
+        findsOneWidget,
+      );
+      expect(find.text('Iniciar sesión'), findsOneWidget);
+      expect(find.text('No pudimos conectar'), findsNothing);
+    });
+
     testWidgets('"Crear una cuenta" abre Auth0 directo en el registro', (tester) async {
       final app = await pumpMechMate(tester, auth: FakeAuthService());
       await tester.tap(find.text('Crear una cuenta'));
@@ -127,6 +141,7 @@ void main() {
       final app = await pumpMechMate(tester, routes: routes);
 
       expect(find.text('No pudimos conectar'), findsOneWidget);
+      expect(find.text('badResponse 503 GET /v1/me'), findsOneWidget); // detalle (modo desarrollo)
       app.http.routes['GET /v1/me'] = (status: 200, body: meAna);
       await tester.tap(find.text('Reintentar'));
       await tester.pumpAndSettle();

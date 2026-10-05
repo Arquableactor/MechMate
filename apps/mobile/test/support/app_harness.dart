@@ -9,15 +9,21 @@ import 'fake_api.dart';
 
 /// Auth0 simulado: sin navegador ni red; registra qué pidió la app.
 class FakeAuthService implements AuthService {
-  FakeAuthService({this.signedIn = false});
+  FakeAuthService({this.signedIn = false, this.restoreError});
 
   bool signedIn;
+
+  /// Simula que Auth0 devolvió un error al regresar del login.
+  final String? restoreError;
   String token = 'token-de-prueba';
   final List<bool> logins = [];
   int logouts = 0;
 
   @override
-  Future<bool> restore() async => signedIn;
+  Future<bool> restore() async {
+    if (restoreError != null) throw AuthFailure(restoreError!);
+    return signedIn;
+  }
 
   @override
   Future<void> login({bool signup = false}) async {

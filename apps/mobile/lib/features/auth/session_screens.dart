@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -76,6 +78,20 @@ class OfflineScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(body: MmErrorState(onRetry: () => ref.invalidate(sessionProvider)));
+    final error = ref.watch(sessionProvider).error;
+    return Scaffold(
+      body: MmErrorState(
+        onRetry: () => ref.invalidate(sessionProvider),
+        // Solo en desarrollo: el motivo técnico en una línea, para diagnosticar.
+        detail: kDebugMode && error != null ? describeError(error) : null,
+      ),
+    );
   }
 }
+
+/// Resumen de una línea de un error (para desarrolladores).
+String describeError(Object error) => switch (error) {
+  DioException(:final type, :final response, :final requestOptions) =>
+    '${type.name} ${response?.statusCode ?? ''} ${requestOptions.method} ${requestOptions.path}'.replaceAll('  ', ' '),
+  _ => error.toString().split('\n').first,
+};

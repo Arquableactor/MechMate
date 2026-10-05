@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mechmate_api/mechmate_api.dart';
 
@@ -45,7 +46,12 @@ class SessionController extends AsyncNotifier<Session> {
 
   @override
   Future<Session> build() async {
-    if (!await _auth.restore()) return const SignedOut();
+    try {
+      if (!await _auth.restore()) return const SignedOut();
+    } on AuthFailure catch (e) {
+      // Error de Auth0 (no de red): de vuelta a la bienvenida con el motivo.
+      return SignedOut(notice: 'No se pudo iniciar sesión: ${e.message}');
+    }
     return _load();
   }
 
@@ -57,6 +63,9 @@ class SessionController extends AsyncNotifier<Session> {
     } on DioException catch (e) {
       // Token vencido o revocado: a iniciar sesión (no es un error de red).
       if (e.response?.statusCode == 401) return const SignedOut(notice: sessionExpiredNotice);
+      debugPrint(
+        'Sesión: no se pudo cargar ${e.requestOptions.path}: ${e.type} ${e.response?.statusCode ?? ''} ${e.error ?? ''}',
+      );
       rethrow;
     }
   }

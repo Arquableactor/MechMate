@@ -6,11 +6,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../config.dart';
 import 'url_cleanup.dart';
 
+/// Auth0 rechazó o no pudo completar el login (no es un problema de red).
+/// [message] es la explicación de Auth0, p. ej. "Service not found: …".
+class AuthFailure implements Exception {
+  const AuthFailure(this.message);
+
+  final String message;
+
+  @override
+  String toString() => 'AuthFailure: $message';
+}
+
 /// Identidad del usuario (Auth0). La app solo necesita: restaurar la sesión,
 /// iniciar/cerrar sesión y un access token vigente para la API.
 abstract interface class AuthService {
   /// Restaura la sesión guardada (en web, también procesa el regreso del
-  /// login). `true` = hay sesión.
+  /// login). `true` = hay sesión. Lanza [AuthFailure] si Auth0 devolvió un error.
   Future<bool> restore();
 
   /// Abre el login de Auth0 (`signup`: directo a crear cuenta). En web la
@@ -51,17 +62,29 @@ class Auth0AuthService implements AuthService {
   Future<bool> restore() async {
     final web = _web;
     if (web != null) {
-      final credentials = await web.onLoad(audience: AppConfig.auth0Audience, scopes: _scopes, useRefreshTokens: true);
-      // El regreso de Auth0 deja ?code=…&state=… en la URL: recargar con eso falla.
-      cleanAuthRedirectFromUrl();
-      return credentials != null;
+      try {
+        final credentials = await web.onLoad(
+          audience: AppConfig.auth0Audience,
+          scopes: _scopes,
+          useRefreshTokens: true,
+        );
+        return credentials != null;
+      } on WebException catch (e) {
+        // Regreso de Auth0 con ?error=… (p. ej. app sin acceso a la API).
+        debugPrint('Auth0: ${e.code}: ${e.message}');
+        throw AuthFailure(e.message);
+      } finally {
+        // El regreso deja ?code=…/?error=… en la URL: recargar con eso falla.
+        cleanAuthRedirectFromUrl();
+      }
     }
     return _mobile!.credentialsManager.hasValidCredentials();
   }
 
   @override
   Future<void> login({bool signup = false}) async {
-    final parameters = signup ? const {'screen_hint': 'signup'} : const <String, String>{};
+    // Página de login de Auth0 en español (requiere el español habilitado en el tenant).
+    final parameters = {'ui_locales': 'es', if (signup) 'screen_hint': 'signup'};
     final web = _web;
     if (web != null) {
       await web.loginWithRedirect(
