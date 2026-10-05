@@ -24,7 +24,7 @@ void main() {
 
     await tester.tap(find.text('Clientes'));
     await tester.pumpAndSettle();
-    expect(find.text('Tus clientes aparecerán aquí'), findsOneWidget);
+    expect(find.text('Nombre, teléfono o cédula'), findsOneWidget); // buscador de clientes
   }, variant: platforms);
 
   testWidgets('tablet: barra lateral con logo, sin barra de pestañas', (tester) async {

@@ -46,4 +46,25 @@ void main() {
     final label = tester.widget<RichText>(find.descendant(of: find.byType(MmButton), matching: find.byType(RichText)));
     expect(label.text.style!.fontFamily, 'Geist');
   });
+
+  test('ningún estilo hereda el espaciado ancho de Material (texto apretado como en iOS)', () {
+    final t = buildTheme(TargetPlatform.android).textTheme;
+    final styles = {
+      'displaySmall': t.displaySmall,
+      'headlineMedium': t.headlineMedium,
+      'headlineSmall': t.headlineSmall,
+      'titleLarge': t.titleLarge,
+      'titleMedium': t.titleMedium,
+      'titleSmall': t.titleSmall,
+      'bodyLarge': t.bodyLarge,
+      'bodyMedium': t.bodyMedium,
+      'bodySmall': t.bodySmall,
+      'labelLarge': t.labelLarge,
+      'labelMedium': t.labelMedium,
+      'labelSmall': t.labelSmall,
+    };
+    for (final MapEntry(:key, :value) in styles.entries) {
+      expect(value!.letterSpacing, lessThanOrEqualTo(0), reason: key);
+    }
+  });
 }

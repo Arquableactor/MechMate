@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 
 import 'tokens.dart';
 
-/// Escala tipográfica de iOS (tamaño/interlineado en pt).
+/// Escala tipográfica de iOS (tamaño/interlineado en pt). TODOS fijan
+/// `letterSpacing`: si no, heredan el tracking ancho de Material (0.4–0.5).
 abstract final class MmType {
   static const largeTitle = TextStyle(fontSize: 34, height: 41 / 34, fontWeight: FontWeight.w700, letterSpacing: -0.4);
   static const title1 = TextStyle(fontSize: 28, height: 34 / 28, fontWeight: FontWeight.w700, letterSpacing: -0.3);
@@ -13,8 +14,8 @@ abstract final class MmType {
   static const body = TextStyle(fontSize: 17, height: 22 / 17, fontWeight: FontWeight.w400, letterSpacing: -0.2);
   static const callout = TextStyle(fontSize: 16, height: 21 / 16, fontWeight: FontWeight.w400, letterSpacing: -0.2);
   static const subhead = TextStyle(fontSize: 15, height: 20 / 15, fontWeight: FontWeight.w400, letterSpacing: -0.1);
-  static const footnote = TextStyle(fontSize: 13, height: 18 / 13, fontWeight: FontWeight.w400);
-  static const caption = TextStyle(fontSize: 12, height: 16 / 12, fontWeight: FontWeight.w500);
+  static const footnote = TextStyle(fontSize: 13, height: 18 / 13, fontWeight: FontWeight.w400, letterSpacing: -0.1);
+  static const caption = TextStyle(fontSize: 12, height: 16 / 12, fontWeight: FontWeight.w500, letterSpacing: 0);
 
   /// Montos: cifras tabulares (las columnas de precios alinean).
   static const money = [FontFeature.tabularFigures()];

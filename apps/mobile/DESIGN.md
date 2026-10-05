@@ -23,6 +23,7 @@ Ningún widget usa colores, radios o sombras sueltos: siempre tokens.
 | Alerta | `danger` / `dangerText` | `#D92D20` / `#B42318` | **Solo** errores y acciones destructivas. |
 
 - **Tipografía:** SF Pro (sistema) en iPhone/iPad; Geist (OFL, incluida) en Android y web.
+  Todo estilo fija `letterSpacing` (si no, hereda el tracking ancho de Material; hay un test).
   Escala de iOS: Large Title 34, Title 1 28, Title 2 22, Title 3 20, Headline 17 semibold, Body 17,
   Subhead 15, Footnote 13, Caption 12. Montos con cifras tabulares (`MmType.money`).
 - **Espaciado:** grilla de 4 pt (4, 8, 12, 16, 20, 24, 32, 40, 48). Márgenes: 20 teléfono, 24 tablet, 32 escritorio.
@@ -38,6 +39,10 @@ Ningún widget usa colores, radios o sombras sueltos: siempre tokens.
 | `MmCard` | reposo, presionada (escala 0.98) si es tocable, foco |
 | `MmBadge` (success / info / neutral / danger) | siempre con texto; punto o ícono opcional |
 | `MmEmptyState` / `MmErrorState` / `MmSkeleton` | vacío con acción; error con "Reintentar"; carga con esqueleto (nunca spinner a pantalla completa) |
+| `MmSearchField` | vacío (lupa + pista), con texto (botón borrar), foco; consulta con pausa de 300 ms |
+| `MmListGroup` / `MmListRow` | lista agrupada de iOS; fila normal, hover, presionada, seleccionada (maestro-detalle), con chevron si navega |
+| `MmFormScaffold` / `MmFieldGroup` / `MmNotice` | hoja con "Cancelar" + acción principal abajo sobre el teclado; avisos info/éxito/advertencia/error con acción |
+| `MmAvatar` / `MmIconTile` / `MmPlate` | iniciales; ícono en cuadro; placa dominicana como chapa |
 | `AppShell` | teléfono: barra de pestañas; ≥ 700 pt: barra lateral; ≥ 1100 pt: barra lateral ancha |
 | `MmPage` | título grande, márgenes por tamaño, contenido ≤ 1280 pt |
 
@@ -59,5 +64,7 @@ Inputs: tema global (`inputDecorationTheme`): activo (borde azul 2 pt), error (r
 - [ ] Íconos sin texto con `Semantics`/tooltip; orden de lectura lógico.
 - [ ] Probado a 390 pt (teléfono), 1024 pt (tablet) y 1440 pt (web).
 - [ ] Letra grande (Dynamic Type): nada se corta ni desborda.
-- [ ] Montos en RD$ con el formato de la API (centavos → pesos) y cifras tabulares.
+- [ ] Montos en RD$ con `Fmt.money` (centavos en string, sin double) y cifras tabulares.
+- [ ] Nada importante truncado a 390 pt: si no cabe, dos líneas o se reacomoda.
+- [ ] Lo que el rol no puede hacer no se muestra (la API igual lo bloquea).
 - [ ] Tests de widget en iOS y Android (`TargetPlatformVariant`).

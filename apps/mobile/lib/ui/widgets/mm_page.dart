@@ -6,12 +6,15 @@ import '../tokens.dart';
 /// Página con título grande estilo iOS, márgenes según el tamaño de pantalla
 /// y contenido limitado a un ancho legible en escritorio.
 class MmPage extends StatelessWidget {
-  const MmPage({super.key, required this.title, required this.child, this.subtitle, this.trailing});
+  const MmPage({super.key, required this.title, required this.child, this.subtitle, this.trailing, this.gutter});
 
   final String title;
   final String? subtitle;
   final Widget? trailing;
   final Widget child;
+
+  /// Margen lateral fijo (p. ej. dentro de un panel); por defecto, según la pantalla.
+  final double? gutter;
 
   static double gutterFor(double width) => width >= MmBreakpoints.desktop
       ? MmSpace.gutterDesktop
@@ -21,7 +24,7 @@ class MmPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final gutter = gutterFor(MediaQuery.sizeOf(context).width);
+    final gutter = this.gutter ?? gutterFor(MediaQuery.sizeOf(context).width);
     return SafeArea(
       bottom: false,
       child: Align(
