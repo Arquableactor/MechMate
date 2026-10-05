@@ -1,9 +1,14 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/auth/session_screens.dart';
 import '../features/auth/welcome_screen.dart';
+import '../features/customers/customer_detail_screen.dart';
+import '../features/customers/customer_form_screen.dart';
+import '../features/customers/customers_screen.dart';
+import '../features/customers/vehicle_detail_screen.dart';
+import '../features/customers/vehicle_form_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/onboarding/create_shop_screen.dart';
 import '../features/shell/placeholder_screens.dart';
@@ -29,6 +34,10 @@ String? gateFor(AsyncValue<Session> session) => switch (session) {
   _ => Routes.loading,
 };
 
+/// Formulario a pantalla completa que entra desde abajo (hoja de iOS).
+Page<void> _sheet(GoRouterState state, Widget child) =>
+    MaterialPage<void>(key: state.pageKey, fullscreenDialog: true, child: child);
+
 /// Rutas. Cada destino principal es una rama con su propia pila (volver a
 /// una pestaña conserva dónde estabas; tocarla de nuevo vuelve a su inicio).
 final routerProvider = Provider<GoRouter>((ref) {
@@ -37,7 +46,11 @@ final routerProvider = Provider<GoRouter>((ref) {
     ..listen(sessionProvider, (_, _) => refresh.value++)
     ..onDispose(refresh.dispose);
 
+  // Navegador raíz: los formularios (hojas) se abren por encima de las pestañas.
+  final rootKey = GlobalKey<NavigatorState>();
+
   return GoRouter(
+    navigatorKey: rootKey,
     initialLocation: Routes.home,
     refreshListenable: refresh,
     redirect: (context, state) {
@@ -65,7 +78,51 @@ final routerProvider = Provider<GoRouter>((ref) {
             routes: [GoRoute(path: '/ordenes', builder: (context, state) => const OrdersPlaceholder())],
           ),
           StatefulShellBranch(
-            routes: [GoRoute(path: '/clientes', builder: (context, state) => const CustomersPlaceholder())],
+            routes: [
+              GoRoute(
+                path: CustomerRoutes.list,
+                builder: (context, state) => const CustomersScreen(),
+                routes: [
+                  // Antes que ':customerId' (si no, "nuevo" se tomaría como un id).
+                  GoRoute(
+                    path: 'nuevo',
+                    parentNavigatorKey: rootKey,
+                    pageBuilder: (context, state) => _sheet(state, const CustomerFormScreen()),
+                  ),
+                  GoRoute(
+                    path: ':customerId',
+                    // Tablet/web: la ficha va en el panel derecho de la misma pantalla.
+                    pageBuilder: (context, state) {
+                      final id = state.pathParameters['customerId']!;
+                      return CustomersScreen.isWide(context)
+                          ? NoTransitionPage<void>(
+                              key: state.pageKey,
+                              child: CustomersScreen(selectedId: id),
+                            )
+                          : MaterialPage<void>(
+                              key: state.pageKey,
+                              child: CustomerDetailScreen(customerId: id),
+                            );
+                    },
+                    routes: [
+                      GoRoute(
+                        path: 'vehiculos/nuevo',
+                        parentNavigatorKey: rootKey,
+                        pageBuilder: (context, state) =>
+                            _sheet(state, VehicleFormScreen(customerId: state.pathParameters['customerId']!)),
+                      ),
+                      GoRoute(
+                        path: 'vehiculos/:vehicleId',
+                        builder: (context, state) => VehicleDetailScreen(
+                          customerId: state.pathParameters['customerId']!,
+                          vehicleId: state.pathParameters['vehicleId']!,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
           ),
           StatefulShellBranch(
             routes: [GoRoute(path: '/cobros', builder: (context, state) => const BillingPlaceholder())],

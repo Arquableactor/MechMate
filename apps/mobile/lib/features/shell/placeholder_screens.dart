@@ -19,20 +19,6 @@ class OrdersPlaceholder extends StatelessWidget {
   );
 }
 
-class CustomersPlaceholder extends StatelessWidget {
-  const CustomersPlaceholder({super.key});
-
-  @override
-  Widget build(BuildContext context) => const MmPage(
-    title: 'Clientes',
-    child: MmEmptyState(
-      icon: CupertinoIcons.person_2,
-      title: 'Tus clientes aparecerán aquí',
-      message: 'Registra clientes y sus vehículos para abrir órdenes en segundos.',
-    ),
-  );
-}
-
 class BillingPlaceholder extends StatelessWidget {
   const BillingPlaceholder({super.key});
 

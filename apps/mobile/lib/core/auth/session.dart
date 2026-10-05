@@ -35,6 +35,21 @@ class SignedIn extends Session {
   }
 }
 
+/// Qué puede hacer el usuario en el taller (espejo de los permisos de la API,
+/// que es quien los hace cumplir; aquí solo se decide qué botones mostrar).
+extension ShopPermissions on ShopView {
+  /// Dueño o asesor: registra clientes y vehículos, crea órdenes, factura y cobra.
+  bool get isFrontDesk => myRole == ShopMemberRole.owner || myRole == ShopMemberRole.advisor;
+}
+
+/// Taller activo de la sesión (las pantallas del taller solo existen con uno).
+final currentShopProvider = Provider<ShopView>((ref) {
+  final session = ref.watch(sessionProvider).value;
+  final shop = session is SignedIn ? session.shop : null;
+  if (shop == null) throw StateError('Pantalla del taller sin taller activo');
+  return shop;
+});
+
 const sessionExpiredNotice = 'Tu sesión expiró. Inicia sesión de nuevo.';
 
 final sessionProvider = AsyncNotifierProvider<SessionController, Session>(SessionController.new);

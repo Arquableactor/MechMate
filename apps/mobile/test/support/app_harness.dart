@@ -53,12 +53,14 @@ const meAna = {
   'created_at': '2026-09-30T12:00:00.000Z',
 };
 
-Map<String, Object?> shopJson(String name) => {
-  'id': '01920000-0000-7000-8000-0000000000aa',
+const shopId = '01920000-0000-7000-8000-0000000000aa';
+
+Map<String, Object?> shopJson(String name, {String role = 'owner'}) => {
+  'id': shopId,
   'name': name,
   'type': 'mechanic_shop',
   'commission_bps': 800,
-  'my_role': 'owner',
+  'my_role': role,
   'created_at': '2026-09-30T12:00:00.000Z',
 };
 
