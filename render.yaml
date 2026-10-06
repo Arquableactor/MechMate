@@ -67,3 +67,31 @@ services:
       - key: NODE_ENV
         value: production
       # Render inyecta PORT automáticamente; la app lo lee de process.env.PORT.
+
+  # App web del taller (Flutter → sitio estático). Las rutas usan "#/", así que no
+  # hace falta reescribir URLs. Tras crearlo, registra su URL en Auth0 (Callback,
+  # Logout y Web Origins) y en CORS_ORIGINS del API.
+  - type: web
+    name: mechmate-app
+    runtime: static
+    buildCommand: bash apps/mobile/tool/build_web.sh
+    staticPublishPath: apps/mobile/build/web
+    # Solo se reconstruye si cambia la app (no en cada cambio del API).
+    buildFilter:
+      paths:
+        - apps/mobile/**
+    headers:
+      # index.html y main.dart.js no llevan hash en el nombre: sin esto, tras un
+      # deploy el navegador podría seguir con la versión vieja.
+      - path: /*
+        name: Cache-Control
+        value: no-cache
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
